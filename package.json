@@ -1,0 +1,19 @@
+{
+    "name": "smodules.js",
+    "description": "",
+    "version": "0.1",
+    "author": {
+        "name": "smori",
+        "email": "smori1983@gmail.com"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+        },
+        {
+            "type": "GPL-2.0",
+            "url": "http://www.opensource.org/licenses/GPL-2.0"
+        }
+    ]
+}
