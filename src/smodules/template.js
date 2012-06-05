@@ -1,127 +1,393 @@
 smodules.template = (function() {
-    var loadedTemplateFiles = {};
+    var _filters = {};
 
-    var escapeHTML = (function() {
-        var list = {
-            "<": "&lt;",
-            ">": "&gt;",
-            "&": "&amp;",
-            '"': "&quot;",
-            "'": "&#039;"
+    var _parse = (function() {
+        var _expr;
+
+        var exception = function(message) {
+            throw new Error("smodules.template parse error - " + message + " in " + _expr);
         };
 
-        return function(value) {
-            return value.toString().replace(/[<>&"']g/, function(matched) {
-                return list[matched];
-            });
+        var getKeys = function(inner) {
+            return (inner + " ").slice(0, inner.indexOf("|")).trim().split(".");
+        };
+
+        var getFilters = (function() {
+            var expr, ptr, len;
+
+            var current = function() {
+                return expr.charAt(ptr);
+            };
+
+            var next = function(word) {
+                if (word && current() !== word) {
+                    exception("args");
+                }
+                ptr++;
+            };
+
+            var skipWhitespace = function() {
+                var matched;
+
+                if ((matched = expr.slice(ptr).match(/^\s+/))) {
+                    ptr += matched[0].length;
+                }
+            };
+
+            var getFilterName = function() {
+                var matched;
+
+                if ((matched = expr.slice(ptr).match(/^\w+/))) {
+                    ptr += matched[0].length;
+                } else {
+                    exception("filter name");
+                }
+                return matched[0];
+            };
+
+            var getFilterArgs = (function() {
+                var getString = function(sign) {
+                    var s = "", c;
+
+                    next(sign);
+                    while (ptr < len) {
+                        c = current();
+                        if (c === sign) {
+                            next(c);
+                            if (s.slice(-1) === "\\") {
+                                s = s.slice(0, -1) + c;
+                            } else {
+                                break;
+                            }
+                        } else {
+                            s += c;
+                            next(c);
+                            if (ptr === len) {
+                                exception("invalid string expression in args");
+                            }
+                        }
+                    }
+                    return s;
+                };
+
+                var getTrue = function() {
+                    next("t");
+                    next("r");
+                    next("u");
+                    next("e");
+                    return true;
+                };
+
+                var getFalse = function() {
+                    next("f");
+                    next("a");
+                    next("l");
+                    next("s");
+                    next("e");
+                    return false;
+                };
+
+                var getNull = function() {
+                    next("n");
+                    next("u");
+                    next("l");
+                    next("l");
+                    return null;
+                };
+
+                var getNumber = function() {
+                    var number, matched;
+
+                    if ((matched = expr.slice(ptr).match(/^\-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][\+\-]?\d+)?/))) {
+                        number = +(matched[0]);
+                    }
+                    if (isNaN(number)) {
+                        exception("invalid number expression in args");
+                    } else {
+                        ptr += matched[0].length;
+                    }
+                    return number;
+                };
+
+                return function() {
+                    var args = [], c;
+
+                    while (ptr < len) {
+                        skipWhitespace();
+
+                        c = current();
+                        if (c === "'" || c === '"') {
+                            args.push(getString(c));
+                        } else if (c === "t") {
+                            args.push(getTrue());
+                        } else if (c === "f") {
+                            args.push(getFalse());
+                        } else if (c === "n") {
+                            args.push(getNull());
+                        } else if (c === "-" || (c >= "0" && c <= "9")) {
+                            args.push(getNumber());
+                        } else {
+                            exception("filter args");
+                        }
+
+                        skipWhitespace();
+                        c = current();
+                        if (c === ",") {
+                            next(",");
+                        } else if (c === "|") {
+                            break;
+                        }
+                    }
+
+                    return args;
+                };
+            })();
+
+            return function(inner) {
+                var c, filter, filters = [];
+
+                expr = (inner + " ").slice(inner.indexOf("|")).trim();
+                ptr  = 0;
+                len  = expr.length;
+
+                while (ptr < len) {
+                    filter = {};
+
+                    next("|");
+                    skipWhitespace();
+
+                    filter.name = getFilterName();
+
+                    skipWhitespace();
+
+                    c = current();
+                    if (c === ":") {
+                        next(":");
+                        filter.args = getFilterArgs();
+                    } else if (c === "|" || c === "") {
+                        filter.args = [];
+                    } else {
+                        exception("syntax error");
+                    }
+
+                    filters.push(filter);
+                }
+
+                return filters;
+            };
+        })();
+
+        return function(expr, inner) {
+            _expr = expr;
+
+            return {
+                expr:    expr,
+                keys:    getKeys(inner),
+                filters: getFilters(inner)
+            };
         };
     })();
 
-    var regexQuote = function(str) {
-        return str.replace(/[\*\+\?\.\-\[\]\{\}\\\/]/g, function(matched) {
-            return "\\" + matched;
-        });
-    };
+    var _templates = {};
 
-    var delimL = regexQuote("{{");
-    var delimR = regexQuote("}}");
-
-    var isRemoteFile = function(templateSrc) {
+    var _isRemoteFile = function(templateSrc) {
         return templateSrc.match(/\.html$/);
     };
 
-    var execute = function(templateSrc, bindParams, callback) {
-        if (loadedTemplateFiles.hasOwnProperty(templateSrc)) {
-            executeRecursive(loadedTemplateFiles[templateSrc], bindParams, callback);
-        } else {
-            if (isRemoteFile(templateSrc)) {
-                $.ajax({
-                    url: templateSrc,
-                    success: function(response) {
-                        loadedTemplateFiles[templateSrc] = response;
-                        executeRecursive(response, bindParams, callback);
-                    }
-                });
-            } else {
-                executeRecursive(templateSrc, bindParams, callback);
+    var _isEmbedded = function(templateSrc) {
+        return templateSrc.indexOf("#") === 0;
+    };
+
+    var _register = function(templateSrc, content) {
+        var matched,
+            regex = /\{\{\s*([\s\S]+?)\s*\}\}/g,
+
+            tmp     = [],
+            holders = [];
+
+        while ((matched = regex.exec(content))) {
+            if ($.inArray(matched[0], tmp) < 0) {
+                holders.push(_parse(matched[0], matched[1]));
             }
+        }
+
+        _templates[templateSrc] = {
+            content: content,
+            holders: holders
+        };
+    };
+
+    var _registerFromRemote = function(templateSrc, callback) {
+        $.ajax({
+            url: templateSrc,
+            success: function(response) {
+                _register(templateSrc, response);
+                if (typeof callback === "function") {
+                    callback();
+                }
+            }
+        });
+    };
+
+    var _registerFromHTML = function(templateSrc, callback) {
+        if ($(templateSrc)[0].tagName.toLowerCase() === "textarea") {
+            _register(templateSrc, $(templateSrc).val());
+        } else {
+            _register(templateSrc, $(templateSrc).html());
+        }
+        if (typeof callback === "function") {
+            callback();
         }
     };
 
-    var executeRecursive = function(templateSrc, bindParams, callback) {
+    var _registerFromString = function(templateSrc, callback) {
+        _register(templateSrc, templateSrc);
+        if (typeof callback === "function") {
+            callback();
+        }
+    };
+
+    var _execute = function(templateSrc, bindParams, callback) {
+        if (_templates.hasOwnProperty(templateSrc)) {
+            _executeRecursive(templateSrc, bindParams, callback);
+        } else if (_isRemoteFile(templateSrc)) {
+            _registerFromRemote(templateSrc, function() {
+                _executeRecursive(templateSrc, bindParams, callback);
+            });
+        } else if (_isEmbedded(templateSrc)) {
+            _registerFromHTML(templateSrc, function() {
+                _executeRecursive(templateSrc, bindParams, callback);
+            });
+        } else {
+            _registerFromString(templateSrc, function() {
+                _executeRecursive(templateSrc, bindParams, callback);
+            });
+        }
+    };
+
+    var _executeRecursive = function(templateSrc, bindParams, callback) {
         if (!$.isArray(bindParams)) {
             bindParams = [bindParams];
         }
 
         $.each(bindParams, function(idx, params) {
-            callback(bind(templateSrc, params));
+            callback(_bind(templateSrc, params));
         });
     };
 
-    var bind = function(templateSrc, bindParams) {
-        var ret = templateSrc;
+    var _bind = (function() {
+        var src;
 
-        $.each(bindParams, function(key, value) {
-            if (typeof value === "object") {
-                ret = bindObject(ret, key, value);
+        var getValue = function(keys, bindParams) {
+            var i = 0, len = keys.length, value = bindParams;
+
+            for ( ; i < len; i++) {
+                if (typeof value[keys[i]] !== "undefined") {
+                    value = value[keys[i]];
+                } else {
+                    value = "";
+                    break;
+                }
+            }
+
+            return value;
+        };
+
+        var getFilter = function(name) {
+            if (typeof _filters[name] === "function") {
+                return _filters[name];
             } else {
-                ret = bindValue(ret, key, value);
+                throw new Error("smodules.template filter not found - " + name + " in " + src);
             }
-        });
+        };
 
-        return ret;
-    };
+        var applyFilters = function(value, filters) {
+            filters.forEach(function(filter) {
+                value = getFilter(filter.name).apply(null, [value].concat(filter.args));
+            });
 
-    var bindObject = function(templateSrc, key, value) {
-        var ret = templateSrc;
-        var regex = new RegExp(delimL + "\\s*(" + regexQuote(key) + "[^\\s" + delimR + "]*)\\s*" + delimR, "g");
+            return value;
+        };
 
-        $.each(templateSrc.match(regex), function(idx, matched) {
-            var regex = new RegExp("^" + delimL + "\\s*|\\s*" + delimR + "$", "g");
-            var ob = matched.replace(regex, "").split(".").slice(1);
-            var chain = value;
+        return function(templateSrc, bindParams) {
+            var value, result = _templates[templateSrc].content;
 
-            while (ob.length > 0) {
-                chain = chain[ob.shift()];
-            }
-            ret = ret.replace(matched, escapeHTML(chain));
-        });
+            src = templateSrc;
+            _templates[templateSrc].holders.forEach(function(holder) {
+                result = result.replace(holder.expr, applyFilters(getValue(holder.keys, bindParams), holder.filters));
+            });
 
-        return ret;
-    };
+            return result;
+        };
+    })();
 
-    var bindValue = function(templateSrc, key, value) {
-        var regex = new RegExp(delimL + "\\s*" + regexQuote(key) + "\\s*" + delimR, "g");
 
-        return templateSrc.replace(regex, escapeHTML(value));
-    };
-
-    var ret = function(templateFile, bindParams) {
+    // APIs.
+    var that = function(templateFile, bindParams) {
         return {
-/*
-            display: function() {
-                execute(templateFile, bindParams, function(response) {
-                    document.write(response);
+            get: function(callback) {
+                _execute(templateFile, bindParams, function(response) {
+                    callback(response);
                 });
             },
-*/
             appendTo: function(target) {
-                execute(templateFile, bindParams, function(response) {
+                _execute(templateFile, bindParams, function(response) {
                     $(response).appendTo(target);
                 });
             },
             insertBefore: function(target) {
-                execute(templateFile, bindParams, function(response) {
+                _execute(templateFile, bindParams, function(response) {
                     $(response).insertBefore(target);
                 });
             }
         };
     };
 
-    ret.setDelimiter = function(left, right) {
-        delimL = regexQuote(left);
-        delimR = regexQuote(right);
+    that.addFilter = function(name, func) {
+        _filters[name] = func;
+        return that;
     };
 
-    return ret;
+    that.preFetch = function(templateSrc) {
+        if (_isRemoteFile(templateSrc)) {
+            _registerFromRemote(templateSrc);
+        } else if (_isEmbedded(templateSrc)) {
+            _registerFromHTML(templateSrc);
+        } else {
+            _registerFromString(templateSrc);
+        }
+        return that;
+    };
+
+    return that;
 })();
+
+
+// default filters
+smodules.template.addFilter("h", (function() {
+    var list = {
+        "<": "&lt;",
+        ">": "&gt;",
+        "&": "&amp;",
+        '"': "&quot;",
+        "'": "&#039;"
+    };
+
+    return function(value) {
+        return value.replace(/[<>&"']/g, function(matched) {
+            return list[matched];
+        });
+    };
+})());
+
+smodules.template.addFilter("default", function(value, defaultValue) {
+    return value.length === 0 ? defaultValue : value;
+});
+
+smodules.template.addFilter("upper", function(value) {
+    return value.toLocaleUpperCase();
+});
+
+smodules.template.addFilter("lower", function(value) {
+    return value.toLocaleLowerCase();
+});
