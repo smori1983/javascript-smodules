@@ -9,9 +9,9 @@ grunt.initConfig({
                 " *\n" +
                 " * Copyright (c) <%= grunt.template.today('yyyy') %> smori <smori1983@gmail.com>\n" +
                 " * Dual licensed under the MIT or GPL-2.0 licenses.\n" +
-                " */\n" +
-                "\n" +
-                "var smodules = smodules || {};"
+                " *\n" +
+                " * Date <%= grunt.template.today('yyyy-mm-dd HH:MM:ss') %>\n" +
+                " */"
     },
     lint: {
         all: ["grunt.js", "src/smodules/*.js", "test/smodules/*.js"]
@@ -23,16 +23,14 @@ grunt.initConfig({
         all: {
             src: [
                 "<banner:meta.banner>",
+                "src/smodules/HEAD.js",
+                "src/smodules/ui.HEAD.js",
+                "src/smodules/ui.*.js",
+                "src/smodules/util.HEAD.js",
+                "src/smodules/util.*.js",
                 "src/smodules/*.js"
             ],
             dest: "dist/smodules-<%= pkg.version %>.js"
-        },
-        template: {
-            src: [
-                "<banner:meta.banner>",
-                "src/smodules/template.js"
-            ],
-            dest: "dist/smodules/template-<%= pkg.version %>.js"
         }
     },
     min: {
@@ -42,13 +40,6 @@ grunt.initConfig({
                 "dist/smodules-<%= pkg.version %>.js"
             ],
             dest: "dist/smodules-<%= pkg.version %>.min.js"
-        },
-        template: {
-            src: [
-                "<banner:meta.banner>",
-                "dist/smodules/template-<%= pkg.version %>.js"
-            ],
-            dest: "dist/smodules/template-<%= pkg.version %>.min.js"
         }
     },
     jshint: {
@@ -60,11 +51,20 @@ grunt.initConfig({
         }
     },
     watch: {
-        files: [
-            "src/*.js",
-            "test/*.js"
-        ],
-        tasks: "lint qunit"
+        all: {
+            files: [
+                "src/smodules/*.js",
+                "test/*.js"
+            ],
+            tasks: "lint qunit concat min"
+        },
+        concat: {
+            files: [
+                "src/smodules/*.js",
+                "test/*.js"
+            ],
+            tasks: "lint concat"
+        }
     }
 });
 
