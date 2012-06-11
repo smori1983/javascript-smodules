@@ -46,7 +46,7 @@ grunt.initConfig({
         options: {
             browser: true,
             curly: true,
-            eqeqeq: true,
+//            eqeqeq: true,
             forin: true
         }
     },
@@ -64,6 +64,13 @@ grunt.initConfig({
                 "test/*.js"
             ],
             tasks: "lint concat"
+        },
+        lint: {
+            files: [
+                "src/smodules/*.js",
+                "test/*.js"
+            ],
+            tasks: "lint"
         }
     }
 });
