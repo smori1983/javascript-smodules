@@ -1,0 +1,7 @@
+<ul>
+    {for $idx, $item in $items}
+    {if $item.show}
+    <li>{ $item.name | upper | h }</li>
+    {/if}
+    {/for}
+</ul>

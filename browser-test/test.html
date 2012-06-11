@@ -1,25 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>javascript-smodules.js test</title>
-  <link rel="stylesheet" href="../lib/qunit/qunit/qunit.css">
-  <script src="../lib/jquery-1.7.2.js"></script>
-  <script src="../lib/qunit/qunit/qunit.js"></script>
-  <script>var smodules = smodules || {};</script>
-  <script src="../src/smodules/template.js"></script>
-  <script src="smodules/template-test.js"></script>
+<meta charset="UTF-8" />
+<title>javascript-smodules.js test</title>
+<link rel="stylesheet" href="../lib/qunit/qunit/qunit.css">
+<script src="../lib/jquery-1.7.2.js"></script>
+<script src="../lib/qunit/qunit/qunit.js"></script>
+<script src="../src/smodules/HEAD.js"></script>
+<script src="../src/smodules/template.js"></script>
+<script src="../src/smodules/templateParser.js"></script>
+<script src="../src/smodules/templateBinder.js"></script>
+<script src="smodules/template-test.js"></script>
+<style type="text/css">
+#template-test { margin-top: 20px; }
+#template-test > div { border:1px solid #000000; margin-bottom: 10px; padding: 0px 20px; }
+</style>
 </head>
 <body>
-  <div id="qunit"></div>
+<div id="qunit"></div>
 
-  <div id="template-test" style="display:none;">
-    <div id="template-test1"></div>
-    <div id="template-test2"><div id="template-test2-child"></div></div>
-    <div id="template-test3"></div>
-    <div id="template-test4"></div>
-    <div id="template-test5"></div>
-  </div>
+<div id="template-test" style="display:block;">
+    <div>
+        <strong>remote source + appendTo</strong>
+        <div id="template-appendTo"></div>
+    </div>
+    <div>
+        <strong>remote source + insertBefore</strong>
+        <div id="template-insertBefore"><div id="template-insertBefore-child"></div></div>
+    </div>
+    <div>
+        <strong>textarea</strong>
+        <div id="template-textarea"></div>
+    </div>
+</div>
+
+<textarea id="textarea" style="display:block;width:80%;height:300px;">
+{for $idx,$item in $items}
+<div class="item">
+    <p>{ $item.title | h }</p>
+    {if ( $item.tags.length gt 0 ) and true and (true !== null) }
+    <ul>
+        {for $idx,$tag in $item.tags}
+        <li>{ $tag | h }</li>
+        {/for}
+    </ul>
+    {else}
+    <p>no tag</p>
+    {/if}
+</div>
+{/for}
+</textarea>
 
 </body>
 </html>
