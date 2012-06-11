@@ -1,193 +1,6 @@
 smodules.template = (function() {
     var _filters = {};
 
-    var _parse = (function() {
-        var _expr;
-
-        var exception = function(message) {
-            throw new Error("smodules.template parse error - " + message + " in " + _expr);
-        };
-
-        var getKeys = function(inner) {
-            return (inner + " ").slice(0, inner.indexOf("|")).trim().split(".");
-        };
-
-        var getFilters = (function() {
-            var expr, ptr, len;
-
-            var current = function() {
-                return expr.charAt(ptr);
-            };
-
-            var next = function(word) {
-                if (word && current() !== word) {
-                    exception("args");
-                }
-                ptr++;
-            };
-
-            var skipWhitespace = function() {
-                var matched;
-
-                if ((matched = expr.slice(ptr).match(/^\s+/))) {
-                    ptr += matched[0].length;
-                }
-            };
-
-            var getFilterName = function() {
-                var matched;
-
-                if ((matched = expr.slice(ptr).match(/^\w+/))) {
-                    ptr += matched[0].length;
-                } else {
-                    exception("filter name");
-                }
-                return matched[0];
-            };
-
-            var getFilterArgs = (function() {
-                var getString = function(sign) {
-                    var s = "", c;
-
-                    next(sign);
-                    while (ptr < len) {
-                        c = current();
-                        if (c === sign) {
-                            next(c);
-                            if (s.slice(-1) === "\\") {
-                                s = s.slice(0, -1) + c;
-                            } else {
-                                break;
-                            }
-                        } else {
-                            s += c;
-                            next(c);
-                            if (ptr === len) {
-                                exception("invalid string expression in args");
-                            }
-                        }
-                    }
-                    return s;
-                };
-
-                var getTrue = function() {
-                    next("t");
-                    next("r");
-                    next("u");
-                    next("e");
-                    return true;
-                };
-
-                var getFalse = function() {
-                    next("f");
-                    next("a");
-                    next("l");
-                    next("s");
-                    next("e");
-                    return false;
-                };
-
-                var getNull = function() {
-                    next("n");
-                    next("u");
-                    next("l");
-                    next("l");
-                    return null;
-                };
-
-                var getNumber = function() {
-                    var number, matched;
-
-                    if ((matched = expr.slice(ptr).match(/^\-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][\+\-]?\d+)?/))) {
-                        number = +(matched[0]);
-                    }
-                    if (isNaN(number)) {
-                        exception("invalid number expression in args");
-                    } else {
-                        ptr += matched[0].length;
-                    }
-                    return number;
-                };
-
-                return function() {
-                    var args = [], c;
-
-                    while (ptr < len) {
-                        skipWhitespace();
-
-                        c = current();
-                        if (c === "'" || c === '"') {
-                            args.push(getString(c));
-                        } else if (c === "t") {
-                            args.push(getTrue());
-                        } else if (c === "f") {
-                            args.push(getFalse());
-                        } else if (c === "n") {
-                            args.push(getNull());
-                        } else if (c === "-" || (c >= "0" && c <= "9")) {
-                            args.push(getNumber());
-                        } else {
-                            exception("filter args");
-                        }
-
-                        skipWhitespace();
-                        c = current();
-                        if (c === ",") {
-                            next(",");
-                        } else if (c === "|") {
-                            break;
-                        }
-                    }
-
-                    return args;
-                };
-            })();
-
-            return function(inner) {
-                var c, filter, filters = [];
-
-                expr = (inner + " ").slice(inner.indexOf("|")).trim();
-                ptr  = 0;
-                len  = expr.length;
-
-                while (ptr < len) {
-                    filter = {};
-
-                    next("|");
-                    skipWhitespace();
-
-                    filter.name = getFilterName();
-
-                    skipWhitespace();
-
-                    c = current();
-                    if (c === ":") {
-                        next(":");
-                        filter.args = getFilterArgs();
-                    } else if (c === "|" || c === "") {
-                        filter.args = [];
-                    } else {
-                        exception("syntax error");
-                    }
-
-                    filters.push(filter);
-                }
-
-                return filters;
-            };
-        })();
-
-        return function(expr, inner) {
-            _expr = expr;
-
-            return {
-                expr:    expr,
-                keys:    getKeys(inner),
-                filters: getFilters(inner)
-            };
-        };
-    })();
-
     var _templates = {};
 
     var _isRemoteFile = function(templateSrc) {
@@ -199,22 +12,7 @@ smodules.template = (function() {
     };
 
     var _register = function(templateSrc, content) {
-        var matched,
-            regex = /\{\{\s*([\s\S]+?)\s*\}\}/g,
-
-            tmp     = [],
-            holders = [];
-
-        while ((matched = regex.exec(content))) {
-            if ($.inArray(matched[0], tmp) < 0) {
-                holders.push(_parse(matched[0], matched[1]));
-            }
-        }
-
-        _templates[templateSrc] = {
-            content: content,
-            holders: holders
-        };
+        _templates[templateSrc] = smodules.templateParser.parse(content, templateSrc);
     };
 
     var _registerFromRemote = function(templateSrc, callback) {
@@ -278,26 +76,36 @@ smodules.template = (function() {
     var _bind = (function() {
         var src;
 
-        var getValue = function(keys, bindParams) {
-            var i = 0, len = keys.length, value = bindParams;
+        var exception = function(message) {
+            throw new Error("smodules.template - " + message + " in source " + src);
+        };
 
-            for ( ; i < len; i++) {
-                if (typeof value[keys[i]] !== "undefined") {
-                    value = value[keys[i]];
-                } else {
-                    value = "";
+        var getValue = function(keys, params) {
+            var pIdx = params.length - 1, i, len = keys.length, value;
+
+            for ( ; pIdx >= 0; pIdx--) {
+                value = params[pIdx];
+                for (i = 0; i < len; i++) {
+                    if (typeof value[keys[i]] !== "undefined") {
+                        value = value[keys[i]];
+                    } else {
+                        value = null;
+                        break;
+                    }
+                }
+                if (typeof value !== null) {
                     break;
                 }
             }
 
-            return value;
+            return value || "";
         };
 
         var getFilter = function(name) {
             if (typeof _filters[name] === "function") {
                 return _filters[name];
             } else {
-                throw new Error("smodules.template filter not found - " + name + " in " + src);
+                exception("filter '" + name + "' not found");
             }
         };
 
@@ -309,15 +117,122 @@ smodules.template = (function() {
             return value;
         };
 
+        var loop = function(blocks, params) {
+            return blocks.reduce(function(output, block) {
+                if (block.type === "normal" || block.type === "literal") {
+                    return output + block.expr;
+                } else if (block.type === "holder") {
+                    return output + applyFilters(getValue(block.keys, params), block.filters);
+                } else if (block.type === "if") {
+                    return output + loopIf(block, params);
+                } else if (block.type === "for") {
+                    return output + loopFor(block, params);
+                } else {
+                    return output;
+                }
+            }, "");
+        };
+
+        var evaluateComp = function(lval, rval, comp) {
+            if (comp === "===") {
+                return lval === rval;
+            } else if (comp === "==") {
+                return lval == rval;
+            } else if (comp === "!==") {
+                return lval !== rval;
+            } else if (comp === "!=") {
+                return lval != rval;
+            } else if (comp === "lte") {
+                return lval <= rval;
+            } else if (comp === "lt") {
+                return lval < rval;
+            } else if (comp === "gte") {
+                return lval >= rval;
+            } else if (comp === "gt") {
+                return lval > rval;
+            } else {
+                exception("invalid comparer");
+            }
+        };
+
+        var evaluateAndOr = function(lval, rval, type) {
+            if (type === "and") {
+                return lval && rval;
+            } else if (type === "or") {
+                return lval || rval;
+            } else {
+                exception("unknown operator");
+            }
+        };
+
+        var evaluate = function(conditions, params) {
+            var result = [], i = 0, len = conditions.length, section, lval, rval;
+
+            for ( ; i < len; i++) {
+                section = conditions[i];
+
+                if (section.type === "value") {
+                    result.push(section.value || section.expr);
+                } else if (section.type === "var") {
+                    result.push(getValue(section.keys, params));
+                } else if (section.type === "comp") {
+                    rval = result.pop();
+                    lval = result.pop();
+                    result.push(evaluateComp(lval, rval, section.expr));
+                } else if (section.type === "andor") {
+                    rval = result.pop();
+                    lval = result.pop();
+                    result.push(evaluateAndOr(lval, rval, section.expr));
+                }
+            }
+
+            if (result.length !== 1) {
+                exception("invalid condition expression");
+            }
+
+            return result[0];
+        };
+
+        var loopIf = function(block, params) {
+            var i = 0, len = block.conditions.length, section, sectionResult, output = "";
+
+            for ( ; i < len; i++) {
+                section = block.conditions[i];
+                if (section.condition.type === "if" || section.condition.type === "elseif") {
+                    if ((sectionResult = evaluate(section.condition.condition, params))) {
+                        output = loop(section.blocks, params);
+                        break;
+                    }
+                } else {
+                    output = loop(section.blocks, params);
+                }
+            }
+
+            return output;
+        };
+
+        var loopFor = function(block, params) {
+            var array = getValue(block.header.param, params), output = "", additional;
+
+            if ($.isArray(array)) {
+                array.forEach(function(value, idx) {
+                    additional = {};
+                    additional[block.header.k] = idx;
+                    additional[block.header.v] = value;
+
+                    params.push(additional);
+                    output += loop(block.blocks, params);
+                    params.pop();
+                });
+            }
+
+            return output;
+        };
+
         return function(templateSrc, bindParams) {
-            var value, result = _templates[templateSrc].content;
-
             src = templateSrc;
-            _templates[templateSrc].holders.forEach(function(holder) {
-                result = result.replace(holder.expr, applyFilters(getValue(holder.keys, bindParams), holder.filters));
-            });
 
-            return result;
+            return loop(_templates[templateSrc], [bindParams]);
         };
     })();
 

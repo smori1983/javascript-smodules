@@ -9,28 +9,37 @@ smodules.templateParser = (function() {
         at;
 
     var exception = function(message) {
-        throw new Error("smodules.templateParser - " + message + " in " + src + " [" + line + "," + at + "]");
+        throw new Error("smodules.templateParser - " + message + " in source " + src + " [" + line + "," + at + "]");
     };
 
-    var next = function(expr, replace) {
-        expr = expr || ch;
+    var next = (function(expr, replace) {
+        var position = function(expr) {
+            while (expr.length > 0) {
+                if (expr.slice(0, 1) === "\n") {
+                    line++;
+                    at = 1;
+                } else {
+                    at++;
+                }
+                expr = expr.slice(1);
+            }
+        };
 
-        if (text.indexOf(expr, ptr) !== ptr) {
-            exception("syntax error");
-        }
+        return function(expr, replace) {
+            expr = expr || ch;
 
-        if (expr === "\n") {
-            line++;
-            at = 1;
-        } else {
-            at += expr.length;
-        }
+            if (text.indexOf(expr, ptr) !== ptr) {
+                exception("syntax error");
+            }
 
-        ptr += expr.length;
-        ch = text.charAt(ptr);
+            position(expr);
 
-        return replace || expr;
-    };
+            ptr += expr.length;
+            ch = text.charAt(ptr);
+
+            return replace || expr;
+        };
+    })();
 
     var skipWhitespace = function() {
         var s = "";
@@ -46,15 +55,512 @@ smodules.templateParser = (function() {
         return text.indexOf(expr, ptr) === ptr;
     };
 
-    var parseNormal = function() {
+    var readRegex = function(regex) {
+        return regex.test(text.slice(ptr));
+    };
+
+    var readLeftTag = function() {
+        return readRegex(/^\{\s*left\s*\}/);
+    };
+
+    var eatLeftTag = function() {
+        next("{");
+        skipWhitespace();
+        next("left");
+        skipWhitespace();
+        next("}");
+
+        return "{";
+    };
+
+    var readRightTag = function() {
+        return readRegex(/^\{\s*right\s*\}/);
+    };
+
+    var eatRightTag = function() {
+        next("{");
+        skipWhitespace();
+        next("right");
+        skipWhitespace();
+        next("}");
+
+        return "}";
+    };
+
+    var readLiteralTag = function() {
+        return readRegex(/^\{\s*literal\s*\}/);
+    };
+
+    var eatLiteralTag = function() {
+        next("{");
+        skipWhitespace();
+        next("literal");
+        skipWhitespace();
+        next("}");
+
+        return "{literal}";
+    };
+
+    var readEndLiteralTag = function() {
+        return readRegex(/^\{\s*\/\s*literal\s*\}/);
+    };
+
+    var eatEndLiteralTag = function() {
+        next("{");
+        skipWhitespace();
+        next("/");
+        skipWhitespace();
+        next("literal");
+        skipWhitespace();
+        next("}");
+
+        return "{/literal}";
+    };
+
+    var readIfTag = function() {
+        return readRegex(/^\{\s*if\s/);
+    };
+
+    var eatIfTag = function() {
+        next("{");
+        skipWhitespace();
+        next("if");
+        skipWhitespace();
+
+        return "{if ";
+    };
+
+    var readElseifTag = function() {
+        return readRegex(/^\{\s*elseif\s/);
+    };
+
+    var eatElseifTag = function() {
+        next("{");
+        skipWhitespace();
+        next("elseif");
+        skipWhitespace();
+
+        return "{elseif ";
+    };
+
+    var readElseTag = function() {
+        return readRegex(/^\{\s*else\s*\}/);
+    };
+
+    var eatElseTag = function() {
+        next("{");
+        skipWhitespace();
+        next("else");
+        skipWhitespace();
+        next("}");
+
+        return "{else}";
+    };
+
+    // NOTE: currently not used.
+    var readEndIfTag = function() {
+        return readRegex(/^\{\s*\/\s*if\s*\}/);
+    };
+
+    var eatEndIfTag = function() {
+        next("{");
+        skipWhitespace();
+        next("/");
+        skipWhitespace();
+        next("if");
+        skipWhitespace();
+        next("}");
+
+        return "{/if}";
+    };
+
+    var readForTag = function() {
+        return readRegex(/^\{\s*for\s/);
+    };
+
+    var eatForTag = function() {
+        next("{");
+        skipWhitespace();
+        next("for");
+        skipWhitespace();
+
+        return "{for ";
+    };
+
+    var readEndForTag = function() {
+        return readRegex(/^\{\s*\/\s*for\s*\}/);
+    };
+
+    var eatEndForTag = function() {
+        next("{");
+        skipWhitespace();
+        next("/");
+        skipWhitespace();
+        next("for");
+        skipWhitespace();
+        next("}");
+
+        return "{/for}";
+    };
+
+    var readHolderTag = function() {
+        return readRegex(/^\{\s*\$/);
+    };
+
+    // NOTE: currently not used.
+    var readTmpVar = function() {
+        return readRegex(/^\$\w+[^\w]/);
+    };
+
+    var eatTmpVar = function() {
+        var s = next("$");
+
+        while (/\w/.test(ch)) {
+            s += next(ch);
+        }
+
+        if (s === "$") {
+            exception("tmp variable not found");
+        }
+
+        return s.slice(1);
+    };
+
+    var readVar = function() {
+        return readRegex(/^\$\w+(?:\.\w+)*(?:[^\w]|$)/);
+    };
+
+    var parseVar = function() {
+        var s = next("$");
+
+        while (/[\w\.]/.test(ch)) {
+            s += next(ch);
+        }
+
+        if (s === "$") {
+            exception("variable not found");
+        } else if (/^\$\.|\.$|\.\./.test(s)) {
+            exception("invalid variable expression");
+        }
+
+        return {
+            type: "var",
+            expr: s,
+            keys: s.slice(1).split(".")
+        };
+    };
+
+    var readNull = function() {
+        return readRegex(/^null[^\w]/);
+    };
+
+    var parseNull = function() {
+        return {
+            type:  "value",
+            expr:  next("null"),
+            value: null
+        };
+    };
+
+    var readTrue = function() {
+        return readRegex(/^true[^\w]/);
+    };
+
+    var parseTrue = function() {
+        return {
+            type:  "value",
+            expr:  next("true"),
+            value: true
+        };
+    };
+
+    var readFalse = function() {
+        return readRegex(/^false[^\w]/);
+    };
+
+    var parseFalse = function() {
+        return {
+            type:  "value",
+            expr:  next("false"),
+            value: false
+        };
+    };
+
+    var readString = function() {
+        return ch === "'" || ch === '"';
+    };
+
+    var parseString = function() {
+        var matched;
+
+        if ((matched = text.slice(ptr).match(/^(["'])(?:\\\1|\s|\S)*?\1/))) {
+            next(matched[0]);
+
+            return {
+                type:  "value",
+                expr:  matched[0],
+                value: matched[0].slice(1, -1).replace("\\" + matched[1], matched[1])
+            };
+        } else {
+            exception("string expression not closed");
+        }
+    };
+
+    var readNumber = function() {
+        return ch === "+" || ch === "-" || (ch >= "0" && ch <= "9");
+    };
+
+    var parseNumber = function() {
+        var value, matched = text.slice(ptr).match(/^[\+\-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][\+\-]?\d+)?/);
+
+        if (matched && !isNaN(value = +(matched[0]))) {
+            next(matched[0]);
+
+            return {
+                type:  "value",
+                expr:  matched[0],
+                value: value
+            };
+        } else {
+            exception("invalid number expression");
+        }
+    };
+
+    var readValue = function() {
+        return readNull() || readTrue() || readFalse() || readString() || readNumber();
+    };
+
+    var parseValue = function() {
+        if (readNull()) {
+            return parseNull();
+        } else if (readTrue()) {
+            return parseTrue();
+        } else if (readFalse()) {
+            return parseFalse();
+        } else if (readString()) {
+            return parseString();
+        } else if (readNumber()) {
+            return parseNumber();
+        } else {
+            exception("value shoud be written");
+        }
+    };
+
+    var readAndOr = function() {
+        return readRegex(/^(and|or)[^\w]/);
+    };
+
+    var parseAndOr = function() {
+        var expr;
+
+        if (read("and")) {
+            expr = next("and");
+        } else if (read("or")) {
+            expr = next("or");
+        } else {
+            exception("'and' or 'or' should be written");
+        }
+
+        return {
+            type: "andor",
+            expr: expr
+        };
+    };
+
+    var compRegex = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
+
+    var readComp = function() {
+        return readRegex(compRegex);
+    };
+
+    var parseComp = function() {
+        var matched;
+
+        if ((matched = text.slice(ptr).match(compRegex))) {
+            expr = next(matched[0]);
+        } else {
+            exception("comparer should be written");
+        }
+
+        return {
+            type: "comp",
+            expr: expr
+        };
+    };
+
+    var readRoundBracket = function() {
+        return ch === "(";
+    };
+
+    var parseRoundBracket = function() {
+        return {
+            type: "roundBracket",
+            expr: next("(")
+        };
+    };
+
+    var readEndRoundBracket = function() {
+        return ch === ")";
+    };
+
+    var parseEndRoundBracket = function() {
+        return {
+            type: "endRoundBracket",
+            expr: next(")")
+        };
+    };
+
+    var parseCondition = (function() {
+        var mainLoop = (function() {
+            var state = {
+                "start":           ["roundBracket",                    "value", "var",                  "error"],
+                "roundBracket":    ["roundBracket",                    "value", "var",                  "error"],
+                "endRoundBracket": [                "endRoundBracket",                         "andor", "error"],
+                "value":           [                "endRoundBracket",                 "comp", "andor", "error"],
+                "var":             [                "endRoundBracket",                 "comp", "andor", "error"],
+                "comp":            [                                   "value", "var",                  "error"],
+                "andor":           ["roundBracket",                    "value", "var",                  "error"]
+            };
+
+            var method = {
+                "roundBracket":    { read: readRoundBracket,    parse: parseRoundBracket },
+                "endRoundBracket": { read: readEndRoundBracket, parse: parseEndRoundBracket },
+                "value":           { read: readValue,           parse: parseValue },
+                "var":             { read: readVar,             parse: parseVar },
+                "comp":            { read: readComp,            parse: parseComp },
+                "andor":           { read: readAndOr,           parse: parseAndOr }
+            };
+
+            var history = (function() {
+                var stack;
+
+                return {
+                    init: function() {
+                        stack = ["start"];
+                    },
+                    add: function(type) {
+                        stack.push(type);
+                    },
+                    get: function(idx) {
+                        return stack[stack.length - idx] || null;
+                    }
+                };
+            })();
+
+            var getOrder = (function() {
+                var orders = {
+                    "endRoundBracket": 1,
+                    "or":              2,
+                    "and":             3,
+                    "comp":            4,
+                    "value":           5,
+                    "var":             5,
+                    "roundBracket":    6
+                };
+
+                return function(section) {
+                    return orders[section.type] || orders[section.expr];
+                };
+            })();
+
+            var parse = function() {
+                var list = state[history.get(1)], i = 0, size = list.length, type, result;
+
+                for ( ; i < size; i++) {
+                    type = list[i];
+
+                    if (type === "error") {
+                        exception("invalid condition expression");
+                    } else if (method[type].read()) {
+                        if (type === "comp" && history.get(2) === "comp") {
+                            exception("can not write comparer here");
+                        }
+                        result = method[type].parse();
+                        break;
+                    }
+                }
+                history.add(result.type);
+
+                return result;
+            };
+
+            return function() {
+                var section, polish = [], stack = [], stackTop;
+
+                history.init();
+                while (ptr < len) {
+                    if (ch === "}") {
+                        break;
+                    } else {
+                        section = parse();
+                        section.order = getOrder(section);
+                    }
+
+                    while (stack.length > 0) {
+                        stackTop = stack.pop();
+
+                        if (section.order <= stackTop.order && stackTop.type !== "roundBracket") {
+                            polish.push(stackTop);
+                        } else {
+                            stack.push(stackTop);
+                            break;
+                        }
+                    }
+
+                    if (section.type === "endRoundBracket") {
+                        stack.pop();
+                    } else {
+                        stack.push(section);
+                    }
+
+                    skipWhitespace();
+                }
+
+                while (stack.length > 0) {
+                    polish.push(stack.pop());
+                }
+
+                return polish;
+            };
+        })(); // mainLoop()
+
+        return function() {
+            var type, mainResult = null;
+
+            if (readIfTag()) {
+                eatIfTag();
+                type = "if";
+            } else if (readElseifTag()) {
+                eatElseifTag();
+                type = "elseif";
+            } else if (readElseTag()) {
+                eatElseTag();
+                type = "else";
+            } else {
+                exception("unknown condition expression");
+            }
+
+            if (type === "if" || type === "elseif") {
+                mainResult = mainLoop();
+                next("}");
+            }
+
+            return {
+                type:      type,
+                condition: mainResult
+            };
+        };
+    })(); // parseCondition()
+
+    var parseNormalBlock = function() {
         var s = "";
 
         while (ptr < len) {
             if (ch === "{") {
-                if (read("{left}")) {
-                    s += next("{left}", "{");
-                } else if (read("{right}")) {
-                    s += next("{right}", "}");
+                if (readLeftTag()) {
+                    s += eatLeftTag();
+                } else if (readRightTag()) {
+                    s += eatRightTag();
                 } else {
                     break;
                 }
@@ -69,19 +575,19 @@ smodules.templateParser = (function() {
         };
     };
 
-    var parseLiteral = function() {
-        var s = "", closed = false, beginLine = line, beginAt = at;
+    var parseLiteralBlock = function() {
+        var s = "", closed = false, startLine = line, startAt = at;
 
-        next("{literal}");
+        eatLiteralTag();
 
         while (ptr < len) {
             if (ch === "{") {
-                if (read("{left}")) {
-                    s += next("{left}", "{");
-                } else if (read("{right}")) {
-                    s += next("{right}", "}");
-                } else if (read("{/literal}")) {
-                    next("{/literal}");
+                if (readLeftTag()) {
+                    s += eatLeftTag();
+                } else if (readRightTag()) {
+                    s += eatRightTag();
+                } else if (readEndLiteralTag()) {
+                    eatEndLiteralTag();
                     closed = true;
                     break;
                 } else {
@@ -93,7 +599,7 @@ smodules.templateParser = (function() {
         }
 
         if (!closed) {
-            exception("literal block starts at [" + beginLine + ", " + beginAt + "] not closed by {/literal}");
+            exception("literal block starts at [" + startLine + ", " + startAt + "] not closed by {/literal}");
         }
 
         return {
@@ -102,31 +608,7 @@ smodules.templateParser = (function() {
         };
     };
 
-    var parseHolder = (function() {
-        var getKeySection = function() {
-            var s = "";
-
-            skipWhitespace();
-
-            while (/[\w\.]/.test(ch)) {
-                if (ch === ".") {
-                    if (s.slice(-1) === "." || s.length === 0) {
-                        exception("invalid variable expression");
-                    }
-                }
-                s += next(ch);
-            }
-
-            if (s.slice(-1) === "." || s.length === 0) {
-                exception("invalid variable expression");
-            }
-
-            return {
-                expr: s,
-                keys: s.split(".")
-            };
-        };
-
+    var parseHolderBlock = (function() {
         var getFilterSection = (function() {
             var getFilterNameSection = function() {
                 var s = "";
@@ -142,148 +624,57 @@ smodules.templateParser = (function() {
                 }
 
                 return {
-                    name: s,
-                    expr: s
+                    expr: s,
+                    name: s
                 };
             };
 
-            var getFilterArgsSection = (function() {
-                var parseString = function() {
-                    var startLine = line, startAt = at, closed = false, s = "", mark = next();
-
-                    while (ptr < len) {
-                        if (ch === mark) {
-                            if (s.slice(-1) === "\\") {
-                                s += next(ch);
-                            } else {
-                                next(ch);
-                                closed = true;
-                                break;
-                            }
-                        } else {
-                            s += next(ch);
-                        }
-                    }
-
-                    if (!closed || !/[\s\|\},]/.test(ch)) {
-                        exception("string expression starts at [" + startLine + ", " + startAt + "] not closed");
-                    }
-
-                    return {
-                        value: mark === "'" ? s.replace("\\'", "'") : s.replace('\\"', '"'),
-                        expr:  mark + s + mark
-                    };
-                };
-
-                var parseNumber = function() {
-                    var s = "", value;
-
-                    if (ch === "-" || ch === "+") {
-                        s += next(ch);
-                    }
-
-                    if (ch === "0") {
-                        s += next(ch);
-                    } else {
-                        while (ch >= "0" && ch <= "9") {
-                            s += next(ch);
-                        }
-                    }
-
-                    if (ch === ".") {
-                        s += next(ch);
-
-                        while (ch >= "0" && ch <= "9") {
-                            s += next(ch);
-                        }
-                    }
-
-                    if (ch === "e" || ch === "E") {
-                        s += next(ch);
-
-                        if (ch === "+" || ch === "-") {
-                            s += next(ch);
-                        }
-
-                        while (ch >= "0" && ch <= "9") {
-                            s += next(ch);
-                        }
-                    }
-
-                    if (isNaN(value = +(s)) || !/[\s\|\},]/.test(ch)) {
-                        exception("invalid number expression");
-                    }
-/*
-                    var s, value, matched;
-
-                    if ((matched = text.slice(ptr).match(/^[\-\+]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][\+\-]?\d+)?/))) {
-                        value = +(matched[0]);
-                    }
-
-                    if (isNaN(value)) {
-                        exception("invalid number expression");
-                    } else {
-                        s = next(matched[0]);
-                    }
-*/
-                    return {
-                        value: value,
-                        expr:  s
-                    };
-                };
-
-                return function() {
-                    var s = "", args = [], arg;
-
-                    skipWhitespace();
-
-                    if (ch === ":") {
-                        s += next(ch);
-
-                        while (ptr < len) {
-                            skipWhitespace();
-
-                            if (ch === "'" || ch === '"') {
-                                arg = parseString();
-                                args.push(arg.value);
-                                s += arg.expr;
-                            } else if (read("null")) {
-                                args.push(null);
-                                s += next("null");
-                            } else if (read("true")) {
-                                args.push(true);
-                                s += next("true");
-                            } else if (read("false")) {
-                                args.push(false);
-                                s += next("false");
-                            } else if (ch === "-" || ch === "+" || (ch >= "0" && ch <= "9")) {
-                                arg = parseNumber();
-                                args.push(arg.value);
-                                s += arg.expr;
-                            } else {
-                                exception("invalid filter args");
-                            }
-
-                            skipWhitespace();
-                            if (ch === ",") {
-                                s += next(ch);
-                            } else if (ch === "|" || ch === "}") {
-                                break;
-                            }
-                        }
-                    }
-
-                    return {
-                        expr: s,
-                        args: args
-                    };
-                };
-            })(); // getFilterArgsSection()
-
-            return function() {
-                var s = "", filters = [], filter, nameSection, argsSection;
+            var getFilterArgsSection = function() {
+                var s = "", args = [], arg;
 
                 skipWhitespace();
+
+                if (ch === ":") {
+                    s += next(":");
+
+                    while (ptr < len) {
+                        skipWhitespace();
+
+                        if (ch === "n") {
+                            arg = parseNull();
+                        } else if (ch === "t") {
+                            arg = parseTrue();
+                        } else if (ch === "f") {
+                            arg = parseFalse();
+                        } else if (ch === "'" || ch === '"') {
+                            arg = parseString();
+                        } else if (ch === "-" || ch === "+" || (ch >= "0" && ch <= "9")) {
+                            arg = parseNumber();
+                        } else {
+                            exception("invalid filter args");
+                        }
+
+                        s += arg.expr;
+                        args.push(arg.value);
+
+                        skipWhitespace();
+
+                        if (ch === ",") {
+                            s += next(",");
+                        } else if (ch === "|" || ch === "}") {
+                            break;
+                        }
+                    }
+                }
+
+                return {
+                    expr: s,
+                    args: args
+                };
+            }; // getFilterArgsSection()
+
+            var mainLoop = function() {
+                var s = "", filters = [], filter, nameSection, argsSection;
 
                 while (ptr < len) {
                     filter = {};
@@ -300,11 +691,29 @@ smodules.templateParser = (function() {
 
                     filters.push(filter);
 
-                    if (read("}}")) {
+                    if (ch === "}") {
                         break;
                     } else if (ch !== "|") {
                         exception("syntax error");
                     }
+                }
+
+                return {
+                    expr:    s,
+                    filters: filters
+                };
+            };
+
+            return function() {
+                var s = "", filters = [], mainResult;
+
+                skipWhitespace();
+
+                if (ch === "|") {
+                    mainResult = mainLoop();
+
+                    s       = mainResult.expr;
+                    filters = mainResult.filters;
                 }
 
                 return {
@@ -317,15 +726,17 @@ smodules.templateParser = (function() {
         return function() {
             var s = "", keySection, filterSection;
 
-            s += next("{{");
+            s += next("{");
 
-            keySection = getKeySection();
+            skipWhitespace();
+
+            keySection = parseVar();
             s += keySection.expr;
 
             filterSection = getFilterSection();
             s += filterSection.expr;
 
-            s += next("}}");
+            s += next("}");
 
             return {
                 type:    "holder",
@@ -334,12 +745,107 @@ smodules.templateParser = (function() {
                 filters: filterSection.filters
             };
         };
-    })(); // parseHolder()
+    })(); // parseHolderBlock()
 
-    that.parse = function(source, content) {
+    var parseForBlock = (function() {
+        var parseHeader = function() {
+            var s = eatForTag(), k, v, paramSection;
+
+            v = eatTmpVar();
+            s += v;
+            skipWhitespace();
+
+            if (ch === ",") {
+                k = v;
+                s += next(",");
+
+                skipWhitespace();
+                v = eatTmpVar();
+                s += v;
+                skipWhitespace();
+            }
+
+            s += " ";
+            if (!readRegex(/^in\s/)) {
+                exception("invalid for in expression");
+            }
+            s += next("in");
+            skipWhitespace();
+
+            paramSection = parseVar();
+            s += paramSection.expr;
+            skipWhitespace();
+
+            s += next("}");
+
+            return {
+                expr:  s,
+                k:     k,
+                v:     v,
+                param: paramSection.keys
+            };
+        }; // parseHeader()
+
+        return function() {
+            var header = parseHeader(),
+                blocks = loop([], true);
+
+            eatEndForTag();
+
+            return {
+                type:   "for",
+                header: header,
+                blocks: blocks
+            };
+        };
+    })(); // parseForBlock()
+
+    var parseIfBlock = function() {
+        var conditions = [];
+
+        while (readIfTag() || readElseifTag() || readElseTag()) {
+            conditions.push({
+                condition: parseCondition(),
+                blocks:    loop([], true)
+            });
+        }
+        eatEndIfTag();
+
+        return {
+            type:       "if",
+            conditions: conditions
+        };
+    }; // parseIfBlock()
+
+    var loop = function(result, inBlock) {
+        while (ptr < len) {
+            if (ch === "{") {
+                if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
+                    break;
+                } else if (readLiteralTag()) {
+                    result.push(parseLiteralBlock());
+                } else if (readIfTag()) {
+                    result.push(parseIfBlock());
+                } else if (readForTag()) {
+                    result.push(parseForBlock());
+                } else if (readHolderTag()) {
+                    result.push(parseHolderBlock());
+                } else {
+                    result.push(parseNormalBlock());
+                }
+            } else {
+                result.push(parseNormalBlock());
+            }
+        }
+
+        return result;
+    };
+
+
+    that.parse = function(content, source) {
         var result = [];
 
-        src  = source;
+        src  = source || "";
         text = content;
         ptr  = 0;
         ch   = content.charAt(0);
@@ -347,38 +853,7 @@ smodules.templateParser = (function() {
         line = 1;
         at   = 1;
 
-//console.log(content);
-//console.time("loop");
-        while (ptr < len) {
-            if (read("{literal}")) {
-                result.push(parseLiteral());
-            } else if (read("{{")) {
-                result.push(parseHolder());
-            } else {
-                result.push(parseNormal());
-            }
-        }
-
-//console.timeEnd("loop");
-//console.log("");
-
-result.forEach(function(block) {
-//    console.log(block.expr.trim());
-/*
-    if (block.type === "holder") {
-        console.log(block.expr);
-        console.log("");
-        console.log("KEY: " + block.keys.join("."));
-        block.filters.forEach(function(filter) {
-            console.log("FILTER: ");
-            console.log(filter.name);
-            console.log(filter.args);
-        });
-        console.log("");
-    }
-*/
-});
-        return result;
+        return loop([]);
     };
 
     return that;
