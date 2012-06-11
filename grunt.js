@@ -46,7 +46,7 @@ grunt.initConfig({
         options: {
             browser: true,
             curly: true,
-//            eqeqeq: true,
+            //eqeqeq: true,
             forin: true
         }
     },
@@ -54,21 +54,28 @@ grunt.initConfig({
         all: {
             files: [
                 "src/smodules/*.js",
-                "test/*.js"
+                "test/smodules/*.js"
             ],
             tasks: "lint qunit concat min"
+        },
+        test: {
+            files: [
+                "src/smodules/*.js",
+                "test/smodules/*.js"
+            ],
+            tasks: "qunit"
         },
         concat: {
             files: [
                 "src/smodules/*.js",
-                "test/*.js"
+                "test/smodules/*.js"
             ],
             tasks: "lint concat"
         },
         lint: {
             files: [
                 "src/smodules/*.js",
-                "test/*.js"
+                "test/smodules/*.js"
             ],
             tasks: "lint"
         }
