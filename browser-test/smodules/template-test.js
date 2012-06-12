@@ -58,27 +58,3 @@ test("text area", function() {
 
     strictEqual($(target).find(".item").length, 2);
 });
-
-/*
-$(function() {
-var src = "#textarea";
-var content = $(src).val();
-var p =smodules.templateParser.parse(content, src);
-
-smodules.template("#textarea", {
-    str1: "a",
-    str2: "b",
-    bookmark: {
-        items: [{
-            title: "title1",
-            tags: [ "tag1", "tag2", "tag3" ]
-        },{
-            title: "title2",
-            tags: [ "japan", "usa" ]
-        }]
-    }
-}).get(function(text) {
-    console.log(text);
-});
-});
-*/
