@@ -411,7 +411,7 @@ smodules.templateParser = (function() {
     };
 
     var parseCondition = (function() {
-        var mainLoop = (function() {
+        var getReversePolish = (function() {
             var state = {
                 "start":           ["roundBracket",                    "value", "var",                  "error"],
                 "roundBracket":    ["roundBracket",                    "value", "var",                  "error"],
@@ -522,10 +522,10 @@ smodules.templateParser = (function() {
 
                 return polish;
             };
-        })(); // mainLoop()
+        })(); // getReversePolish()
 
         return function() {
-            var type, mainResult = null;
+            var type, stack = null;
 
             if (readIfTag()) {
                 eatIfTag();
@@ -541,13 +541,13 @@ smodules.templateParser = (function() {
             }
 
             if (type === "if" || type === "elseif") {
-                mainResult = mainLoop();
+                stack = getReversePolish();
                 next("}");
             }
 
             return {
-                type:      type,
-                condition: mainResult
+                type:  type,
+                stack: stack
             };
         };
     })(); // parseCondition()
@@ -749,7 +749,7 @@ smodules.templateParser = (function() {
 
     var parseForBlock = (function() {
         var parseHeader = function() {
-            var s = eatForTag(), k, v, paramSection;
+            var s = eatForTag(), k, v, array;
 
             v = eatTmpVar();
             s += v;
@@ -767,13 +767,13 @@ smodules.templateParser = (function() {
 
             s += " ";
             if (!readRegex(/^in\s/)) {
-                exception("invalid for in expression");
+                exception("invalid for expression");
             }
             s += next("in");
             skipWhitespace();
 
-            paramSection = parseVar();
-            s += paramSection.expr;
+            array = parseVar();
+            s += array.expr;
             skipWhitespace();
 
             s += next("}");
@@ -782,7 +782,7 @@ smodules.templateParser = (function() {
                 expr:  s,
                 k:     k,
                 v:     v,
-                param: paramSection.keys
+                array: array.keys
             };
         }; // parseHeader()
 
@@ -801,19 +801,19 @@ smodules.templateParser = (function() {
     })(); // parseForBlock()
 
     var parseIfBlock = function() {
-        var conditions = [];
+        var sections = [];
 
         while (readIfTag() || readElseifTag() || readElseTag()) {
-            conditions.push({
-                condition: parseCondition(),
-                blocks:    loop([], true)
+            sections.push({
+                header: parseCondition(),
+                blocks: loop([], true)
             });
         }
         eatEndIfTag();
 
         return {
-            type:       "if",
-            conditions: conditions
+            type:     "if",
+            sections: sections
         };
     }; // parseIfBlock()
 

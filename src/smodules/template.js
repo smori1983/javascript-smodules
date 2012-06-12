@@ -194,12 +194,13 @@ smodules.template = (function() {
         };
 
         var loopIf = function(block, params) {
-            var i = 0, len = block.conditions.length, section, sectionResult, output = "";
+            var i = 0, len = block.sections.length, section, sectionResult, output = "";
 
             for ( ; i < len; i++) {
-                section = block.conditions[i];
-                if (section.condition.type === "if" || section.condition.type === "elseif") {
-                    if ((sectionResult = evaluate(section.condition.condition, params))) {
+                section = block.sections[i];
+
+                if (section.header.type === "if" || section.header.type === "elseif") {
+                    if ((sectionResult = evaluate(section.header.stack, params))) {
                         output = loop(section.blocks, params);
                         break;
                     }
@@ -212,12 +213,15 @@ smodules.template = (function() {
         };
 
         var loopFor = function(block, params) {
-            var array = getValue(block.header.param, params), output = "", additional;
+            var array = getValue(block.header.array, params), output = "", additional;
 
             if ($.isArray(array)) {
                 array.forEach(function(value, idx) {
                     additional = {};
-                    additional[block.header.k] = idx;
+
+                    if (block.header.k) {
+                        additional[block.header.k] = idx;
+                    }
                     additional[block.header.v] = value;
 
                     params.push(additional);
