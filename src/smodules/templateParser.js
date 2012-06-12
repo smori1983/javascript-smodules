@@ -447,6 +447,40 @@ smodules.templateParser = (function() {
                 };
             })();
 
+            var sectionTypeStat = (function() {
+                var roundBracketBalance, operandOperatorBalance;
+
+                return {
+                    init: function() {
+                        roundBracketBalance    = 0;
+                        operandOperatorBalance = 0;
+                    },
+                    add: function(type) {
+                        if (type === "var" || type === "value") {
+                            operandOperatorBalance++;
+                        } else if (type === "comp" || type === "andor") {
+                            operandOperatorBalance--;
+                        } else if (type === "roundBracket") {
+                            roundBracketBalance++;
+                        } else if (type === "endRoundBracket") {
+                            roundBracketBalance--;
+                        }
+
+                        if (roundBracketBalance < 0) {
+                            exception("can not use ')' here");
+                        }
+                    },
+                    finish: function() {
+                        if (roundBracketBalance !== 0) {
+                            exception("invalid usage of round bracket");
+                        }
+                        if (operandOperatorBalance !== 1) {
+                            exception("invalid usage of operand or operator");
+                        }
+                    }
+                };
+            })();
+
             var getOrder = (function() {
                 var orders = {
                     "endRoundBracket": 1,
@@ -480,6 +514,7 @@ smodules.templateParser = (function() {
                     }
                 }
                 history.add(result.type);
+                sectionTypeStat.add(result.type);
 
                 return result;
             };
@@ -488,6 +523,7 @@ smodules.templateParser = (function() {
                 var section, polish = [], stack = [], stackTop;
 
                 history.init();
+                sectionTypeStat.init();
                 while (ptr < len) {
                     if (ch === "}") {
                         break;
@@ -519,6 +555,7 @@ smodules.templateParser = (function() {
                 while (stack.length > 0) {
                     polish.push(stack.pop());
                 }
+                sectionTypeStat.finish();
 
                 return polish;
             };
