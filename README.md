@@ -7,6 +7,8 @@ JavaScript のいろいろなモジュールをまとめたプロジェクトで
 ## MODULES LIST
 
 - `smodules.template` : 小さなテンプレートエンジン
+- `smodules.ui`
+- `smodules.util`
 
 ## LICENSE
 
