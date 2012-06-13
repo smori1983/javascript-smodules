@@ -86,14 +86,14 @@ smodules.template = (function() {
             for ( ; pIdx >= 0; pIdx--) {
                 value = params[pIdx];
                 for (i = 0; i < len; i++) {
-                    if (typeof value[keys[i]] !== "undefined") {
-                        value = value[keys[i]];
-                    } else {
+                    if (typeof value[keys[i]] === "undefined") {
                         value = null;
                         break;
+                    } else {
+                        value = value[keys[i]];
                     }
                 }
-                if (typeof value !== null) {
+                if (i === len) {
                     break;
                 }
             }
