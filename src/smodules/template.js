@@ -314,3 +314,11 @@ smodules.template.addFilter("upper", function(value) {
 smodules.template.addFilter("lower", function(value) {
     return value.toLocaleLowerCase();
 });
+
+smodules.template.addFilter("plus", function(value, plus) {
+    if (/^\d+$/.test(value) && typeof plus === "number" && isFinite(plus)) {
+        return (+(value) + plus).toString();
+    } else {
+        return value;
+    }
+});
