@@ -80,7 +80,7 @@ smodules.template = (function() {
             throw new Error("smodules.template - " + message + " in source " + src);
         };
 
-        var getValue = function(keys, params) {
+        var getValue = function(keys, params, asis) {
             var pIdx = params.length - 1, i, len = keys.length, value;
 
             for ( ; pIdx >= 0; pIdx--) {
@@ -98,7 +98,11 @@ smodules.template = (function() {
                 }
             }
 
-            return value || "";
+            if (asis) {
+                return value;
+            } else {
+                return value === null ? "" : value.toString();
+            }
         };
 
         var getFilter = function(name) {
@@ -174,7 +178,7 @@ smodules.template = (function() {
                 if (section.type === "value") {
                     result.push(section.value || section.expr);
                 } else if (section.type === "var") {
-                    result.push(getValue(section.keys, params));
+                    result.push(getValue(section.keys, params, true));
                 } else if (section.type === "comp") {
                     rval = result.pop();
                     lval = result.pop();
@@ -213,7 +217,7 @@ smodules.template = (function() {
         };
 
         var loopFor = function(block, params) {
-            var array = getValue(block.header.array, params), output = "", additional;
+            var array = getValue(block.header.array, params, true), output = "", additional;
 
             if ($.isArray(array)) {
                 array.forEach(function(value, idx) {
