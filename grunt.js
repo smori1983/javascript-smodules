@@ -79,7 +79,7 @@ grunt.initConfig({
                 "src/smodules/*.js",
                 "test/smodules/*.js"
             ],
-            tasks: "qunit"
+            tasks: "lint qunit"
         },
         concat: {
             files: [
