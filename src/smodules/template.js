@@ -4,7 +4,7 @@ smodules.template = (function() {
     var _templates = {};
 
     var _isRemoteFile = function(templateSrc) {
-        return /\.html$/.test(templateSrc);
+        return (/\.html$/).test(templateSrc);
     };
 
     var _isEmbedded = function(templateSrc) {
