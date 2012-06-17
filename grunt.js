@@ -20,6 +20,18 @@ grunt.initConfig({
         files: ["test/test.html"]
     },
     concat: {
+        readme: {
+            src: "README.md",
+            dest: "dist/README.md"
+        },
+        licenseGPL: {
+            src: "LICENSE-GPL",
+            dest: "dist/LICENSE-GPL"
+        },
+        licenseMIT: {
+            src: "LICENSE-MIT",
+            dest: "dist/LICENSE-MIT"
+        },
         all: {
             src: [
                 "<banner:meta.banner>",
