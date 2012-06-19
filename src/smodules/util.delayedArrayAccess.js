@@ -1,9 +1,9 @@
 /**
- * @param array array
- * @param int unit Size to be accessed in one time.
- * @param int interval Milliseconds to be waited for delay.
- * @param bool loop If true array will be accessed repeatedly.
+ * @param array    array
+ * @param int      unit     Size to be accessed in one time.
+ * @param int      interval Milliseconds to be waited for delay.
  * @param function callback Function to be called for each sliced array elements.
+ * @param bool     loop     [optional]If true array will be accessed repeatedly.
  *
  * APIs:
  * start()
