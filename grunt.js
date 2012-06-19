@@ -20,18 +20,6 @@ grunt.initConfig({
         files: ["test/test.html"]
     },
     concat: {
-        readme: {
-            src: "README.md",
-            dest: "dist/README.md"
-        },
-        licenseGPL: {
-            src: "LICENSE-GPL",
-            dest: "dist/LICENSE-GPL"
-        },
-        licenseMIT: {
-            src: "LICENSE-MIT",
-            dest: "dist/LICENSE-MIT"
-        },
         all: {
             src: [
                 "<banner:meta.banner>",
@@ -58,14 +46,14 @@ grunt.initConfig({
         all: {
             src: [
                 "<banner:meta.banner>",
-                "dist/smodules-<%= pkg.version %>.js"
+                "<config:concat.all.dest>"
             ],
             dest: "dist/smodules-<%= pkg.version %>.min.js"
         },
         template: {
             src: [
                 "<banner:meta.banner>",
-                "dist/smodules.template-<%= pkg.version %>.js"
+                "<config:concat.template.dest>"
             ],
             dest: "dist/smodules.template-<%= pkg.version %>.min.js"
         }
@@ -84,7 +72,7 @@ grunt.initConfig({
                 "src/smodules/*.js",
                 "test/smodules/*.js"
             ],
-            tasks: "lint qunit concat min"
+            tasks: "lint qunit preconcat concat min"
         },
         test: {
             files: [
@@ -98,7 +86,7 @@ grunt.initConfig({
                 "src/smodules/*.js",
                 "test/smodules/*.js"
             ],
-            tasks: "lint concat"
+            tasks: "lint preconcat concat"
         },
         lint: {
             files: [
@@ -108,6 +96,22 @@ grunt.initConfig({
             tasks: "lint"
         }
     }
+});
+
+grunt.registerTask("preconcat", "preconcat", function() {
+    var fs    = require("fs"),
+        path  = require("path"),
+        dir   = path.resolve("dist"),
+        count = 0;
+
+    fs.readdirSync(dir).forEach(function(file) {
+        if (/\.js$/.test(file)) {
+            fs.unlinkSync(path.resolve(dir, file));
+            count++;
+        }
+    });
+
+    grunt.log.writeln("Removed file count: " + count);
 });
 
 grunt.registerTask("default", "lint qunit concat min");
