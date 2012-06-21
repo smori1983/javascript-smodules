@@ -114,7 +114,7 @@ grunt.registerTask("preconcat", "preconcat", function() {
     grunt.log.writeln("Removed file count: " + count);
 });
 
-grunt.registerTask("default", "lint qunit concat min");
+grunt.registerTask("default", "lint qunit preconcat concat min");
 grunt.registerTask("test", "lint qunit");
 
 };
