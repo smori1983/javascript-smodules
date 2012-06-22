@@ -1,6 +1,6 @@
 module("smodules.templateParser");
 
-var parser = smodules.templateParser;
+var parser = smodules.templateParser();
 
 test("normal block", function() {
     var source = "<div>foo {left}bar{right}</div>",

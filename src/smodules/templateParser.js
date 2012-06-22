@@ -1,4 +1,4 @@
-smodules.templateParser = (function() {
+smodules.templateParser = function() {
     var that = {},
         src,
         text,
@@ -894,4 +894,4 @@ smodules.templateParser = (function() {
     };
 
     return that;
-})();
+};

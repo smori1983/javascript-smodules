@@ -1,9 +1,9 @@
 module("smodules.template");
 
 asyncTest("remote source + appendTo", function() {
-    var src = "/javascript-smodules/browser-test/tpl/appendTo.html";
-
-    smodules.template(src, {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/appendTo.html";
+    template(src, {
         items: [
             { name: "item1", show: true },
             { name: "item2", show: false },
@@ -22,9 +22,10 @@ asyncTest("remote source + appendTo", function() {
 });
 
 asyncTest("remote source + insertBefore", function() {
-    var src = "/javascript-smodules/browser-test/tpl/insertBefore.html";
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/insertBefore.html";
 
-    smodules.template(src, {
+    template(src, {
         foo: {
             bar: {
                 hoge: "hoge"
@@ -44,9 +45,10 @@ asyncTest("remote source + insertBefore", function() {
 });
 
 test("text area", function() {
-    var src = "#textarea", target = "#template-textarea";
+    var template = smodules.template(),
+        src = "#textarea", target = "#template-textarea";
 
-    smodules.template(src, {
+    template(src, {
         items: [{
             title: "title1",
             tags:  ["tag1", "tag2", "tag3"]

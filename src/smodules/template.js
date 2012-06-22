@@ -1,7 +1,11 @@
-smodules.template = (function() {
-    var _filters = {};
+smodules.template = function() {
+    var _filters = smodules.data.keyValueStore();
 
-    var _templates = {};
+    var _templates = smodules.data.keyValueStore();
+
+    var _parser = smodules.templateParser();
+
+    var _remoteQueue = smodules.data.queueStore();
 
     var _isRemoteFile = function(templateSrc) {
         return (/\.html$/).test(templateSrc);
@@ -12,20 +16,33 @@ smodules.template = (function() {
     };
 
     var _register = function(templateSrc, content) {
-        _templates[templateSrc] = smodules.templateParser.parse(content, templateSrc);
+        _templates.add(templateSrc, _parser.parse(content, templateSrc));
     };
 
-    var _registerFromRemote = function(templateSrc, callback) {
-        $.ajax({
-            url: templateSrc,
-            success: function(response) {
-                _register(templateSrc, response);
-                if (typeof callback === "function") {
-                    callback();
-                }
+    var _registerFromRemote = (function() {
+        var _fetching = smodules.data.keyValueStore();
+
+        return function(templateSrc) {
+            if (!_fetching.has(templateSrc)) {
+                _fetching.add(templateSrc, true);
+
+                $.ajax({
+                    url: templateSrc,
+                    success: function(response) {
+                        var queue;
+
+                        _fetching.remove(templateSrc);
+                        _register(templateSrc, response);
+        
+                        while (_remoteQueue.sizeOf(templateSrc) > 0) {
+                            queue = _remoteQueue.getFrom(templateSrc);
+                            _executeRecursive(templateSrc, queue.bindParams, queue.callback);
+                        }
+                    }
+                });
             }
-        });
-    };
+        };
+    })();
 
     var _registerFromHTML = function(templateSrc, callback) {
         if ($(templateSrc)[0].tagName.toLowerCase() === "textarea") {
@@ -46,12 +63,11 @@ smodules.template = (function() {
     };
 
     var _execute = function(templateSrc, bindParams, callback) {
-        if (_templates.hasOwnProperty(templateSrc)) {
+        if (_templates.has(templateSrc)) {
             _executeRecursive(templateSrc, bindParams, callback);
         } else if (_isRemoteFile(templateSrc)) {
-            _registerFromRemote(templateSrc, function() {
-                _executeRecursive(templateSrc, bindParams, callback);
-            });
+            _registerFromRemote(templateSrc);
+            _remoteQueue.addTo(templateSrc, { bindParams: bindParams, callback: callback });
         } else if (_isEmbedded(templateSrc)) {
             _registerFromHTML(templateSrc, function() {
                 _executeRecursive(templateSrc, bindParams, callback);
@@ -106,8 +122,8 @@ smodules.template = (function() {
         };
 
         var getFilter = function(name) {
-            if (typeof _filters[name] === "function") {
-                return _filters[name];
+            if (_filters.has(name)) {
+                return _filters.get(name);
             } else {
                 exception("filter '" + name + "' not found");
             }
@@ -240,7 +256,7 @@ smodules.template = (function() {
         return function(templateSrc, bindParams) {
             src = templateSrc;
 
-            return loop(_templates[templateSrc], [bindParams]);
+            return loop(_templates.get(templateSrc), [bindParams]);
         };
     })();
 
@@ -267,7 +283,9 @@ smodules.template = (function() {
     };
 
     that.addFilter = function(name, func) {
-        _filters[name] = func;
+        if (typeof func === "function") {
+            _filters.add(name, func);
+        }
         return that;
     };
 
@@ -282,43 +300,42 @@ smodules.template = (function() {
         return that;
     };
 
+    // default filters
+    that.addFilter("h", (function() {
+        var list = {
+            "<": "&lt;",
+            ">": "&gt;",
+            "&": "&amp;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+
+        return function(value) {
+            return value.replace(/[<>&"']/g, function(matched) {
+                return list[matched];
+            });
+        };
+    })());
+
+    that.addFilter("default", function(value, defaultValue) {
+        return value.length === 0 ? defaultValue : value;
+    });
+
+    that.addFilter("upper", function(value) {
+        return value.toLocaleUpperCase();
+    });
+
+    that.addFilter("lower", function(value) {
+        return value.toLocaleLowerCase();
+    });
+
+    that.addFilter("plus", function(value, plus) {
+        if (isFinite(value) && typeof plus === "number" && isFinite(plus)) {
+            return (+(value) + plus).toString();
+        } else {
+            return value;
+        }
+    });
+
     return that;
-})();
-
-
-// default filters
-smodules.template.addFilter("h", (function() {
-    var list = {
-        "<": "&lt;",
-        ">": "&gt;",
-        "&": "&amp;",
-        '"': "&quot;",
-        "'": "&#039;"
-    };
-
-    return function(value) {
-        return value.replace(/[<>&"']/g, function(matched) {
-            return list[matched];
-        });
-    };
-})());
-
-smodules.template.addFilter("default", function(value, defaultValue) {
-    return value.length === 0 ? defaultValue : value;
-});
-
-smodules.template.addFilter("upper", function(value) {
-    return value.toLocaleUpperCase();
-});
-
-smodules.template.addFilter("lower", function(value) {
-    return value.toLocaleLowerCase();
-});
-
-smodules.template.addFilter("plus", function(value, plus) {
-    if (isFinite(value) && typeof plus === "number" && isFinite(plus)) {
-        return (+(value) + plus).toString();
-    } else {
-        return value;
-    }
-});
+};
