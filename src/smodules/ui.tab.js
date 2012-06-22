@@ -1,23 +1,3 @@
-smodules.ui.hasId = function(event, id, callbackTrue, callbackFalse) {
-    var target = event.target;
-
-    if ($(target).attr("id") === id) {
-        callbackTrue(target);
-    } else if (typeof callbackFalse === "function") {
-        callbackFalse(target);
-    }
-};
-
-smodules.ui.hasClass = function(event, className, callbackTrue, callbackFalse) {
-    var target = event.target;
-
-    if ($(target).hasClass(className)) {
-        callbackTrue(target);
-    } else if (typeof callbackFalse === "function") {
-        callbackFalse(target);
-    }
-};
-
 smodules.ui.tab = (function() {
     var ok = function(event, callback) {
         var target = event.target;
