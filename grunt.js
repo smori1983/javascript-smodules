@@ -24,6 +24,10 @@ grunt.initConfig({
             src: [
                 "<banner:meta.banner>",
                 "src/smodules/HEAD.js",
+                "src/smodules/data.HEAD.js",
+                "src/smodules/data.*.js",
+                "src/smodules/mod.HEAD.js",
+                "src/smodules/mod.*.js",
                 "src/smodules/ui.HEAD.js",
                 "src/smodules/ui.*.js",
                 "src/smodules/util.HEAD.js",
