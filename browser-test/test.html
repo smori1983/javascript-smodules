@@ -42,9 +42,9 @@
 {for $idx,$item in $items}
 <div class="item">
     <p>{ $item.title | h }</p>
-    {if ( $item.tags.length gt 0 ) and true and (true !== null) }
+    {if $item.tags.length gt 0}
     <ul>
-        {for $idx,$tag in $item.tags}
+        {for $tag in $item.tags}
         <li>{ $tag | h }</li>
         {/for}
     </ul>

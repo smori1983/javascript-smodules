@@ -3,6 +3,7 @@ module("smodules.template");
 asyncTest("remote source + appendTo", function() {
     var template = smodules.template(),
         src = "/javascript-smodules/browser-test/tpl/appendTo.html";
+
     template(src, {
         items: [
             { name: "item1", show: true },
@@ -14,9 +15,9 @@ asyncTest("remote source + appendTo", function() {
     window.setTimeout(function() {
         var li = $("#template-appendTo > ul:first > li");
 
-        strictEqual(li.length, 2);
-        strictEqual($(li[0]).text(), "ITEM1");
-        strictEqual($(li[1]).text(), "ITEM3");
+        strictEqual(li.length, 2, "li.length is 2");
+        strictEqual(li.eq(0).text(), "ITEM1", "li.eq(0).text() is 'ITEM1'");
+        strictEqual(li.eq(1).text(), "ITEM3", "li.eq(1).text() is 'ITEM3'");
         start();
     }, 500);
 });
@@ -38,15 +39,15 @@ asyncTest("remote source + insertBefore", function() {
             li  = div.find("ul:first").find("li");
 
         strictEqual(div.attr("id"), "template-insertBefore-target");
-        strictEqual($(li[0]).text(), "hoge");
-        strictEqual($(li[1]).text(), "default");
+        strictEqual(li.eq(0).text(), "hoge", "li.eq(0).text() is 'hoge'");
+        strictEqual(li.eq(1).text(), "default", "li.eq(1).text() is 'default'");
         start();
     }, 500);
 });
 
-test("text area", function() {
+test("embedded source - textarea", function() {
     var template = smodules.template(),
-        src = "#textarea", target = "#template-textarea";
+        src = "#textarea", target = "#template-textarea", div = $(target);
 
     template(src, {
         items: [{
@@ -56,9 +57,12 @@ test("text area", function() {
             title: "title2",
             tags:  []
         }]
-    }).appendTo("#template-textarea");
+    }).appendTo(target);
 
-    strictEqual($(target).find(".item").length, 2);
+    strictEqual(div.find(".item").length, 2, "div.find('.item').length is 2");
+    strictEqual("title1", $("p:first", div.eq(0)).text(), "$('p:first', div.eq(0)).text() is 'title1'");
+    strictEqual(3, $("li", div.eq(0)).length, "$('li', div.eq(0)).length is 3");
+    strictEqual(0, $("ul", div.eq(1)).length, "$('ul', div.eq(1)).length is 0");
 });
 
 asyncTest("setRemoteFilePattern - default", function() {
