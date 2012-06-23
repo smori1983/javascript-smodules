@@ -1,9 +1,8 @@
 module("smodules.templateParser");
 
-var parser = smodules.templateParser();
-
 test("normal block", function() {
-    var source = "<div>foo {left}bar{right}</div>",
+    var parser = smodules.templateParser(),
+        source = "<div>foo {left}bar{right}</div>",
         result = parser.parse(source);
 
     strictEqual(1, result.length);
@@ -25,7 +24,8 @@ test("normal block - error", function() {
 });
 
 test("literal block", function() {
-    var source = "<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>",
+    var parser = smodules.templateParser(),
+        source = "<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>",
         result = parser.parse(source);
 
     strictEqual(3, result.length);
@@ -39,7 +39,8 @@ test("literal block", function() {
 });
 
 test("holder block - no filters", function() {
-    var source = "{ $foo.bar }",
+    var parser = smodules.templateParser(),
+        source = "{ $foo.bar }",
         result = parser.parse(source);
 
     strictEqual(1, result.length);
@@ -52,7 +53,8 @@ test("holder block - no filters", function() {
 });
 
 test("holder block - filters with no args", function() {
-    var source  = "{ $foo | filter1 | filter2 }",
+    var parser  = smodules.templateParser(),
+        source  = "{ $foo | filter1 | filter2 }",
         result  = parser.parse(source),
         filter1 = result[0].filters[0],
         filter2 = result[0].filters[1];
@@ -65,7 +67,8 @@ test("holder block - filters with no args", function() {
 });
 
 test("holder block - filter with args - null, true and false", function() {
-    var source = "{ $foo | filter : null, true, false }",
+    var parser = smodules.templateParser(),
+        source = "{ $foo | filter : null, true, false }",
         result = parser.parse(source),
         filter = result[0].filters[0];
 
@@ -76,7 +79,8 @@ test("holder block - filter with args - null, true and false", function() {
 });
 
 test("holder block - filter with args - string", function() {
-    var source = "{ $foo | filter : 'test','{delimiter}','it\\'s string' }",
+    var parser = smodules.templateParser(),
+        source = "{ $foo | filter : 'test','{delimiter}','it\\'s string' }",
         result = parser.parse(source),
         filter = result[0].filters[0];
 
@@ -87,7 +91,8 @@ test("holder block - filter with args - string", function() {
 });
 
 test("holder block - filter with args - number", function() {
-    var source = "{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }",
+    var parser = smodules.templateParser(),
+        source = "{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }",
         result = parser.parse(source),
         filter = result[0].filters[0];
 
@@ -103,7 +108,8 @@ test("holder block - filter with args - number", function() {
 });
 
 test("if block - if elseif else", function() {
-    var source = "{ if $value1 }" +
+    var parser = smodules.templateParser(),
+        source = "{ if $value1 }" +
                  "<div>value1</div>" +
                  "{ elseif $value2 }" +
                  "<div>value2</div>" +
@@ -146,7 +152,8 @@ test("if block - if elseif else", function() {
 });
 
 test("if block - conditions", function() {
-    var source, section, stack, blocks;
+    var parser = smodules.templateParser(),
+        source, section, stack, blocks;
 
     source = "{ if $foo === 'hoge' }<p>hoge</p>{ /if }";
     stack  = parser.parse(source)[0].sections[0].header.stack;
@@ -227,7 +234,8 @@ test("if block - conditions", function() {
 });
 
 test("for block", function() {
-    var source, block;
+    var parser = smodules.templateParser(),
+        source, block;
 
     source = "{ for $item in $items }<p>{ $item | h }</p>{ /for }";
     block  = parser.parse(source)[0];
