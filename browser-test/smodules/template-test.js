@@ -4,7 +4,7 @@ asyncTest("remote source + appendTo", function() {
     var template = smodules.template(),
         src = "/javascript-smodules/browser-test/tpl/appendTo.html";
 
-    template(src, {
+    template.bind(src, {
         items: [
             { name: "item1", show: true },
             { name: "item2", show: false },
@@ -26,7 +26,7 @@ asyncTest("remote source + insertBefore", function() {
     var template = smodules.template(),
         src = "/javascript-smodules/browser-test/tpl/insertBefore.html";
 
-    template(src, {
+    template.bind(src, {
         foo: {
             bar: {
                 hoge: "hoge"
@@ -49,7 +49,7 @@ test("embedded source - textarea", function() {
     var template = smodules.template(),
         src = "#textarea", target = "#template-textarea", div = $(target);
 
-    template(src, {
+    template.bind(src, {
         items: [{
             title: "title1",
             tags:  ["tag1", "tag2", "tag3"]
@@ -71,7 +71,7 @@ asyncTest("setRemoteFilePattern - default", function() {
         param = { tag: "div", message: "test" },
         output;
 
-    template(src, param).get(function(o) {
+    template.bind(src, param).get(function(o) {
         output = o.trim();
     });
 
@@ -87,7 +87,7 @@ asyncTest("setRemoteFilePattern - string", function() {
         param = { tag: "div", message: "test" },
         output;
 
-    template(src, param).get(function(o) {
+    template.bind(src, param).get(function(o) {
         output = o.trim();
     });
 
@@ -104,7 +104,7 @@ asyncTest("setRemoteFilePattern - string - not match", function() {
         output;
 
     template.setRemoteFilePattern("/hoge/");
-    template(src, param).get(function(o) {
+    template.bind(src, param).get(function(o) {
         output = o.trim();
     });
 
@@ -121,7 +121,7 @@ asyncTest("setRemoteFilePattern - regular expression", function() {
         output;
 
     template.setRemoteFilePattern(/^\/javascript-smodules\/browser-test\/tpl\//);
-    template(src, param).get(function(o) {
+    template.bind(src, param).get(function(o) {
         output = o.trim();
     });
 
@@ -138,7 +138,7 @@ asyncTest("setRemoteFilePattern - regular expression - not match", function() {
         output;
 
     template.setRemoteFilePattern(/\.tpl$/);
-    template(src, param).get(function(o) {
+    template.bind(src, param).get(function(o) {
         output = o.trim();
     });
 

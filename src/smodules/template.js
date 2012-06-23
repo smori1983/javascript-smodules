@@ -1,4 +1,6 @@
 smodules.template = function() {
+    var that = {};
+
     var _filters = smodules.data.keyValueStore();
 
     var _templates = smodules.data.keyValueStore();
@@ -266,7 +268,7 @@ smodules.template = function() {
 
 
     // APIs.
-    var that = function(templateFile, bindParams) {
+    that.bind = function(templateFile, bindParams) {
         return {
             get: function(callback) {
                 _execute(templateFile, bindParams, function(response) {
