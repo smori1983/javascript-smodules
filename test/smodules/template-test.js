@@ -226,3 +226,12 @@ test("template cache", function() {
     cacheList = template.getTemplateCacheList();
     strictEqual(0, cacheList.length);
 });
+
+test("error - filter not found", function() {
+    var template = smodules.template(),
+        src = "<p>{ $value | hoge }</p>";
+
+    raises(function() {
+        template.bind(src, { value: "test" }).get(function(output) {});
+    }, Error);
+});
