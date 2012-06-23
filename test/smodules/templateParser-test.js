@@ -12,6 +12,18 @@ test("normal block", function() {
     start();
 });
 
+test("normal block - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "<div>{left} is ok, only { is forbidden.</div>";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "<div> } is ok.</div>";
+    parser.parse(source);
+});
+
 test("literal block", function() {
     var source = "<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>",
         result = parser.parse(source);

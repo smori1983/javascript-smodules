@@ -868,7 +868,7 @@ smodules.templateParser = function() {
                 } else if (readHolderTag()) {
                     result.push(parseHolderBlock());
                 } else {
-                    result.push(parseNormalBlock());
+                    exception("unknown tag");
                 }
             } else {
                 result.push(parseNormalBlock());
