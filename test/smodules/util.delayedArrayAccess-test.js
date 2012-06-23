@@ -18,7 +18,7 @@ asyncTest("single unit:1", function() {
         strictEqual("b", output[1]);
         strictEqual("c", output[2]);
         start();
-    }, 100);
+    }, 150);
 });
 
 asyncTest("single unit:2", function() {
@@ -38,7 +38,7 @@ asyncTest("single unit:2", function() {
         strictEqual("a.b", output[0]);
         strictEqual("c",   output[1]);
         start();
-    }, 100);
+    }, 150);
 });
 
 asyncTest("multiple", function() {
@@ -76,6 +76,6 @@ asyncTest("multiple", function() {
         strictEqual("G.H", output2[3]);
 
         start();
-    }, 100);
+    }, 150);
 });
 
