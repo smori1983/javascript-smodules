@@ -601,6 +601,8 @@ smodules.templateParser = function() {
                 } else {
                     break;
                 }
+            } else if (ch === "}") {
+                exception("syntax error");
             } else {
                 s += next(ch);
             }

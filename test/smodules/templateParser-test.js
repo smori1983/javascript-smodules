@@ -19,8 +19,10 @@ test("normal block - error", function() {
         parser.parse(source);
     }, Error);
 
-    source = "<div> } is ok.</div>";
-    parser.parse(source);
+    source = "<div> } is forbidden.</div>";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
 });
 
 test("literal block", function() {
