@@ -40,6 +40,20 @@ test("literal block", function() {
     start();
 });
 
+test("literal block - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "<div>{literal}</div>";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "<div>{/literal}</div>";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+});
+
 test("holder block - no filters", function() {
     var parser = smodules.templateParser(),
         source = "{ $foo.bar }",
@@ -53,6 +67,31 @@ test("holder block - no filters", function() {
     strictEqual(0, result[0].filters.length);
     start();
 });
+
+test("holder block - no filters - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "{ $ foo } has space between $ and property name.";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $.foo }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo. }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo..bar }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+});
+
 
 test("holder block - filters with no args", function() {
     var parser  = smodules.templateParser(),
@@ -68,6 +107,30 @@ test("holder block - filters with no args", function() {
     start();
 });
 
+test("holder block - filters with no args - error", function() {
+    var parser = smodules.template(), source;
+
+    source = "{ $foo | invalid filter name }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | invalid-filter-name }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo pipeNotFound }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | filter : }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+});
+
 test("holder block - filter with args - null, true and false", function() {
     var parser = smodules.templateParser(),
         source = "{ $foo | filter : null, true, false }",
@@ -80,6 +143,25 @@ test("holder block - filter with args - null, true and false", function() {
     start();
 });
 
+test("holder block - filter with args - null, true and false - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "{ $foo | filter : NULL }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | filter : TRUE }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | filter : FALSE }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+});
+
 test("holder block - filter with args - string", function() {
     var parser = smodules.templateParser(),
         source = "{ $foo | filter : 'test','{delimiter}','it\\'s string' }",
@@ -90,6 +172,30 @@ test("holder block - filter with args - string", function() {
     strictEqual("{delimiter}", filter.args[1]);
     strictEqual("it's string", filter.args[2]);
     start();
+});
+
+test("holder block - filter with args - string - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "{ $foo | filter : 'test }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | filter : test' }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | filter : \"test' }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{ $foo | filter : 'test\" }";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
 });
 
 test("holder block - filter with args - number", function() {
@@ -151,6 +257,35 @@ test("if block - if elseif else", function() {
     strictEqual("<div>value4</div>", section.blocks[0].expr);
 
     start();
+});
+
+test("if block - if elseif else - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "{if $foo}<p>hoge</p>";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{elseif $foo}<p>hoge</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{else}<p>hoge</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{if $foo}<p>foo</p>{if $bar}<p>bar</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
 });
 
 test("if block - conditions", function() {
@@ -235,6 +370,154 @@ test("if block - conditions", function() {
     start();
 });
 
+test("if block - conditions - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    // roundBracket -> endRoundBracket
+    source = "{if () }<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // roundBracket -> comp
+    source = "{if ( === $foo )}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // roundBracket -> andor
+    source = "{if ( and $foo )}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // endRoundBracket -> roundBracket
+    source = "{if ( $foo ) ( === $bar )}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // endRoundBracket -> value
+    source = "{if ( $foo ) 10 === $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // endRoundBracket -> var
+    source = "{if ( $foo ) $bar gte 10}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // endRoundBracket -> comp
+    source = "{if ( $foo ) === $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // value -> roundBracket
+    source = "{if 10 ( === $foo )}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // value -> value
+    source = "{if 10 20}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // value -> var
+    source = "{if 10 $foo}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // var -> roundBracket
+    soruce = "{if $foo ( === $bar )}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // var -> value
+    source = "{if $foo 10}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // var -> var
+    source = "{if $foo $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // comp -> roundBracket
+    source = "{if $foo lte ( $bar ) }<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // comp -> endRoundBracket
+    source = "{if ( $foo gte ) $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // comp -> comp
+    source = "{if $foo === === $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // comp -> andor
+    source = "{if $foo !== or $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // comp -> value -> comp
+    source = "{if 10 === 10 === 10}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // comp -> var -> comp
+    source = "{if $foo gt $bar gt $baz}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // andor -> endRoundBracket
+    source = "{if ( $foo or ) $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // andor -> comp
+    source = "{if $foo or === $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // andor -> andor
+    source = "{if $foo or or $bar}<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // lack of endRoundBracket
+    source = "{if ( $foo }<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    // lack of roundBracket
+    source = "{if ( $foo ) ) }<p>ok</p>{/if}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+});
+
 test("for block", function() {
     var parser = smodules.templateParser(),
         source, block;
@@ -253,4 +536,28 @@ test("for block", function() {
     strictEqual("item", block.header.v);
 
     start();
+});
+
+test("for block - error", function() {
+    var parser = smodules.templateParser(), source;
+
+    source = "{for $idx $item in $items}<p>{$item}</p>{/for}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{for $idx , in $items}<p>{$idx}</p>{/for}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{for , $item in $items}<p>{$item}</p>{/for}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
+
+    source = "{for $idx , $item , $foo in $items}<p>{$item}</p>{/for}";
+    raises(function() {
+        parser.parse(source);
+    }, Error);
 });
