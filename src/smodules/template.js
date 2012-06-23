@@ -7,8 +7,12 @@ smodules.template = function() {
 
     var _remoteQueue = smodules.data.queueStore();
 
+    var _testRemoteFile = function(file) {
+        return (/\.html$/).test(file);
+    };
+
     var _isRemoteFile = function(templateSrc) {
-        return (/\.html$/).test(templateSrc);
+        return _testRemoteFile(templateSrc);
     };
 
     var _isEmbedded = function(templateSrc) {
@@ -296,6 +300,19 @@ smodules.template = function() {
             _registerFromHTML(templateSrc);
         } else {
             _registerFromString(templateSrc);
+        }
+        return that;
+    };
+
+    that.setRemoteFilePattern = function(arg) {
+        if (typeof arg === "string") {
+            _testRemoteFile = function(file) {
+                return file.indexOf(arg) === 0;
+            };
+        } else if (typeof arg === "object" && typeof arg.test === "function" && (/^\/.+\/$/).test(arg.toString())) {
+            _testRemoteFile = function(file) {
+                return arg.test(file);
+            };
         }
         return that;
     };

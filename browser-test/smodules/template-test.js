@@ -60,3 +60,86 @@ test("text area", function() {
 
     strictEqual($(target).find(".item").length, 2);
 });
+
+asyncTest("setRemoteFilePattern - default", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        param = { tag: "div", message: "test" },
+        output;
+
+    template(src, param).get(function(o) {
+        output = o.trim();
+    });
+
+    window.setTimeout(function() {
+        strictEqual("<div>test</div>", output, "Default pattern is regular expression: /\\.html$/");
+        start();
+    }, 100);
+});
+
+asyncTest("setRemoteFilePattern - string", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        param = { tag: "div", message: "test" },
+        output;
+
+    template(src, param).get(function(o) {
+        output = o.trim();
+    });
+
+    window.setTimeout(function() {
+        strictEqual("<div>test</div>", output, "If pattern is string, file is checked as indexOf(pattern) is 0.");
+        start();
+    }, 100);
+});
+
+asyncTest("setRemoteFilePattern - string - not match", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        param = { tag: "div", message: "test" },
+        output;
+
+    template.setRemoteFilePattern("/hoge/");
+    template(src, param).get(function(o) {
+        output = o.trim();
+    });
+
+    window.setTimeout(function() {
+        strictEqual(src, output, "If file does not match, file name is treated as source of string.");
+        start();
+    }, 100);
+});
+
+asyncTest("setRemoteFilePattern - regular expression", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        param = { tag: "div", message: "test" },
+        output;
+
+    template.setRemoteFilePattern(/^\/javascript-smodules\/browser-test\/tpl\//);
+    template(src, param).get(function(o) {
+        output = o.trim();
+    });
+
+    window.setTimeout(function() {
+        strictEqual("<div>test</div>", output, "/^\\/javascript-smodules\\/browser-test\\/tpl\\// for " + src);
+        start();
+    }, 100);
+});
+
+asyncTest("setRemoteFilePattern - regular expression - not match", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        param = { tag: "div", message: "test" },
+        output;
+
+    template.setRemoteFilePattern(/\.tpl$/);
+    template(src, param).get(function(o) {
+        output = o.trim();
+    });
+
+    window.setTimeout(function() {
+        strictEqual(src, output, "/\\.tpl$/ for " + src);
+        start();
+    }, 100);
+});
