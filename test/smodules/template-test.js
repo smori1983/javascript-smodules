@@ -164,7 +164,7 @@ test("if block", function() {
 
     // comparative operator - "===" and "=="
     $(target).empty();
-    src = "{ if $foo === 1}<p>one</p>{ /if }{if $foo == 1}<p>two</p>{ /if }";
+    src = "{ if $foo === 1 }<p>one</p>{ /if }{if $foo == 1}<p>two</p>{ /if }";
     param = { foo: true };
     template.bind(src, param).appendTo(target);
     strictEqual("<p>two</p>", $(target).html());
@@ -192,3 +192,37 @@ test("for block", function() {
     start();
 });
 
+test("template cache", function() {
+    var template = smodules.template(),
+        src1 = "<h1>{$value}</h1>",
+        src2 = "<h2>{$value}</h2>",
+        src3 = "<h3>{$value}</h3>",
+        cacheList;
+
+    // Initially no cache.
+    cacheList = template.getTemplateCacheList();
+    strictEqual(0, cacheList.length);
+
+    template.preFetch(src1);
+    cacheList = template.getTemplateCacheList();
+    strictEqual(1, cacheList.length);
+    strictEqual(true, cacheList.indexOf(src1) >= 0);
+
+    template.preFetch(src2);
+    template.preFetch(src3);
+    cacheList = template.getTemplateCacheList();
+    strictEqual(3, cacheList.length);
+    strictEqual(true, cacheList.indexOf(src1) >= 0);
+    strictEqual(true, cacheList.indexOf(src2) >= 0);
+    strictEqual(true, cacheList.indexOf(src3) >= 0);
+
+    // Clear individual cache.
+    template.clearTemplateCache(src1);
+    cacheList = template.getTemplateCacheList();
+    strictEqual(2, cacheList.length);
+
+    // Clear all cache.
+    template.clearTemplateCache();
+    cacheList = template.getTemplateCacheList();
+    strictEqual(0, cacheList.length);
+});

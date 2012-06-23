@@ -319,6 +319,19 @@ smodules.template = function() {
         return that;
     };
 
+    that.getTemplateCacheList = function() {
+        return _templates.getKeys();
+    };
+
+    that.clearTemplateCache = function(source) {
+        if (typeof source === "string") {
+            _templates.remove(source);
+        } else {
+            _templates.clear();
+        }
+        return that;
+    };
+
     // default filters
     that.addFilter("h", (function() {
         var list = {
