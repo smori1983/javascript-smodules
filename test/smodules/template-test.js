@@ -192,7 +192,7 @@ test("for block", function() {
     start();
 });
 
-test("template cache", function() {
+test("preFetch and template cache", function() {
     var template = smodules.template(),
         src1 = "<h1>{$value}</h1>",
         src2 = "<h2>{$value}</h2>",
@@ -203,13 +203,14 @@ test("template cache", function() {
     cacheList = template.getTemplateCacheList();
     strictEqual(0, cacheList.length);
 
+    // Fetch single source.
     template.preFetch(src1);
     cacheList = template.getTemplateCacheList();
     strictEqual(1, cacheList.length);
     strictEqual(true, cacheList.indexOf(src1) >= 0);
 
-    template.preFetch(src2);
-    template.preFetch(src3);
+    // Fetch multiple sources.
+    template.preFetch([src2, src3]);
     cacheList = template.getTemplateCacheList();
     strictEqual(3, cacheList.length);
     strictEqual(true, cacheList.indexOf(src1) >= 0);
