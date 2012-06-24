@@ -147,3 +147,21 @@ asyncTest("setRemoteFilePattern - regular expression - not match", function() {
         start();
     }, 100);
 });
+
+asyncTest("preFetch", function() {
+    var template = smodules.template(),
+        stringSrc = "<p>hoge</p>",
+        remoteSrc = "/javascript-smodules/browser-test/tpl/template.html",
+        cacheList;
+
+    template.preFetch([stringSrc, remoteSrc], function() {
+        cacheList = template.getTemplateCacheList();
+        strictEqual(2, cacheList.length, "template cache size is 2.");
+        strictEqual(true, cacheList.indexOf(stringSrc) >= 0, "template cache has string source.");
+        strictEqual(true, cacheList.indexOf(remoteSrc) >= 0, "template cache has remote source.");
+        start();
+    });
+    cacheList = template.getTemplateCacheList();
+    strictEqual(1, cacheList.length, "template cache size is 1.");
+    strictEqual(true, cacheList.indexOf(stringSrc) >= 0, "template cache has string source.");
+});
