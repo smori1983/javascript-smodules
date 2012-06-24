@@ -1,13 +1,13 @@
 smodules.template = function() {
     var that = {};
 
-    var _filters = smodules.data.keyValueStore();
+    var _filters = smodules.data.hash();
 
-    var _templates = smodules.data.keyValueStore();
+    var _templates = smodules.data.hash();
 
     var _parser = smodules.templateParser();
 
-    var _remoteQueue = smodules.data.queueStore();
+    var _remoteQueue = smodules.data.queueHash();
 
     var _testRemoteFile = function(file) {
         return (/\.html$/).test(file);
@@ -26,7 +26,7 @@ smodules.template = function() {
     };
 
     var _registerFromRemote = (function() {
-        var _fetching = smodules.data.keyValueStore();
+        var _fetching = smodules.data.hash();
 
         return function(templateSrc) {
             if (!_fetching.has(templateSrc)) {

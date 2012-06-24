@@ -1,4 +1,4 @@
-smodules.data.keyValueStore = function() {
+smodules.data.hash = function() {
     var that = {}, store = {};
 
     var has = function(key) {

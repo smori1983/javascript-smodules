@@ -1,5 +1,5 @@
-smodules.data.queueStore = function() {
-    var that = smodules.data.keyValueStore(),
+smodules.data.queueHash = function() {
+    var that = smodules.data.hash(),
         parent = {
             add: smodules.mod.superior(that, "add"),
             get: smodules.mod.superior(that, "get")
