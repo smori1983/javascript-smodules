@@ -21,6 +21,44 @@ smodules.template = function() {
         return templateSrc.indexOf("#") === 0;
     };
 
+    var _preFetchJobList = (function() {
+        var jobList = [];
+
+        var check = function() {
+            var finished = [];
+
+            jobList.forEach(function(job) {
+                job.sourceList = job.sourceList.filter(function(source) {
+                    return !_templates.has(source);
+                });
+
+                if (job.sourceList.length === 0) {
+                    finished.push(job);
+                }
+            });
+
+            jobList = jobList.filter(function(job) {
+                return job.sourceList.length > 0;
+            });
+
+            finished.forEach(function(job) {
+                if (typeof job.callback === "function") {
+                    job.callback();
+                }
+            });
+        };
+
+        return {
+            add: function(sourceList, callback) {
+                jobList.push({ sourceList: sourceList, callback: callback });
+                check();
+            },
+            notifyFetched: function() {
+                check();
+            }
+        };
+    })();
+
     var _register = function(templateSrc, content) {
         _templates.add(templateSrc, _parser.parse(content, templateSrc));
     };
@@ -37,9 +75,10 @@ smodules.template = function() {
                     success: function(response) {
                         var queue;
 
-                        _fetching.remove(templateSrc);
                         _register(templateSrc, response);
-        
+                        _fetching.remove(templateSrc);
+                        _preFetchJobList.notifyFetched();
+
                         while (_remoteQueue.sizeOf(templateSrc) > 0) {
                             queue = _remoteQueue.getFrom(templateSrc);
                             _executeRecursive(templateSrc, queue.bindParams, queue.callback);
@@ -295,13 +334,20 @@ smodules.template = function() {
         return that;
     };
 
-    that.preFetch = function(templateSrc) {
-        if (_isRemoteFile(templateSrc)) {
-            _registerFromRemote(templateSrc);
-        } else if (_isEmbedded(templateSrc)) {
-            _registerFromHTML(templateSrc);
-        } else {
-            _registerFromString(templateSrc);
+    that.preFetch = function(source, callback) {
+        var sourceList = (typeof source === "string") ? [].concat(source) : source;
+
+        if ($.isArray(sourceList)) {
+            sourceList.forEach(function(source) {
+                if (_isRemoteFile(source)) {
+                    _registerFromRemote(source);
+                } else if (_isEmbedded(source)) {
+                    _registerFromHTML(source);
+                } else {
+                    _registerFromString(source);
+                }
+            });
+            _preFetchJobList.add(sourceList, callback);
         }
         return that;
     };
