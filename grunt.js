@@ -17,13 +17,14 @@ grunt.initConfig({
         all: ["grunt.js", "src/smodules/*.js", "test/smodules/*.js"]
     },
     qunit: {
-        files: ["test/test.html"]
+        files: ["test/test.html", "test/test.*.html"]
     },
     concat: {
         all: {
             src: [
                 "<banner:meta.banner>",
                 "src/smodules/HEAD.js",
+                "src/smodules/a.js",
                 "src/smodules/data.HEAD.js",
                 "src/smodules/data.*.js",
                 "src/smodules/mod.HEAD.js",
