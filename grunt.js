@@ -36,15 +36,6 @@ grunt.initConfig({
                 "src/smodules/*.js"
             ],
             dest: "dist/smodules-<%= pkg.version %>.js"
-        },
-        template: {
-            src: [
-                "<banner:meta.banner>",
-                "src/smodules/HEAD.js",
-                "src/smodules/templateParser.js",
-                "src/smodules/template.js"
-            ],
-            dest: "dist/smodules.template-<%= pkg.version %>.js"
         }
     },
     min: {
@@ -54,13 +45,6 @@ grunt.initConfig({
                 "<config:concat.all.dest>"
             ],
             dest: "dist/smodules-<%= pkg.version %>.min.js"
-        },
-        template: {
-            src: [
-                "<banner:meta.banner>",
-                "<config:concat.template.dest>"
-            ],
-            dest: "dist/smodules.template-<%= pkg.version %>.min.js"
         }
     },
     jshint: {
