@@ -1,10 +1,10 @@
 smodules.a = {};
 
 smodules.a.indexOf = (function() {
-    var native = typeof Array.prototype.indexOf === "function";
+    var isNative = typeof Array.prototype.indexOf === "function";
 
     return function(array, item, fromIdx) {
-        if (native) {
+        if (isNative) {
             return array.indexOf(item, fromIdx);
         } else {
             var i = 0, len = array.length, result = -1;
@@ -30,10 +30,10 @@ smodules.a.indexOf = (function() {
 })();
 
 smodules.a.lastIndexOf = (function() {
-    var native = typeof Array.prototype.lastIndexOf === "function";
+    var isNative = typeof Array.prototype.lastIndexOf === "function";
 
     return function(array, item, fromIdx) {
-        if (native) {
+        if (isNative) {
             return array.lastIndexOf(item, fromIdx);
         } else {
             var i = array.length - 1, result = -1;
@@ -61,10 +61,10 @@ smodules.a.lastIndexOf = (function() {
 })();
 
 smodules.a.forEach = (function() {
-    var native = typeof Array.prototype.forEach === "function";
+    var isNative = typeof Array.prototype.forEach === "function";
 
     return function(array, func, context) {
-        if (native) {
+        if (isNative) {
             array.forEach(func, context);
         } else {
             var i = 0, len = array.length;
@@ -77,10 +77,10 @@ smodules.a.forEach = (function() {
 })();
 
 smodules.a.filter = (function() {
-    var native = typeof Array.prototype.filter === "function";
+    var isNative = typeof Array.prototype.filter === "function";
 
     return function(array, func, context) {
-        if (native) {
+        if (isNative) {
             return array.filter(func, context);
         } else {
             var i = 0, len = array.length, result = [];
@@ -97,10 +97,10 @@ smodules.a.filter = (function() {
 })();
 
 smodules.a.every = (function() {
-    var native = typeof Array.prototype.every === "function";
+    var isNative = typeof Array.prototype.every === "function";
 
     return function(array, func, context) {
-        if (native) {
+        if (isNative) {
             return array.every(func, context);
         } else {
             var i = 0, len = array.length, result = true;
@@ -118,10 +118,10 @@ smodules.a.every = (function() {
 })();
 
 smodules.a.some = (function() {
-    var native = typeof Array.prototype.some === "function";
+    var isNative = typeof Array.prototype.some === "function";
 
     return function(array, func, context) {
-        if (native) {
+        if (isNative) {
             return array.some(func, context);
         } else {
             var i = 0, len = array.length, result = false;
@@ -139,10 +139,10 @@ smodules.a.some = (function() {
 })();
 
 smodules.a.map = (function() {
-    var native = typeof Array.prototype.map === "function";
+    var isNative = typeof Array.prototype.map === "function";
 
     return function(array, func, context) {
-        if (native) {
+        if (isNative) {
             return array.map(func, context);
         } else {
             var i = 0, len = array.length, result = [];
@@ -157,12 +157,12 @@ smodules.a.map = (function() {
 })();
 
 smodules.a.reduce = (function() {
-    var native = typeof Array.prototype.reduce === "function";
+    var isNative = typeof Array.prototype.reduce === "function";
 
     return function(array, func, memo) {
         var initial = arguments.length > 2;
 
-        if (native) {
+        if (isNative) {
             return initial ? array.reduce(func, memo) : array.reduce(func);
         } else {
             var i = 0, len = array.length, context;
@@ -186,12 +186,12 @@ smodules.a.reduce = (function() {
 })();
 
 smodules.a.reduceRight = (function() {
-    var native = typeof Array.prototype.reduceRight === "function";
+    var isNative = typeof Array.prototype.reduceRight === "function";
 
     return function(array, func, memo) {
         var initial = arguments.length > 2;
 
-        if (native) {
+        if (isNative) {
             return initial ? array.reduceRight(func, memo) : array.reduceRight(func);
         } else {
             var i = array.length - 1, context;
