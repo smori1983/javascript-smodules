@@ -207,15 +207,15 @@ test("preFetch and template cache", function() {
     template.preFetch(src1);
     cacheList = template.getTemplateCacheList();
     strictEqual(1, cacheList.length);
-    strictEqual(true, cacheList.indexOf(src1) >= 0);
+    strictEqual(src1, cacheList[0]);
 
     // Fetch multiple sources.
     template.preFetch([src2, src3]);
     cacheList = template.getTemplateCacheList();
     strictEqual(3, cacheList.length);
-    strictEqual(true, cacheList.indexOf(src1) >= 0);
-    strictEqual(true, cacheList.indexOf(src2) >= 0);
-    strictEqual(true, cacheList.indexOf(src3) >= 0);
+    strictEqual(src1, cacheList[0]);
+    strictEqual(src2, cacheList[1]);
+    strictEqual(src3, cacheList[2]);
 
     // Clear individual cache.
     template.clearTemplateCache(src1);
