@@ -13,12 +13,12 @@ smodules.template = function() {
         return (/\.html$/).test(file);
     };
 
-    var _isRemoteFile = function(templateSrc) {
-        return _testRemoteFile(templateSrc);
+    var _isRemoteFile = function(source) {
+        return _testRemoteFile(source);
     };
 
-    var _isEmbedded = function(templateSrc) {
-        return templateSrc.indexOf("#") === 0;
+    var _isEmbedded = function(source) {
+        return source.indexOf("#") === 0;
     };
 
     var _preFetchJobList = (function() {
@@ -59,29 +59,29 @@ smodules.template = function() {
         };
     })();
 
-    var _register = function(templateSrc, content) {
-        _templates.add(templateSrc, _parser.parse(content, templateSrc));
+    var _register = function(source, content) {
+        _templates.add(source, _parser.parse(content, source));
     };
 
     var _registerFromRemote = (function() {
         var _fetching = smodules.data.hash();
 
-        return function(templateSrc) {
-            if (!_fetching.has(templateSrc)) {
-                _fetching.add(templateSrc, true);
+        return function(source) {
+            if (!_fetching.has(source)) {
+                _fetching.add(source, true);
 
                 $.ajax({
-                    url: templateSrc,
+                    url: source,
                     success: function(response) {
                         var queue;
 
-                        _register(templateSrc, response);
-                        _fetching.remove(templateSrc);
+                        _register(source, response);
+                        _fetching.remove(source);
                         _preFetchJobList.notifyFetched();
 
-                        while (_remoteQueue.sizeOf(templateSrc) > 0) {
-                            queue = _remoteQueue.getFrom(templateSrc);
-                            _executeRecursive(templateSrc, queue.bindParams, queue.callback);
+                        while (_remoteQueue.sizeOf(source) > 0) {
+                            queue = _remoteQueue.getFrom(source);
+                            _executeRecursive(source, queue.bindParams, queue.callback);
                         }
                     }
                 });
@@ -89,48 +89,48 @@ smodules.template = function() {
         };
     })();
 
-    var _registerFromHTML = function(templateSrc, callback) {
-        if ($(templateSrc)[0].tagName.toLowerCase() === "textarea") {
-            _register(templateSrc, $(templateSrc).val());
+    var _registerFromHTML = function(source, callback) {
+        if ($(source)[0].tagName.toLowerCase() === "textarea") {
+            _register(source, $(source).val());
         } else {
-            _register(templateSrc, $(templateSrc).html());
+            _register(source, $(source).html());
         }
         if (typeof callback === "function") {
             callback();
         }
     };
 
-    var _registerFromString = function(templateSrc, callback) {
-        _register(templateSrc, templateSrc);
+    var _registerFromString = function(source, callback) {
+        _register(source, source);
         if (typeof callback === "function") {
             callback();
         }
     };
 
-    var _execute = function(templateSrc, bindParams, callback) {
-        if (_templates.has(templateSrc)) {
-            _executeRecursive(templateSrc, bindParams, callback);
-        } else if (_isRemoteFile(templateSrc)) {
-            _registerFromRemote(templateSrc);
-            _remoteQueue.addTo(templateSrc, { bindParams: bindParams, callback: callback });
-        } else if (_isEmbedded(templateSrc)) {
-            _registerFromHTML(templateSrc, function() {
-                _executeRecursive(templateSrc, bindParams, callback);
+    var _execute = function(source, bindParams, callback) {
+        if (_templates.has(source)) {
+            _executeRecursive(source, bindParams, callback);
+        } else if (_isRemoteFile(source)) {
+            _registerFromRemote(source);
+            _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
+        } else if (_isEmbedded(source)) {
+            _registerFromHTML(source, function() {
+                _executeRecursive(source, bindParams, callback);
             });
         } else {
-            _registerFromString(templateSrc, function() {
-                _executeRecursive(templateSrc, bindParams, callback);
+            _registerFromString(source, function() {
+                _executeRecursive(source, bindParams, callback);
             });
         }
     };
 
-    var _executeRecursive = function(templateSrc, bindParams, callback) {
+    var _executeRecursive = function(source, bindParams, callback) {
         if (!$.isArray(bindParams)) {
             bindParams = [bindParams];
         }
 
         $.each(bindParams, function(idx, params) {
-            callback(_bind(templateSrc, params));
+            callback(_bind(source, params));
         });
     };
 
@@ -298,30 +298,30 @@ smodules.template = function() {
             return output;
         };
 
-        return function(templateSrc, bindParams) {
-            src = templateSrc;
+        return function(source, bindParams) {
+            src = source;
 
-            return loop(_templates.get(templateSrc), [bindParams]);
+            return loop(_templates.get(source), [bindParams]);
         };
     })();
 
 
     // APIs.
-    that.bind = function(templateFile, bindParams) {
+    that.bind = function(source, bindParams) {
         return {
             get: function(callback) {
-                _execute(templateFile, bindParams, function(response) {
-                    callback(response);
+                _execute(source, bindParams, function(output) {
+                    callback(output);
                 });
             },
             appendTo: function(target) {
-                _execute(templateFile, bindParams, function(response) {
-                    $(response).appendTo(target);
+                _execute(source, bindParams, function(output) {
+                    $(output).appendTo(target);
                 });
             },
             insertBefore: function(target) {
-                _execute(templateFile, bindParams, function(response) {
-                    $(response).insertBefore(target);
+                _execute(source, bindParams, function(output) {
+                    $(output).insertBefore(target);
                 });
             }
         };
