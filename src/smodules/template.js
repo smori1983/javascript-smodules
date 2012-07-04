@@ -81,7 +81,7 @@ smodules.template = function() {
 
                         while (_remoteQueue.sizeOf(source) > 0) {
                             queue = _remoteQueue.getFrom(source);
-                            _executeRecursive(source, queue.bindParams, queue.callback);
+                            _execute(source, queue.bindParams, queue.callback);
                         }
                     }
                 });
@@ -109,29 +109,31 @@ smodules.template = function() {
 
     var _execute = function(source, bindParams, callback) {
         if (_templates.has(source)) {
-            _executeRecursive(source, bindParams, callback);
+            if (typeof callback === "function") {
+                callback(_bind(source, bindParams));
+            } else {
+                return _bind(source, bindParams);
+            }
         } else if (_isRemoteFile(source)) {
-            _registerFromRemote(source);
-            _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
+            if (typeof callback === "function") {
+                _registerFromRemote(source);
+                _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
+            }
         } else if (_isEmbedded(source)) {
-            _registerFromHTML(source, function() {
-                _executeRecursive(source, bindParams, callback);
-            });
+            _registerFromHTML(source);
+            if (typeof callback === "function") {
+                callback(_bind(source, bindParams));
+            } else {
+                return _bind(source, bindParams);
+            }
         } else {
-            _registerFromString(source, function() {
-                _executeRecursive(source, bindParams, callback);
-            });
+            _registerFromString(source);
+            if (typeof callback === "function") {
+                callback(_bind(source, bindParams));
+            } else {
+                return _bind(source, bindParams);
+            }
         }
-    };
-
-    var _executeRecursive = function(source, bindParams, callback) {
-        if (!$.isArray(bindParams)) {
-            bindParams = [bindParams];
-        }
-
-        $.each(bindParams, function(idx, params) {
-            callback(_bind(source, params));
-        });
     };
 
     var _bind = (function() {
@@ -310,9 +312,13 @@ smodules.template = function() {
     that.bind = function(source, bindParams) {
         return {
             get: function(callback) {
-                _execute(source, bindParams, function(output) {
-                    callback(output);
-                });
+                if (typeof callback === "function") {
+                    _execute(source, bindParams, function(output) {
+                        callback(output);
+                    });
+                } else {
+                    return _execute(source, bindParams);
+                }
             },
             appendTo: function(target) {
                 _execute(source, bindParams, function(output) {

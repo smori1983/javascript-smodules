@@ -1,6 +1,24 @@
 module("smodules.template");
 
-asyncTest("remote source + appendTo", function() {
+asyncTest("bind - get - remote source", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        paramSet = [{ tag: "p", message: "a" }, { tag: "p", message: "b" }],
+        result = "";
+
+    $.each(paramSet, function(idx, param) {
+        template.bind(src, param).get(function(output) {
+            result += $.trim(output);
+        });
+    });
+
+    window.setTimeout(function() {
+        strictEqual("<p>a</p><p>b</p>", result, "even if remote source is used multiple times, fetching is just once.");
+        start();
+    }, 500);
+});
+
+asyncTest("bind - appendTo - remote source", function() {
     var template = smodules.template(),
         src = "/javascript-smodules/browser-test/tpl/appendTo.html";
 
@@ -22,7 +40,7 @@ asyncTest("remote source + appendTo", function() {
     }, 500);
 });
 
-asyncTest("remote source + insertBefore", function() {
+asyncTest("bind - insertBefore - remote source", function() {
     var template = smodules.template(),
         src = "/javascript-smodules/browser-test/tpl/insertBefore.html";
 
@@ -45,7 +63,7 @@ asyncTest("remote source + insertBefore", function() {
     }, 500);
 });
 
-test("embedded source - textarea", function() {
+test("bind - appendTo - embedded source", function() {
     var template = smodules.template(),
         src = "#textarea", target = "#template-textarea", div = $(target);
 
@@ -164,4 +182,18 @@ asyncTest("preFetch", function() {
     cacheList = template.getTemplateCacheList();
     strictEqual(1, cacheList.length, "template cache size is 1.");
     strictEqual(true, cacheList.indexOf(stringSrc) >= 0, "template cache has string source.");
+});
+
+asyncTest("preFetch - bind - get - without callback", function() {
+    var template = smodules.template(),
+        src = "/javascript-smodules/browser-test/tpl/template.html",
+        param = { tag: "div", message: "test" },
+        output;
+
+    template.preFetch(src, function() {
+        var output = $.trim(template.bind(src, param).get());
+
+        strictEqual("<div>test</div>", output, "by using preFetch(), bind() can be used synchronously.");
+        start();
+    });
 });

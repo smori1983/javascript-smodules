@@ -226,6 +226,48 @@ test("preFetch and template cache", function() {
     template.clearTemplateCache();
     cacheList = template.getTemplateCacheList();
     strictEqual(0, cacheList.length);
+
+    start();
+});
+
+test("bind - get - embedded source - with callback", function() {
+    var template = smodules.template(),
+        src = "#template-test-source",
+        params = { value: "hoge" };
+
+    template.bind(src, params).get(function(output) {
+        strictEqual("<p>hoge</p>", output);
+    });
+});
+
+test("bind - get - embedded source - without callback", function() {
+    var template = smodules.template(),
+        src = "#template-test-source",
+        params = { value: "hoge" };
+
+    strictEqual("<p>hoge</p>", template.bind(src, params).get());
+});
+
+test("bind - get - string source - with callback", function() {
+    var template = smodules.template(),
+        src = "<p>{$value}</p>",
+        params = { value: "hoge" };
+
+    template.bind(src, params).get(function(output) {
+        strictEqual("<p>hoge</p>", output);
+    });
+
+    start();
+});
+
+test("bind - get - string source - without callback", function() {
+    var template = smodules.template(),
+        src = "<p>{$value}</p>",
+        params = { value: "hoge" };
+
+    strictEqual("<p>hoge</p>", template.bind(src, params).get());
+
+    start();
 });
 
 test("error - filter not found", function() {
