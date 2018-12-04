@@ -8,8 +8,6 @@ test("normal block", function() {
     $(target).empty();
     template.bind(src, {}).appendTo(target);
     strictEqual("<p>{ok}</p>", $(target).html());
-
-    start();
 });
 
 test("literal block", function() {
@@ -20,8 +18,6 @@ test("literal block", function() {
     $(target).empty();
     template.bind(src, {}).appendTo(target);
     strictEqual("<p>{literal} {/literal}</p>", $(target).html());
-
-    start();
 });
 
 test("holder block", function() {
@@ -60,8 +56,6 @@ test("holder block", function() {
     };
     template.bind(src, param).appendTo(target);
     strictEqual("<p>c</p>", $(target).html());
-
-    start();
 });
 
 test("holder block - default filter", function() {
@@ -110,8 +104,6 @@ test("holder block - default filter", function() {
     param = { foo: 1, bar: 1.23, baz: 10 };
     template.bind(src, param).appendTo(target);
     strictEqual("<p>2</p><p>3.23</p><p>9</p>", $(target).html());
-
-    start();
 });
 
 test("holder block - original filter", function() {
@@ -127,8 +119,6 @@ test("holder block - original filter", function() {
     param = { foo: "abcdefghi" };
     template.bind(src, param).appendTo(target);
     strictEqual("<p>a</p><p>abc...</p>", $(target).html());
-
-    start();
 });
 
 test("if block", function() {
@@ -168,8 +158,6 @@ test("if block", function() {
     param = { foo: true };
     template.bind(src, param).appendTo(target);
     strictEqual("<p>two</p>", $(target).html());
-
-    start();
 });
 
 test("for block", function() {
@@ -188,8 +176,6 @@ test("for block", function() {
     param = { items: [ "one", "two" ] };
     template.bind(src, param).appendTo(target);
     strictEqual("<p>0-one</p><p>1-two</p>", $(target).html());
-
-    start();
 });
 
 test("preFetch and template cache", function() {
@@ -226,8 +212,6 @@ test("preFetch and template cache", function() {
     template.clearTemplateCache();
     cacheList = template.getTemplateCacheList();
     strictEqual(0, cacheList.length);
-
-    start();
 });
 
 test("bind - get - embedded source - with callback", function() {
@@ -256,8 +240,6 @@ test("bind - get - string source - with callback", function() {
     template.bind(src, params).get(function(output) {
         strictEqual("<p>hoge</p>", output);
     });
-
-    start();
 });
 
 test("bind - get - string source - without callback", function() {
@@ -266,8 +248,6 @@ test("bind - get - string source - without callback", function() {
         params = { value: "hoge" };
 
     strictEqual("<p>hoge</p>", template.bind(src, params).get());
-
-    start();
 });
 
 test("error - filter not found", function() {

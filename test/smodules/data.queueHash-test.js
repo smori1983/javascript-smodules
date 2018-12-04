@@ -16,8 +16,6 @@ test("addTo and getFrom", function() {
     qh.remove("list");
 
     strictEqual(false, qh.has("list"));
-
-    start();
 });
 
 test("check keys", function() {
@@ -37,8 +35,6 @@ test("check keys", function() {
     qh.clear();
 
     strictEqual(0, qh.getKeys().length);
-
-    start();
 });
 
 test("using not existing key", function() {
@@ -47,6 +43,4 @@ test("using not existing key", function() {
     strictEqual(false, qh.has("hoge"));
     strictEqual(0,     qh.sizeOf("hoge"));
     strictEqual("undefined", typeof qh.getFrom("hoge"));
-
-    start();
 });
