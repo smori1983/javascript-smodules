@@ -27,5 +27,4 @@ test("simple test", function() {
     var s = sub();
 
     strictEqual("base sub", s.say());
-    start();
 });

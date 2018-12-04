@@ -8,7 +8,6 @@ test("normal block", function() {
     strictEqual(1, result.length);
     strictEqual("normal", result[0].type);
     strictEqual("<div>foo {bar}</div>", result[0].expr);
-    start();
 });
 
 test("normal block - error", function() {
@@ -37,7 +36,6 @@ test("literal block", function() {
     strictEqual("{foo} {bar} {/literal} function() {};", result[1].expr);
     strictEqual("normal", result[2].type);
     strictEqual("</div>", result[2].expr);
-    start();
 });
 
 test("literal block - error", function() {
@@ -65,7 +63,6 @@ test("holder block - no filters", function() {
     strictEqual("foo", result[0].keys[0]);
     strictEqual("bar", result[0].keys[1]);
     strictEqual(0, result[0].filters.length);
-    start();
 });
 
 test("holder block - no filters - error", function() {
@@ -104,7 +101,6 @@ test("holder block - filters with no args", function() {
     strictEqual(0,         filter1.args.length);
     strictEqual("filter2", filter2.name);
     strictEqual(0,         filter2.args.length);
-    start();
 });
 
 test("holder block - filters with no args - error", function() {
@@ -140,7 +136,6 @@ test("holder block - filter with args - null, true and false", function() {
     strictEqual(null,  filter.args[0]);
     strictEqual(true,  filter.args[1]);
     strictEqual(false, filter.args[2]);
-    start();
 });
 
 test("holder block - filter with args - null, true and false - error", function() {
@@ -171,7 +166,6 @@ test("holder block - filter with args - string", function() {
     strictEqual("test",        filter.args[0]);
     strictEqual("{delimiter}", filter.args[1]);
     strictEqual("it's string", filter.args[2]);
-    start();
 });
 
 test("holder block - filter with args - string - error", function() {
@@ -212,7 +206,6 @@ test("holder block - filter with args - number", function() {
     strictEqual(10,     filter.args[5]);
     strictEqual(10,     filter.args[6]);
     strictEqual(1,      filter.args[7]);
-    start();
 });
 
 test("if block - if elseif else", function() {
@@ -255,8 +248,6 @@ test("if block - if elseif else", function() {
     strictEqual(1,        section.blocks.length);
     strictEqual("normal",            section.blocks[0].type);
     strictEqual("<div>value4</div>", section.blocks[0].expr);
-
-    start();
 });
 
 test("if block - if elseif else - error", function() {
@@ -366,8 +357,6 @@ test("if block - conditions", function() {
     strictEqual("var3", stack[3].keys.join("."));
     strictEqual("andor", stack[4].type);
     strictEqual("and",   stack[4].expr);
-
-    start();
 });
 
 test("if block - conditions - error", function() {
@@ -534,8 +523,6 @@ test("for block", function() {
     block  = parser.parse(source)[0];
     strictEqual("idx",  block.header.k);
     strictEqual("item", block.header.v);
-
-    start();
 });
 
 test("for block - error", function() {

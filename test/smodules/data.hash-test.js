@@ -9,8 +9,6 @@ test("add", function() {
 
     hash.add("hoge", "hogehoge");
     strictEqual("hogehoge", hash.get("hoge"));
-
-    start();
 });
 
 test("remove", function() {
@@ -22,8 +20,6 @@ test("remove", function() {
     hash.remove("name");
     strictEqual(false, hash.has("name"));
     strictEqual("undefined", typeof hash.get("name"));
-
-    start();
 });
 
 test("clear", function() {
@@ -34,6 +30,4 @@ test("clear", function() {
     hash.clear();
     strictEqual(false, hash.has("name"));
     strictEqual(false, hash.has("mail"));
-
-    start();
 });
