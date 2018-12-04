@@ -1,2 +1,2 @@
-wget -O qunit.js https://code.jquery.com/qunit/qunit-1.10.0.js
-wget -O qunit.css https://code.jquery.com/qunit/qunit-1.10.0.css
+wget -O qunit.js https://code.jquery.com/qunit/qunit-1.11.0.js
+wget -O qunit.css https://code.jquery.com/qunit/qunit-1.11.0.css
