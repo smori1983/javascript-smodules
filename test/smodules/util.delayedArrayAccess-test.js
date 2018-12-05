@@ -1,6 +1,8 @@
-module("smodules.util.delayedArrayAccess");
+QUnit.module("smodules.util.delayedArrayAccess");
 
-asyncTest("single unit:1", function() {
+QUnit.test("single unit:1", function(assert) {
+    var done = assert.async();
+
     var output = [];
 
     smodules.util.delayedArrayAccess({
@@ -13,15 +15,18 @@ asyncTest("single unit:1", function() {
     }).start();
 
     window.setTimeout(function() {
-        strictEqual(3, output.length);
-        strictEqual("a", output[0]);
-        strictEqual("b", output[1]);
-        strictEqual("c", output[2]);
-        start();
+        assert.strictEqual(3, output.length);
+        assert.strictEqual("a", output[0]);
+        assert.strictEqual("b", output[1]);
+        assert.strictEqual("c", output[2]);
+
+        done();
     }, 150);
 });
 
-asyncTest("single unit:2", function() {
+QUnit.test("single unit:2", function(assert) {
+    var done = assert.async();
+
     var output = [];
 
     smodules.util.delayedArrayAccess({
@@ -34,14 +39,17 @@ asyncTest("single unit:2", function() {
     }).start();
 
     window.setTimeout(function() {
-        strictEqual(2, output.length);
-        strictEqual("a.b", output[0]);
-        strictEqual("c",   output[1]);
-        start();
+        assert.strictEqual(2, output.length);
+        assert.strictEqual("a.b", output[0]);
+        assert.strictEqual("c",   output[1]);
+
+        done();
     }, 150);
 });
 
-asyncTest("multiple", function() {
+QUnit.test("multiple", function(assert) {
+    var done = assert.async();
+
     var output1 = [], output2 = [];
 
     smodules.util.delayedArrayAccess({
@@ -63,19 +71,18 @@ asyncTest("multiple", function() {
     }).start();
 
     window.setTimeout(function() {
-        strictEqual(4, output1.length);
-        strictEqual("a.b", output1[0]);
-        strictEqual("c.d", output1[1]);
-        strictEqual("e.f", output1[2]);
-        strictEqual("g.h", output1[3]);
+        assert.strictEqual(4, output1.length);
+        assert.strictEqual("a.b", output1[0]);
+        assert.strictEqual("c.d", output1[1]);
+        assert.strictEqual("e.f", output1[2]);
+        assert.strictEqual("g.h", output1[3]);
 
-        strictEqual(4, output2.length);
-        strictEqual("A.B", output2[0]);
-        strictEqual("C.D", output2[1]);
-        strictEqual("E.F", output2[2]);
-        strictEqual("G.H", output2[3]);
+        assert.strictEqual(4, output2.length);
+        assert.strictEqual("A.B", output2[0]);
+        assert.strictEqual("C.D", output2[1]);
+        assert.strictEqual("E.F", output2[2]);
+        assert.strictEqual("G.H", output2[3]);
 
-        start();
+        done();
     }, 150);
 });
-
