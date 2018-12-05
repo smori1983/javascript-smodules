@@ -1,191 +1,172 @@
-module("smodules.a.test");
+QUnit.module("smodules.a.test");
 
-test("indexOf", function() {
+QUnit.test("indexOf", function(assert) {
     var array = ["a", "b", "a", "c"];
 
-    strictEqual(0,  smodules.a.indexOf(array, "a"));
-    strictEqual(0,  smodules.a.indexOf(array, "a", 0));
-    strictEqual(0,  smodules.a.indexOf(array, "a", -5));
-    strictEqual(0,  smodules.a.indexOf(array, "a", -4));
-    strictEqual(2,  smodules.a.indexOf(array, "a", 1));
-    strictEqual(2,  smodules.a.indexOf(array, "a", -2));
-    strictEqual(-1, smodules.a.indexOf(array, "a", 3));
-    strictEqual(-1, smodules.a.indexOf(array, "a", -1));
-    strictEqual(-1, smodules.a.indexOf(array, "z"));
-    start();
+    assert.strictEqual(0,  smodules.a.indexOf(array, "a"));
+    assert.strictEqual(0,  smodules.a.indexOf(array, "a", 0));
+    assert.strictEqual(0,  smodules.a.indexOf(array, "a", -5));
+    assert.strictEqual(0,  smodules.a.indexOf(array, "a", -4));
+    assert.strictEqual(2,  smodules.a.indexOf(array, "a", 1));
+    assert.strictEqual(2,  smodules.a.indexOf(array, "a", -2));
+    assert.strictEqual(-1, smodules.a.indexOf(array, "a", 3));
+    assert.strictEqual(-1, smodules.a.indexOf(array, "a", -1));
+    assert.strictEqual(-1, smodules.a.indexOf(array, "z"));
 });
 
-test("lastIndexOf", function() {
+QUnit.test("lastIndexOf", function(assert) {
     var array = ["a", "b", "a", "c"];
 
-    strictEqual(2,  smodules.a.lastIndexOf(array, "a"));
-    strictEqual(0,  smodules.a.lastIndexOf(array, "a", 0));
-    strictEqual(-1, smodules.a.lastIndexOf(array, "a", -5));
-    strictEqual(0,  smodules.a.lastIndexOf(array, "a", -4));
-    strictEqual(0,  smodules.a.lastIndexOf(array, "a", 1));
-    strictEqual(2,  smodules.a.lastIndexOf(array, "a", -2));
-    strictEqual(2,  smodules.a.lastIndexOf(array, "a", 3));
-    strictEqual(2,  smodules.a.lastIndexOf(array, "a", -1));
-    strictEqual(-1, smodules.a.lastIndexOf(array, "z"));
-    start();
+    assert.strictEqual(2,  smodules.a.lastIndexOf(array, "a"));
+    assert.strictEqual(0,  smodules.a.lastIndexOf(array, "a", 0));
+    assert.strictEqual(-1, smodules.a.lastIndexOf(array, "a", -5));
+    assert.strictEqual(0,  smodules.a.lastIndexOf(array, "a", -4));
+    assert.strictEqual(0,  smodules.a.lastIndexOf(array, "a", 1));
+    assert.strictEqual(2,  smodules.a.lastIndexOf(array, "a", -2));
+    assert.strictEqual(2,  smodules.a.lastIndexOf(array, "a", 3));
+    assert.strictEqual(2,  smodules.a.lastIndexOf(array, "a", -1));
+    assert.strictEqual(-1, smodules.a.lastIndexOf(array, "z"));
 });
 
-test("forEach", function() {
+QUnit.test("forEach", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = "";
     smodules.a.forEach(array, function(element, idx) {
         result += "[" + idx + ":" + element + "]";
     });
-    strictEqual("[0:a][1:b][2:a][3:c]", result);
-
-    start();
+    assert.strictEqual("[0:a][1:b][2:a][3:c]", result);
 });
 
-test("filter", function() {
+QUnit.test("filter", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.filter(array, function(element) {
         return element === "a";
     });
-    strictEqual(2, result.length);
-    strictEqual("a", result[0]);
-    strictEqual("a", result[1]);
+    assert.strictEqual(2, result.length);
+    assert.strictEqual("a", result[0]);
+    assert.strictEqual("a", result[1]);
 
     result = smodules.a.filter(array, function(element, idx) {
         return idx % 2;
     });
-    strictEqual(2, result.length);
-    strictEqual("b", result[0]);
-    strictEqual("c", result[1]);
-
-    start();
+    assert.strictEqual(2, result.length);
+    assert.strictEqual("b", result[0]);
+    assert.strictEqual("c", result[1]);
 });
 
-test("every", function() {
+QUnit.test("every", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.every(array, function(element) {
         return (/^\w+$/).test(element);
     });
-    strictEqual(true, result);
+    assert.strictEqual(true, result);
 
     result = smodules.a.every(array, function(element) {
         return element === "a";
     });
-    strictEqual(false, result);
-
-    start();
+    assert.strictEqual(false, result);
 });
 
-test("some", function() {
+QUnit.test("some", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.some(array, function(element) {
         return typeof element === "string";
     });
-    strictEqual(true, result);
+    assert.strictEqual(true, result);
 
     result = smodules.a.some(array, function(element) {
         return typeof element === "number";
     });
-    strictEqual(false, result);
-
-    start();
+    assert.strictEqual(false, result);
 });
 
-test("map", function() {
+QUnit.test("map", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.map(array, function(element) {
         return element.toUpperCase();
     });
-    strictEqual(4, result.length);
-    strictEqual("A", result[0]);
-    strictEqual("B", result[1]);
-    strictEqual("A", result[2]);
-    strictEqual("C", result[3]);
-    start();
+    assert.strictEqual(4, result.length);
+    assert.strictEqual("A", result[0]);
+    assert.strictEqual("B", result[1]);
+    assert.strictEqual("A", result[2]);
+    assert.strictEqual("C", result[3]);
 });
 
-test("reduce - with initial value", function() {
+QUnit.test("reduce - with initial value", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.reduce(array, function(memo, current, idx) {
         return memo + "[" + idx + ":" + current + "]";
     }, "");
-    strictEqual("[0:a][1:b][2:a][3:c]", result);
+    assert.strictEqual("[0:a][1:b][2:a][3:c]", result);
 
     result = smodules.a.reduce([], function(memo, current) {
         return memno + "[" + memo + "]";
     }, "");
-    strictEqual("", result);
+    assert.strictEqual("", result);
 
     result = smodules.a.reduce(array, function(memo, current) {
         memo[current] = memo.hasOwnProperty(current) ? (memo[current] + 1) : 1;
         return memo;
     }, {});
-    strictEqual(2, result.a);
-    strictEqual(1, result.b);
-    strictEqual(1, result.c);
-
-    start();
+    assert.strictEqual(2, result.a);
+    assert.strictEqual(1, result.b);
+    assert.strictEqual(1, result.c);
 });
 
-test("reduce - without initial value", function() {
+QUnit.test("reduce - without initial value", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.reduce(array, function(memo, current, idx) {
         return memo + "[" + idx + ":" + current + "]";
     });
-    strictEqual("a[1:b][2:a][3:c]", result);
+    assert.strictEqual("a[1:b][2:a][3:c]", result);
 
-    raises(function() {
+    assert.raises(function() {
         result = smodules.a.reduce([], function(memo, current) {
             return memno + "[" + memo + "]";
         });
     }, TypeError);
-
-    start();
 });
 
-test("reduceRight - with initial value", function() {
+QUnit.test("reduceRight - with initial value", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.reduceRight(array, function(memo, current, idx) {
         return memo + "[" + idx + ":" + current + "]";
     }, "");
-    strictEqual("[3:c][2:a][1:b][0:a]", result);
+    assert.strictEqual("[3:c][2:a][1:b][0:a]", result);
 
     result = smodules.a.reduceRight([], function(memo, current) {
         return memno + "[" + memo + "]";
     }, "");
-    strictEqual("", result);
+    assert.strictEqual("", result);
 
     result = smodules.a.reduceRight(array, function(memo, current) {
         memo[current] = memo.hasOwnProperty(current) ? (memo[current] + 1) : 1;
         return memo;
     }, {});
-    strictEqual(2, result.a);
-    strictEqual(1, result.b);
-    strictEqual(1, result.c);
-
-    start();
+    assert.strictEqual(2, result.a);
+    assert.strictEqual(1, result.b);
+    assert.strictEqual(1, result.c);
 });
 
-test("reduceRight - without initial value", function() {
+QUnit.test("reduceRight - without initial value", function(assert) {
     var array = ["a", "b", "a", "c"], result;
 
     result = smodules.a.reduceRight(array, function(memo, current, idx) {
         return memo + "[" + idx + ":" + current + "]";
     });
-    strictEqual("c[2:a][1:b][0:a]", result);
+    assert.strictEqual("c[2:a][1:b][0:a]", result);
 
-    raises(function() {
+    assert.raises(function() {
         result = smodules.a.reduceRight([], function(memo, current) {
             return memno + "[" + memo + "]";
         });
     }, TypeError);
-
-    start();
 });
