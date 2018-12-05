@@ -1,6 +1,6 @@
-module("smodules.mod.superior");
+QUnit.module("smodules.mod.superior");
 
-test("simple test", function() {
+QUnit.test("simple test", function(assert) {
     var base = function() {
         var that = {};
 
@@ -26,5 +26,5 @@ test("simple test", function() {
 
     var s = sub();
 
-    strictEqual("base sub", s.say());
+    assert.strictEqual("base sub", s.say());
 });
