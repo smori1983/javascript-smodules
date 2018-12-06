@@ -15,5 +15,12 @@
             "type": "GPL-2.0",
             "url": "http://www.opensource.org/licenses/GPL-2.0"
         }
-    ]
+    ],
+    "devDependencies": {
+        "eslint": "^5.9.0",
+        "grunt": "^1.0.3",
+        "grunt-contrib-concat": "^1.0.1",
+        "grunt-eslint": "^21.0.0"
+    },
+    "dependencies": {}
 }
