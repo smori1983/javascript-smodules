@@ -234,7 +234,7 @@ smodules.templateParser = function() {
     var parseVar = function() {
         var s = next("$");
 
-        while (/[\w\.]/.test(ch)) {
+        while (/[\w.]/.test(ch)) {
             s += next(ch);
         }
 
@@ -312,7 +312,7 @@ smodules.templateParser = function() {
     };
 
     var parseNumber = function() {
-        var value, matched = text.slice(ptr).match(/^[\+\-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][\+\-]?\d+)?/);
+        var value, matched = text.slice(ptr).match(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
 
         if (matched && !isNaN(value = +(matched[0]))) {
             next(matched[0]);
@@ -657,7 +657,7 @@ smodules.templateParser = function() {
 
                 skipWhitespace();
 
-                while (/[\w\-]/.test(ch)) {
+                while (/[\w-]/.test(ch)) {
                     s += next(ch);
                 }
 
