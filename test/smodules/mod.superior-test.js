@@ -1,11 +1,11 @@
-QUnit.module("smodules.mod.superior");
+QUnit.module('smodules.mod.superior');
 
-QUnit.test("simple test", function(assert) {
+QUnit.test('simple test', function(assert) {
     var base = function() {
         var that = {};
 
         that.say = function() {
-            return "base";
+            return 'base';
         };
 
         return that;
@@ -14,11 +14,11 @@ QUnit.test("simple test", function(assert) {
     var sub = function() {
         var that = base(),
             parent = {
-                say: smodules.mod.superior(that, "say")
+                say: smodules.mod.superior(that, 'say'),
             };
 
         that.say = function() {
-            return parent.say() + " sub";
+            return parent.say() + ' sub';
         };
 
         return that;
@@ -26,5 +26,5 @@ QUnit.test("simple test", function(assert) {
 
     var s = sub();
 
-    assert.strictEqual("base sub", s.say());
+    assert.strictEqual('base sub', s.say());
 });

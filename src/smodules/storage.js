@@ -12,7 +12,7 @@ smodules.storage = (function() {
     that.get = function(key, defaultValue) {
         var value = localStorage.getItem(key);
 
-        if (typeof defaultValue === "undefined") {
+        if (typeof defaultValue === 'undefined') {
             return value;
         } else {
             return value === null ? defaultValue : value;
@@ -22,7 +22,7 @@ smodules.storage = (function() {
     that.getJSON = function(key, defaultObject) {
         var value = localStorage.getItem(key);
 
-        if (typeof defaultObject === "undefined") {
+        if (typeof defaultObject === 'undefined') {
             return value === null ? {} : JSON.parse(value);
         } else {
             return value === null ? defaultObject : JSON.parse(value);

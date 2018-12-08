@@ -18,7 +18,7 @@ smodules.template = function() {
     };
 
     var _isEmbedded = function(source) {
-        return source.indexOf("#") === 0;
+        return source.indexOf('#') === 0;
     };
 
     var _preFetchJobList = (function() {
@@ -42,7 +42,7 @@ smodules.template = function() {
             });
 
             smodules.a.forEach(finished, function(job) {
-                if (typeof job.callback === "function") {
+                if (typeof job.callback === 'function') {
                     job.callback();
                 }
             });
@@ -55,7 +55,7 @@ smodules.template = function() {
             },
             notifyFetched: function() {
                 check();
-            }
+            },
         };
     })();
 
@@ -83,52 +83,52 @@ smodules.template = function() {
                             queue = _remoteQueue.getFrom(source);
                             _execute(source, queue.bindParams, queue.callback);
                         }
-                    }
+                    },
                 });
             }
         };
     })();
 
     var _registerFromHTML = function(source, callback) {
-        if ($(source)[0].tagName.toLowerCase() === "textarea") {
+        if ($(source)[0].tagName.toLowerCase() === 'textarea') {
             _register(source, $(source).val());
         } else {
             _register(source, $(source).html());
         }
-        if (typeof callback === "function") {
+        if (typeof callback === 'function') {
             callback();
         }
     };
 
     var _registerFromString = function(source, callback) {
         _register(source, source);
-        if (typeof callback === "function") {
+        if (typeof callback === 'function') {
             callback();
         }
     };
 
     var _execute = function(source, bindParams, callback) {
         if (_templates.has(source)) {
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 callback(_bind(source, bindParams));
             } else {
                 return _bind(source, bindParams);
             }
         } else if (_isRemoteFile(source)) {
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 _registerFromRemote(source);
                 _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
             }
         } else if (_isEmbedded(source)) {
             _registerFromHTML(source);
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 callback(_bind(source, bindParams));
             } else {
                 return _bind(source, bindParams);
             }
         } else {
             _registerFromString(source);
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 callback(_bind(source, bindParams));
             } else {
                 return _bind(source, bindParams);
@@ -140,7 +140,7 @@ smodules.template = function() {
         var src;
 
         var exception = function(message) {
-            throw new Error("smodules.template - " + message + " in source " + src);
+            throw new Error('smodules.template - ' + message + ' in source ' + src);
         };
 
         var getValue = function(keys, params, asis) {
@@ -149,7 +149,7 @@ smodules.template = function() {
             for ( ; pIdx >= 0; pIdx--) {
                 value = params[pIdx];
                 for (i = 0; i < len; i++) {
-                    if (typeof value[keys[i]] === "undefined") {
+                    if (typeof value[keys[i]] === 'undefined') {
                         value = null;
                         break;
                     } else {
@@ -164,7 +164,7 @@ smodules.template = function() {
             if (asis) {
                 return value;
             } else {
-                return value === null ? "" : value.toString();
+                return value === null ? '' : value.toString();
             }
         };
 
@@ -172,6 +172,7 @@ smodules.template = function() {
             if (_filters.has(name)) {
                 return _filters.get(name);
             } else {
+                // eslint-disable-next-line quotes
                 exception("filter '" + name + "' not found");
             }
         };
@@ -186,49 +187,49 @@ smodules.template = function() {
 
         var loop = function(blocks, params) {
             return smodules.a.reduce(blocks, function(output, block) {
-                if (block.type === "normal" || block.type === "literal") {
+                if (block.type === 'normal' || block.type === 'literal') {
                     return output + block.expr;
-                } else if (block.type === "holder") {
+                } else if (block.type === 'holder') {
                     return output + applyFilters(getValue(block.keys, params), block.filters);
-                } else if (block.type === "if") {
+                } else if (block.type === 'if') {
                     return output + loopIf(block, params);
-                } else if (block.type === "for") {
+                } else if (block.type === 'for') {
                     return output + loopFor(block, params);
                 } else {
                     return output;
                 }
-            }, "");
+            }, '');
         };
 
         var evaluateComp = function(lval, rval, comp) {
-            if (comp === "===") {
+            if (comp === '===') {
                 return lval === rval;
-            } else if (comp === "==") {
-                return lval == rval;
-            } else if (comp === "!==") {
+            } else if (comp === '==') {
+                return lval == rval; // eslint-disable-line eqeqeq
+            } else if (comp === '!==') {
                 return lval !== rval;
-            } else if (comp === "!=") {
-                return lval != rval;
-            } else if (comp === "lte") {
+            } else if (comp === '!=') {
+                return lval != rval; // eslint-disable-line eqeqeq
+            } else if (comp === 'lte') {
                 return lval <= rval;
-            } else if (comp === "lt") {
+            } else if (comp === 'lt') {
                 return lval < rval;
-            } else if (comp === "gte") {
+            } else if (comp === 'gte') {
                 return lval >= rval;
-            } else if (comp === "gt") {
+            } else if (comp === 'gt') {
                 return lval > rval;
             } else {
-                exception("invalid comparer");
+                exception('invalid comparer');
             }
         };
 
         var evaluateAndOr = function(lval, rval, type) {
-            if (type === "and") {
+            if (type === 'and') {
                 return lval && rval;
-            } else if (type === "or") {
+            } else if (type === 'or') {
                 return lval || rval;
             } else {
-                exception("unknown operator");
+                exception('unknown operator');
             }
         };
 
@@ -238,15 +239,15 @@ smodules.template = function() {
             for ( ; i < len; i++) {
                 section = conditions[i];
 
-                if (section.type === "value") {
+                if (section.type === 'value') {
                     result.push(section.value || section.expr);
-                } else if (section.type === "var") {
+                } else if (section.type === 'var') {
                     result.push(getValue(section.keys, params, true));
-                } else if (section.type === "comp") {
+                } else if (section.type === 'comp') {
                     rval = result.pop();
                     lval = result.pop();
                     result.push(evaluateComp(lval, rval, section.expr));
-                } else if (section.type === "andor") {
+                } else if (section.type === 'andor') {
                     rval = result.pop();
                     lval = result.pop();
                     result.push(evaluateAndOr(lval, rval, section.expr));
@@ -254,20 +255,20 @@ smodules.template = function() {
             }
 
             if (result.length !== 1) {
-                exception("invalid condition expression");
+                exception('invalid condition expression');
             }
 
             return result[0];
         };
 
         var loopIf = function(block, params) {
-            var i = 0, len = block.sections.length, section, sectionResult, output = "";
+            var i = 0, len = block.sections.length, section, output = '';
 
             for ( ; i < len; i++) {
                 section = block.sections[i];
 
-                if (section.header.type === "if" || section.header.type === "elseif") {
-                    if ((sectionResult = evaluate(section.header.stack, params))) {
+                if (section.header.type === 'if' || section.header.type === 'elseif') {
+                    if (evaluate(section.header.stack, params)) {
                         output = loop(section.blocks, params);
                         break;
                     }
@@ -280,7 +281,7 @@ smodules.template = function() {
         };
 
         var loopFor = function(block, params) {
-            var array = getValue(block.header.array, params, true), output = "", additional;
+            var array = getValue(block.header.array, params, true), output = '', additional;
 
             if ($.isArray(array)) {
                 smodules.a.forEach(array, function(value, idx) {
@@ -312,7 +313,7 @@ smodules.template = function() {
     that.bind = function(source, bindParams) {
         return {
             get: function(callback) {
-                if (typeof callback === "function") {
+                if (typeof callback === 'function') {
                     _execute(source, bindParams, function(output) {
                         callback(output);
                     });
@@ -329,19 +330,19 @@ smodules.template = function() {
                 _execute(source, bindParams, function(output) {
                     $(output).insertBefore(target);
                 });
-            }
+            },
         };
     };
 
     that.addFilter = function(name, func) {
-        if (typeof func === "function") {
+        if (typeof func === 'function') {
             _filters.add(name, func);
         }
         return that;
     };
 
     that.preFetch = function(source, callback) {
-        var sourceList = (typeof source === "string") ? [].concat(source) : source;
+        var sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
         if ($.isArray(sourceList)) {
             smodules.a.forEach(sourceList, function(source) {
@@ -359,11 +360,11 @@ smodules.template = function() {
     };
 
     that.setRemoteFilePattern = function(arg) {
-        if (typeof arg === "string") {
+        if (typeof arg === 'string') {
             _testRemoteFile = function(file) {
                 return file.indexOf(arg) === 0;
             };
-        } else if (typeof arg === "object" && typeof arg.test === "function" && (/^\/.+\/$/).test(arg.toString())) {
+        } else if (typeof arg === 'object' && typeof arg.test === 'function' && (/^\/.+\/$/).test(arg.toString())) {
             _testRemoteFile = function(file) {
                 return arg.test(file);
             };
@@ -376,7 +377,7 @@ smodules.template = function() {
     };
 
     that.clearTemplateCache = function(source) {
-        if (typeof source === "string") {
+        if (typeof source === 'string') {
             _templates.remove(source);
         } else {
             _templates.clear();
@@ -385,13 +386,13 @@ smodules.template = function() {
     };
 
     // default filters
-    that.addFilter("h", (function() {
+    that.addFilter('h', (function() {
         var list = {
-            "<": "&lt;",
-            ">": "&gt;",
-            "&": "&amp;",
-            '"': "&quot;",
-            "'": "&#039;"
+            '<': '&lt;',
+            '>': '&gt;',
+            '&': '&amp;',
+            '"': '&quot;',
+            "'": '&#039;', // eslint-disable-line quotes
         };
 
         return function(value) {
@@ -401,20 +402,20 @@ smodules.template = function() {
         };
     })());
 
-    that.addFilter("default", function(value, defaultValue) {
+    that.addFilter('default', function(value, defaultValue) {
         return value.length === 0 ? defaultValue : value;
     });
 
-    that.addFilter("upper", function(value) {
+    that.addFilter('upper', function(value) {
         return value.toLocaleUpperCase();
     });
 
-    that.addFilter("lower", function(value) {
+    that.addFilter('lower', function(value) {
         return value.toLocaleLowerCase();
     });
 
-    that.addFilter("plus", function(value, plus) {
-        if (isFinite(value) && typeof plus === "number" && isFinite(plus)) {
+    that.addFilter('plus', function(value, plus) {
+        if (isFinite(value) && typeof plus === 'number' && isFinite(plus)) {
             return (+(value) + plus).toString();
         } else {
             return value;

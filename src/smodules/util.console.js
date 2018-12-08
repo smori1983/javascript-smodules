@@ -23,6 +23,7 @@ smodules.util.console = (function() {
 
     that.log = function(message) {
         if (on) {
+            // eslint-disable-next-line no-console
             console.log(message);
         }
         return that;
@@ -30,6 +31,7 @@ smodules.util.console = (function() {
 
     that.time = function(tag) {
         if (on) {
+            // eslint-disable-next-line no-console
             console.time(tag);
         }
         return that;
@@ -37,10 +39,11 @@ smodules.util.console = (function() {
 
     that.timeEnd = function(tag) {
         if (on) {
+            // eslint-disable-next-line no-console
             console.timeEnd(tag);
         }
         return that;
     };
-    
+
     return that;
 })();
