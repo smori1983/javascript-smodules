@@ -40,5 +40,6 @@ grunt.loadNpmTasks("grunt-contrib-concat");
 grunt.loadNpmTasks('grunt-eslint');
 
 grunt.registerTask("default", ["eslint", "concat"]);
+grunt.registerTask("lint", ["eslint"]);
 
 };
