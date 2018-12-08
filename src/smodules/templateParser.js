@@ -9,13 +9,13 @@ smodules.templateParser = function() {
         at;
 
     var exception = function(message) {
-        throw new Error("smodules.templateParser - " + message + " in source " + src + " [" + line + "," + at + "]");
+        throw new Error('smodules.templateParser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
     };
 
     var next = (function(expr, replace) {
         var position = function(expr) {
             while (expr.length > 0) {
-                if (expr.slice(0, 1) === "\n") {
+                if (expr.slice(0, 1) === '\n') {
                     line++;
                     at = 1;
                 } else {
@@ -29,7 +29,7 @@ smodules.templateParser = function() {
             expr = expr || ch;
 
             if (text.indexOf(expr, ptr) !== ptr) {
-                exception("syntax error");
+                exception('syntax error');
             }
 
             position(expr);
@@ -42,7 +42,7 @@ smodules.templateParser = function() {
     })();
 
     var skipWhitespace = function() {
-        var s = "";
+        var s = '';
 
         while (/\s/.test(ch)) {
             s += next(ch);
@@ -64,13 +64,13 @@ smodules.templateParser = function() {
     };
 
     var eatLeftTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("left");
+        next('left');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "{";
+        return '{';
     };
 
     var readRightTag = function() {
@@ -78,13 +78,13 @@ smodules.templateParser = function() {
     };
 
     var eatRightTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("right");
+        next('right');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "}";
+        return '}';
     };
 
     var readLiteralTag = function() {
@@ -92,13 +92,13 @@ smodules.templateParser = function() {
     };
 
     var eatLiteralTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("literal");
+        next('literal');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "{literal}";
+        return '{literal}';
     };
 
     var readEndLiteralTag = function() {
@@ -106,15 +106,15 @@ smodules.templateParser = function() {
     };
 
     var eatEndLiteralTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("/");
+        next('/');
         skipWhitespace();
-        next("literal");
+        next('literal');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "{/literal}";
+        return '{/literal}';
     };
 
     var readIfTag = function() {
@@ -122,12 +122,12 @@ smodules.templateParser = function() {
     };
 
     var eatIfTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("if");
+        next('if');
         skipWhitespace();
 
-        return "{if ";
+        return '{if ';
     };
 
     var readElseifTag = function() {
@@ -135,12 +135,12 @@ smodules.templateParser = function() {
     };
 
     var eatElseifTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("elseif");
+        next('elseif');
         skipWhitespace();
 
-        return "{elseif ";
+        return '{elseif ';
     };
 
     var readElseTag = function() {
@@ -148,13 +148,13 @@ smodules.templateParser = function() {
     };
 
     var eatElseTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("else");
+        next('else');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "{else}";
+        return '{else}';
     };
 
     // NOTE: currently not used.
@@ -163,15 +163,15 @@ smodules.templateParser = function() {
     };
 
     var eatEndIfTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("/");
+        next('/');
         skipWhitespace();
-        next("if");
+        next('if');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "{/if}";
+        return '{/if}';
     };
 
     var readForTag = function() {
@@ -179,12 +179,12 @@ smodules.templateParser = function() {
     };
 
     var eatForTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("for");
+        next('for');
         skipWhitespace();
 
-        return "{for ";
+        return '{for ';
     };
 
     var readEndForTag = function() {
@@ -192,15 +192,15 @@ smodules.templateParser = function() {
     };
 
     var eatEndForTag = function() {
-        next("{");
+        next('{');
         skipWhitespace();
-        next("/");
+        next('/');
         skipWhitespace();
-        next("for");
+        next('for');
         skipWhitespace();
-        next("}");
+        next('}');
 
-        return "{/for}";
+        return '{/for}';
     };
 
     var readHolderTag = function() {
@@ -214,14 +214,14 @@ smodules.templateParser = function() {
     };
 
     var eatTmpVar = function() {
-        var s = next("$");
+        var s = next('$');
 
         while (/\w/.test(ch)) {
             s += next(ch);
         }
 
-        if (s === "$") {
-            exception("tmp variable not found");
+        if (s === '$') {
+            exception('tmp variable not found');
         }
 
         return s.slice(1);
@@ -232,22 +232,22 @@ smodules.templateParser = function() {
     };
 
     var parseVar = function() {
-        var s = next("$");
+        var s = next('$');
 
         while (/[\w.]/.test(ch)) {
             s += next(ch);
         }
 
-        if (s === "$") {
-            exception("variable not found");
+        if (s === '$') {
+            exception('variable not found');
         } else if (/^\$\.|\.$|\.\./.test(s)) {
-            exception("invalid variable expression");
+            exception('invalid variable expression');
         }
 
         return {
-            type: "var",
+            type: 'var',
             expr: s,
-            keys: s.slice(1).split("."),
+            keys: s.slice(1).split('.'),
         };
     };
 
@@ -257,8 +257,8 @@ smodules.templateParser = function() {
 
     var parseNull = function() {
         return {
-            type:  "value",
-            expr:  next("null"),
+            type:  'value',
+            expr:  next('null'),
             value: null,
         };
     };
@@ -269,8 +269,8 @@ smodules.templateParser = function() {
 
     var parseTrue = function() {
         return {
-            type:  "value",
-            expr:  next("true"),
+            type:  'value',
+            expr:  next('true'),
             value: true,
         };
     };
@@ -281,13 +281,14 @@ smodules.templateParser = function() {
 
     var parseFalse = function() {
         return {
-            type:  "value",
-            expr:  next("false"),
+            type:  'value',
+            expr:  next('false'),
             value: false,
         };
     };
 
     var readString = function() {
+        // eslint-disable-next-line quotes
         return ch === "'" || ch === '"';
     };
 
@@ -298,17 +299,17 @@ smodules.templateParser = function() {
             next(matched[0]);
 
             return {
-                type:  "value",
+                type:  'value',
                 expr:  matched[0],
-                value: matched[0].slice(1, -1).replace("\\" + matched[1], matched[1]),
+                value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
             };
         } else {
-            exception("string expression not closed");
+            exception('string expression not closed');
         }
     };
 
     var readNumber = function() {
-        return ch === "+" || ch === "-" || (ch >= "0" && ch <= "9");
+        return ch === '+' || ch === '-' || (ch >= '0' && ch <= '9');
     };
 
     var parseNumber = function() {
@@ -318,12 +319,12 @@ smodules.templateParser = function() {
             next(matched[0]);
 
             return {
-                type:  "value",
+                type:  'value',
                 expr:  matched[0],
                 value: value,
             };
         } else {
-            exception("invalid number expression");
+            exception('invalid number expression');
         }
     };
 
@@ -343,7 +344,7 @@ smodules.templateParser = function() {
         } else if (readNumber()) {
             return parseNumber();
         } else {
-            exception("value shoud be written");
+            exception('value shoud be written');
         }
     };
 
@@ -354,16 +355,17 @@ smodules.templateParser = function() {
     var parseAndOr = function() {
         var expr;
 
-        if (read("and")) {
-            expr = next("and");
-        } else if (read("or")) {
-            expr = next("or");
+        if (read('and')) {
+            expr = next('and');
+        } else if (read('or')) {
+            expr = next('or');
         } else {
+            // eslint-disable-next-line quotes
             exception("'and' or 'or' should be written");
         }
 
         return {
-            type: "andor",
+            type: 'andor',
             expr: expr,
         };
     };
@@ -380,34 +382,34 @@ smodules.templateParser = function() {
         if ((matched = text.slice(ptr).match(compRegex))) {
             expr = next(matched[0]);
         } else {
-            exception("comparer should be written");
+            exception('comparer should be written');
         }
 
         return {
-            type: "comp",
+            type: 'comp',
             expr: expr,
         };
     };
 
     var readRoundBracket = function() {
-        return ch === "(";
+        return ch === '(';
     };
 
     var parseRoundBracket = function() {
         return {
-            type: "roundBracket",
-            expr: next("("),
+            type: 'roundBracket',
+            expr: next('('),
         };
     };
 
     var readEndRoundBracket = function() {
-        return ch === ")";
+        return ch === ')';
     };
 
     var parseEndRoundBracket = function() {
         return {
-            type: "endRoundBracket",
-            expr: next(")"),
+            type: 'endRoundBracket',
+            expr: next(')'),
         };
     };
 
@@ -415,23 +417,23 @@ smodules.templateParser = function() {
         var getReversePolish = (function() {
             /* eslint-disable array-bracket-spacing */
             var state = {
-                "start":           ["roundBracket",                    "value", "var",                  "error"],
-                "roundBracket":    ["roundBracket",                    "value", "var",                  "error"],
-                "endRoundBracket": [                "endRoundBracket",                         "andor", "error"],
-                "value":           [                "endRoundBracket",                 "comp", "andor", "error"],
-                "var":             [                "endRoundBracket",                 "comp", "andor", "error"],
-                "comp":            [                                   "value", "var",                  "error"],
-                "andor":           ["roundBracket",                    "value", "var",                  "error"],
+                'start':           ['roundBracket',                    'value', 'var',                  'error'],
+                'roundBracket':    ['roundBracket',                    'value', 'var',                  'error'],
+                'endRoundBracket': [                'endRoundBracket',                         'andor', 'error'],
+                'value':           [                'endRoundBracket',                 'comp', 'andor', 'error'],
+                'var':             [                'endRoundBracket',                 'comp', 'andor', 'error'],
+                'comp':            [                                   'value', 'var',                  'error'],
+                'andor':           ['roundBracket',                    'value', 'var',                  'error'],
             };
             /* eslint-enable */
 
             var method = {
-                "roundBracket":    { read: readRoundBracket,    parse: parseRoundBracket },
-                "endRoundBracket": { read: readEndRoundBracket, parse: parseEndRoundBracket },
-                "value":           { read: readValue,           parse: parseValue },
-                "var":             { read: readVar,             parse: parseVar },
-                "comp":            { read: readComp,            parse: parseComp },
-                "andor":           { read: readAndOr,           parse: parseAndOr },
+                'roundBracket':    { read: readRoundBracket,    parse: parseRoundBracket },
+                'endRoundBracket': { read: readEndRoundBracket, parse: parseEndRoundBracket },
+                'value':           { read: readValue,           parse: parseValue },
+                'var':             { read: readVar,             parse: parseVar },
+                'comp':            { read: readComp,            parse: parseComp },
+                'andor':           { read: readAndOr,           parse: parseAndOr },
             };
 
             var history = (function() {
@@ -439,7 +441,7 @@ smodules.templateParser = function() {
 
                 return {
                     init: function() {
-                        stack = ["start"];
+                        stack = ['start'];
                     },
                     add: function(type) {
                         stack.push(type);
@@ -459,26 +461,27 @@ smodules.templateParser = function() {
                         operandOperatorBalance = 0;
                     },
                     add: function(type) {
-                        if (type === "var" || type === "value") {
+                        if (type === 'var' || type === 'value') {
                             operandOperatorBalance++;
-                        } else if (type === "comp" || type === "andor") {
+                        } else if (type === 'comp' || type === 'andor') {
                             operandOperatorBalance--;
-                        } else if (type === "roundBracket") {
+                        } else if (type === 'roundBracket') {
                             roundBracketBalance++;
-                        } else if (type === "endRoundBracket") {
+                        } else if (type === 'endRoundBracket') {
                             roundBracketBalance--;
                         }
 
                         if (roundBracketBalance < 0) {
+                            // eslint-disable-next-line quotes
                             exception("can not use ')' here");
                         }
                     },
                     finish: function() {
                         if (roundBracketBalance !== 0) {
-                            exception("invalid usage of round bracket");
+                            exception('invalid usage of round bracket');
                         }
                         if (operandOperatorBalance !== 1) {
-                            exception("invalid usage of operand or operator");
+                            exception('invalid usage of operand or operator');
                         }
                     },
                 };
@@ -486,13 +489,13 @@ smodules.templateParser = function() {
 
             var getOrder = (function() {
                 var orders = {
-                    "endRoundBracket": 1,
-                    "or":              2,
-                    "and":             3,
-                    "comp":            4,
-                    "value":           5,
-                    "var":             5,
-                    "roundBracket":    6,
+                    'endRoundBracket': 1,
+                    'or':              2,
+                    'and':             3,
+                    'comp':            4,
+                    'value':           5,
+                    'var':             5,
+                    'roundBracket':    6,
                 };
 
                 return function(section) {
@@ -506,11 +509,11 @@ smodules.templateParser = function() {
                 for ( ; i < size; i++) {
                     type = list[i];
 
-                    if (type === "error") {
-                        exception("invalid condition expression");
+                    if (type === 'error') {
+                        exception('invalid condition expression');
                     } else if (method[type].read()) {
-                        if (type === "comp" && history.get(2) === "comp") {
-                            exception("can not write comparer here");
+                        if (type === 'comp' && history.get(2) === 'comp') {
+                            exception('can not write comparer here');
                         }
                         result = method[type].parse();
                         break;
@@ -528,7 +531,7 @@ smodules.templateParser = function() {
                 history.init();
                 sectionTypeStat.init();
                 while (ptr < len) {
-                    if (ch === "}") {
+                    if (ch === '}') {
                         break;
                     } else {
                         section = parse();
@@ -538,7 +541,7 @@ smodules.templateParser = function() {
                     while (stack.length > 0) {
                         stackTop = stack.pop();
 
-                        if (section.order <= stackTop.order && stackTop.type !== "roundBracket") {
+                        if (section.order <= stackTop.order && stackTop.type !== 'roundBracket') {
                             polish.push(stackTop);
                         } else {
                             stack.push(stackTop);
@@ -546,7 +549,7 @@ smodules.templateParser = function() {
                         }
                     }
 
-                    if (section.type === "endRoundBracket") {
+                    if (section.type === 'endRoundBracket') {
                         stack.pop();
                     } else {
                         stack.push(section);
@@ -569,20 +572,20 @@ smodules.templateParser = function() {
 
             if (readIfTag()) {
                 eatIfTag();
-                type = "if";
+                type = 'if';
             } else if (readElseifTag()) {
                 eatElseifTag();
-                type = "elseif";
+                type = 'elseif';
             } else if (readElseTag()) {
                 eatElseTag();
-                type = "else";
+                type = 'else';
             } else {
-                exception("unknown condition expression");
+                exception('unknown condition expression');
             }
 
-            if (type === "if" || type === "elseif") {
+            if (type === 'if' || type === 'elseif') {
                 stack = getReversePolish();
-                next("}");
+                next('}');
             }
 
             return {
@@ -593,10 +596,10 @@ smodules.templateParser = function() {
     })(); // parseCondition()
 
     var parseNormalBlock = function() {
-        var s = "";
+        var s = '';
 
         while (ptr < len) {
-            if (ch === "{") {
+            if (ch === '{') {
                 if (readLeftTag()) {
                     s += eatLeftTag();
                 } else if (readRightTag()) {
@@ -604,26 +607,26 @@ smodules.templateParser = function() {
                 } else {
                     break;
                 }
-            } else if (ch === "}") {
-                exception("syntax error");
+            } else if (ch === '}') {
+                exception('syntax error');
             } else {
                 s += next(ch);
             }
         }
 
         return {
-            type: "normal",
+            type: 'normal',
             expr: s,
         };
     };
 
     var parseLiteralBlock = function() {
-        var s = "", closed = false, startLine = line, startAt = at;
+        var s = '', closed = false, startLine = line, startAt = at;
 
         eatLiteralTag();
 
         while (ptr < len) {
-            if (ch === "{") {
+            if (ch === '{') {
                 if (readLeftTag()) {
                     s += eatLeftTag();
                 } else if (readRightTag()) {
@@ -641,11 +644,11 @@ smodules.templateParser = function() {
         }
 
         if (!closed) {
-            exception("literal block starts at [" + startLine + ", " + startAt + "] not closed by {/literal}");
+            exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by {/literal}');
         }
 
         return {
-            type: "literal",
+            type: 'literal',
             expr: s,
         };
     };
@@ -653,7 +656,7 @@ smodules.templateParser = function() {
     var parseHolderBlock = (function() {
         var getFilterSection = (function() {
             var getFilterNameSection = function() {
-                var s = "";
+                var s = '';
 
                 skipWhitespace();
 
@@ -661,8 +664,8 @@ smodules.templateParser = function() {
                     s += next(ch);
                 }
 
-                if (s === "") {
-                    exception("filter name not found");
+                if (s === '') {
+                    exception('filter name not found');
                 }
 
                 return {
@@ -672,28 +675,28 @@ smodules.templateParser = function() {
             };
 
             var getFilterArgsSection = function() {
-                var s = "", args = [], arg;
+                var s = '', args = [], arg;
 
                 skipWhitespace();
 
-                if (ch === ":") {
-                    s += next(":");
+                if (ch === ':') {
+                    s += next(':');
 
                     while (ptr < len) {
                         skipWhitespace();
 
-                        if (ch === "n") {
+                        if (ch === 'n') {
                             arg = parseNull();
-                        } else if (ch === "t") {
+                        } else if (ch === 't') {
                             arg = parseTrue();
-                        } else if (ch === "f") {
+                        } else if (ch === 'f') {
                             arg = parseFalse();
-                        } else if (ch === "'" || ch === '"') {
+                        } else if (ch === "'" || ch === '"') { // eslint-disable-line quotes
                             arg = parseString();
-                        } else if (ch === "-" || ch === "+" || (ch >= "0" && ch <= "9")) {
+                        } else if (ch === '-' || ch === '+' || (ch >= '0' && ch <= '9')) {
                             arg = parseNumber();
                         } else {
-                            exception("invalid filter args");
+                            exception('invalid filter args');
                         }
 
                         s += arg.expr;
@@ -701,9 +704,9 @@ smodules.templateParser = function() {
 
                         skipWhitespace();
 
-                        if (ch === ",") {
-                            s += next(",");
-                        } else if (ch === "|" || ch === "}") {
+                        if (ch === ',') {
+                            s += next(',');
+                        } else if (ch === '|' || ch === '}') {
                             break;
                         }
                     }
@@ -716,12 +719,12 @@ smodules.templateParser = function() {
             }; // getFilterArgsSection()
 
             var mainLoop = function() {
-                var s = "", filters = [], filter, nameSection, argsSection;
+                var s = '', filters = [], filter, nameSection, argsSection;
 
                 while (ptr < len) {
                     filter = {};
 
-                    s += next("|");
+                    s += next('|');
 
                     nameSection = getFilterNameSection();
                     s += nameSection.expr;
@@ -733,10 +736,10 @@ smodules.templateParser = function() {
 
                     filters.push(filter);
 
-                    if (ch === "}") {
+                    if (ch === '}') {
                         break;
-                    } else if (ch !== "|") {
-                        exception("syntax error");
+                    } else if (ch !== '|') {
+                        exception('syntax error');
                     }
                 }
 
@@ -747,11 +750,11 @@ smodules.templateParser = function() {
             };
 
             return function() {
-                var s = "", filters = [], mainResult;
+                var s = '', filters = [], mainResult;
 
                 skipWhitespace();
 
-                if (ch === "|") {
+                if (ch === '|') {
                     mainResult = mainLoop();
 
                     s       = mainResult.expr;
@@ -766,9 +769,9 @@ smodules.templateParser = function() {
         })(); // getFilterSection()
 
         return function() {
-            var s = "", keySection, filterSection;
+            var s = '', keySection, filterSection;
 
-            s += next("{");
+            s += next('{');
 
             skipWhitespace();
 
@@ -778,10 +781,10 @@ smodules.templateParser = function() {
             filterSection = getFilterSection();
             s += filterSection.expr;
 
-            s += next("}");
+            s += next('}');
 
             return {
-                type:    "holder",
+                type:    'holder',
                 expr:    s,
                 keys:    keySection.keys,
                 filters: filterSection.filters,
@@ -797,9 +800,9 @@ smodules.templateParser = function() {
             s += v;
             skipWhitespace();
 
-            if (ch === ",") {
+            if (ch === ',') {
                 k = v;
-                s += next(",");
+                s += next(',');
 
                 skipWhitespace();
                 v = eatTmpVar();
@@ -807,19 +810,19 @@ smodules.templateParser = function() {
                 skipWhitespace();
             }
 
-            s += " ";
+            s += ' ';
             if (!readRegex(/^in\s/)) {
-                exception("invalid for expression");
+                exception('invalid for expression');
             }
-            s += next("in");
+            s += next('in');
             skipWhitespace();
-            s += " ";
+            s += ' ';
 
             array = parseVar();
             s += array.expr;
             skipWhitespace();
 
-            s += next("}");
+            s += next('}');
 
             return {
                 expr:  s,
@@ -836,7 +839,7 @@ smodules.templateParser = function() {
             eatEndForTag();
 
             return {
-                type:   "for",
+                type:   'for',
                 header: header,
                 blocks: blocks,
             };
@@ -855,14 +858,14 @@ smodules.templateParser = function() {
         eatEndIfTag();
 
         return {
-            type:     "if",
+            type:     'if',
             sections: sections,
         };
     }; // parseIfBlock()
 
     var loop = function(result, inBlock) {
         while (ptr < len) {
-            if (ch === "{") {
+            if (ch === '{') {
                 if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
                     break;
                 } else if (readLiteralTag()) {
@@ -874,7 +877,7 @@ smodules.templateParser = function() {
                 } else if (readHolderTag()) {
                     result.push(parseHolderBlock());
                 } else {
-                    exception("unknown tag");
+                    exception('unknown tag');
                 }
             } else {
                 result.push(parseNormalBlock());
@@ -886,7 +889,7 @@ smodules.templateParser = function() {
 
 
     that.parse = function(content, source) {
-        src  = source || "";
+        src  = source || '';
         text = content;
         ptr  = 0;
         ch   = content.charAt(0);

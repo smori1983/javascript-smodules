@@ -9,8 +9,8 @@ smodules.a.indexOf = (function() {
         } else {
             var i = 0, len = array.length, result = -1;
 
-            if (typeof fromIdx === "number" && isFinite(fromIdx)) {
-                i = Math[fromIdx > 0 ? "floor" : "ceil"](fromIdx);
+            if (typeof fromIdx === 'number' && isFinite(fromIdx)) {
+                i = Math[fromIdx > 0 ? 'floor' : 'ceil'](fromIdx);
 
                 if (i < 0) {
                     i = Math.max(len + i, 0);
@@ -38,8 +38,8 @@ smodules.a.lastIndexOf = (function() {
         } else {
             var i = array.length - 1, result = -1;
 
-            if (typeof fromIdx === "number" && isFinite(fromIdx)) {
-                i = Math[fromIdx > 0 ? "floor" : "ceil"](fromIdx);
+            if (typeof fromIdx === 'number' && isFinite(fromIdx)) {
+                i = Math[fromIdx > 0 ? 'floor' : 'ceil'](fromIdx);
 
                 if (i >= 0) {
                     i = Math.min(array.length - 1, i);
@@ -169,7 +169,7 @@ smodules.a.reduce = (function() {
 
             if (!initial) {
                 if (len === 0) {
-                    throw new TypeError("Reduce of empty array with no initial value");
+                    throw new TypeError('Reduce of empty array with no initial value');
                 }
 
                 memo = array[i];
@@ -198,7 +198,7 @@ smodules.a.reduceRight = (function() {
 
             if (!initial) {
                 if (i < 0) {
-                    throw new TypeError("Reduce of empty array with no initial value");
+                    throw new TypeError('Reduce of empty array with no initial value');
                 }
 
                 memo = array[i];

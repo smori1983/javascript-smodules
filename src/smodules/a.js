@@ -1,7 +1,7 @@
 smodules.a = {};
 
 smodules.a.indexOf = (function() {
-    var isNative = typeof Array.prototype.indexOf === "function";
+    var isNative = typeof Array.prototype.indexOf === 'function';
 
     return function(array, item, fromIdx) {
         if (isNative) {
@@ -9,8 +9,8 @@ smodules.a.indexOf = (function() {
         } else {
             var i = 0, len = array.length, result = -1;
 
-            if (typeof fromIdx === "number" && isFinite(fromIdx)) {
-                i = Math[fromIdx > 0 ? "floor" : "ceil"](fromIdx);
+            if (typeof fromIdx === 'number' && isFinite(fromIdx)) {
+                i = Math[fromIdx > 0 ? 'floor' : 'ceil'](fromIdx);
 
                 if (i < 0) {
                     i = Math.max(len + i, 0);
@@ -30,7 +30,7 @@ smodules.a.indexOf = (function() {
 })();
 
 smodules.a.lastIndexOf = (function() {
-    var isNative = typeof Array.prototype.lastIndexOf === "function";
+    var isNative = typeof Array.prototype.lastIndexOf === 'function';
 
     return function(array, item, fromIdx) {
         if (isNative) {
@@ -38,8 +38,8 @@ smodules.a.lastIndexOf = (function() {
         } else {
             var i = array.length - 1, result = -1;
 
-            if (typeof fromIdx === "number" && isFinite(fromIdx)) {
-                i = Math[fromIdx > 0 ? "floor" : "ceil"](fromIdx);
+            if (typeof fromIdx === 'number' && isFinite(fromIdx)) {
+                i = Math[fromIdx > 0 ? 'floor' : 'ceil'](fromIdx);
 
                 if (i >= 0) {
                     i = Math.min(array.length - 1, i);
@@ -61,7 +61,7 @@ smodules.a.lastIndexOf = (function() {
 })();
 
 smodules.a.forEach = (function() {
-    var isNative = typeof Array.prototype.forEach === "function";
+    var isNative = typeof Array.prototype.forEach === 'function';
 
     return function(array, func, context) {
         if (isNative) {
@@ -77,7 +77,7 @@ smodules.a.forEach = (function() {
 })();
 
 smodules.a.filter = (function() {
-    var isNative = typeof Array.prototype.filter === "function";
+    var isNative = typeof Array.prototype.filter === 'function';
 
     return function(array, func, context) {
         if (isNative) {
@@ -97,7 +97,7 @@ smodules.a.filter = (function() {
 })();
 
 smodules.a.every = (function() {
-    var isNative = typeof Array.prototype.every === "function";
+    var isNative = typeof Array.prototype.every === 'function';
 
     return function(array, func, context) {
         if (isNative) {
@@ -118,7 +118,7 @@ smodules.a.every = (function() {
 })();
 
 smodules.a.some = (function() {
-    var isNative = typeof Array.prototype.some === "function";
+    var isNative = typeof Array.prototype.some === 'function';
 
     return function(array, func, context) {
         if (isNative) {
@@ -139,7 +139,7 @@ smodules.a.some = (function() {
 })();
 
 smodules.a.map = (function() {
-    var isNative = typeof Array.prototype.map === "function";
+    var isNative = typeof Array.prototype.map === 'function';
 
     return function(array, func, context) {
         if (isNative) {
@@ -157,7 +157,7 @@ smodules.a.map = (function() {
 })();
 
 smodules.a.reduce = (function() {
-    var isNative = typeof Array.prototype.reduce === "function";
+    var isNative = typeof Array.prototype.reduce === 'function';
 
     return function(array, func, memo) {
         var initial = arguments.length > 2;
@@ -169,7 +169,7 @@ smodules.a.reduce = (function() {
 
             if (!initial) {
                 if (len === 0) {
-                    throw new TypeError("Reduce of empty array with no initial value");
+                    throw new TypeError('Reduce of empty array with no initial value');
                 }
 
                 memo = array[i];
@@ -186,7 +186,7 @@ smodules.a.reduce = (function() {
 })();
 
 smodules.a.reduceRight = (function() {
-    var isNative = typeof Array.prototype.reduceRight === "function";
+    var isNative = typeof Array.prototype.reduceRight === 'function';
 
     return function(array, func, memo) {
         var initial = arguments.length > 2;
@@ -198,7 +198,7 @@ smodules.a.reduceRight = (function() {
 
             if (!initial) {
                 if (i < 0) {
-                    throw new TypeError("Reduce of empty array with no initial value");
+                    throw new TypeError('Reduce of empty array with no initial value');
                 }
 
                 memo = array[i];

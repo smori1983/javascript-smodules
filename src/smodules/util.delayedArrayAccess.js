@@ -11,9 +11,9 @@
  */
 smodules.util.delayedArrayAccess = function(spec) {
     if (!$.isArray(spec.array) ||
-        typeof spec.unit !== "number" ||
-        typeof spec.interval !== "number" ||
-        typeof spec.callback !== "function") {
+        typeof spec.unit !== 'number' ||
+        typeof spec.interval !== 'number' ||
+        typeof spec.callback !== 'function') {
 
         return;
     }
