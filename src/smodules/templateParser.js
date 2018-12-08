@@ -412,6 +412,7 @@ smodules.templateParser = function() {
 
     var parseCondition = (function() {
         var getReversePolish = (function() {
+            /* eslint-disable array-bracket-spacing */
             var state = {
                 "start":           ["roundBracket",                    "value", "var",                  "error"],
                 "roundBracket":    ["roundBracket",                    "value", "var",                  "error"],
@@ -421,6 +422,7 @@ smodules.templateParser = function() {
                 "comp":            [                                   "value", "var",                  "error"],
                 "andor":           ["roundBracket",                    "value", "var",                  "error"],
             };
+            /* eslint-enable */
 
             var method = {
                 "roundBracket":    { read: readRoundBracket,    parse: parseRoundBracket },

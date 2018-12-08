@@ -204,11 +204,11 @@ smodules.template = function() {
             if (comp === "===") {
                 return lval === rval;
             } else if (comp === "==") {
-                return lval == rval;
+                return lval == rval; // eslint-disable-line eqeqeq
             } else if (comp === "!==") {
                 return lval !== rval;
             } else if (comp === "!=") {
-                return lval != rval;
+                return lval != rval; // eslint-disable-line eqeqeq
             } else if (comp === "lte") {
                 return lval <= rval;
             } else if (comp === "lt") {
