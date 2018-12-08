@@ -374,7 +374,7 @@ smodules.templateParser = function() {
     };
 
     var parseComp = function() {
-        var matched;
+        var matched, expr;
 
         if ((matched = text.slice(ptr).match(compRegex))) {
             expr = next(matched[0]);
@@ -884,8 +884,6 @@ smodules.templateParser = function() {
 
 
     that.parse = function(content, source) {
-        var result = [];
-
         src  = source || "";
         text = content;
         ptr  = 0;
