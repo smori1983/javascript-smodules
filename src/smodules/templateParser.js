@@ -812,6 +812,7 @@ smodules.templateParser = function() {
             }
             s += next("in");
             skipWhitespace();
+            s += " ";
 
             array = parseVar();
             s += array.expr;
