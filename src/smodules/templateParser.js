@@ -246,7 +246,7 @@ smodules.templateParser = function() {
         return {
             type: "var",
             expr: s,
-            keys: s.slice(1).split(".")
+            keys: s.slice(1).split("."),
         };
     };
 
@@ -258,7 +258,7 @@ smodules.templateParser = function() {
         return {
             type:  "value",
             expr:  next("null"),
-            value: null
+            value: null,
         };
     };
 
@@ -270,7 +270,7 @@ smodules.templateParser = function() {
         return {
             type:  "value",
             expr:  next("true"),
-            value: true
+            value: true,
         };
     };
 
@@ -282,7 +282,7 @@ smodules.templateParser = function() {
         return {
             type:  "value",
             expr:  next("false"),
-            value: false
+            value: false,
         };
     };
 
@@ -299,7 +299,7 @@ smodules.templateParser = function() {
             return {
                 type:  "value",
                 expr:  matched[0],
-                value: matched[0].slice(1, -1).replace("\\" + matched[1], matched[1])
+                value: matched[0].slice(1, -1).replace("\\" + matched[1], matched[1]),
             };
         } else {
             exception("string expression not closed");
@@ -319,7 +319,7 @@ smodules.templateParser = function() {
             return {
                 type:  "value",
                 expr:  matched[0],
-                value: value
+                value: value,
             };
         } else {
             exception("invalid number expression");
@@ -363,7 +363,7 @@ smodules.templateParser = function() {
 
         return {
             type: "andor",
-            expr: expr
+            expr: expr,
         };
     };
 
@@ -384,7 +384,7 @@ smodules.templateParser = function() {
 
         return {
             type: "comp",
-            expr: expr
+            expr: expr,
         };
     };
 
@@ -395,7 +395,7 @@ smodules.templateParser = function() {
     var parseRoundBracket = function() {
         return {
             type: "roundBracket",
-            expr: next("(")
+            expr: next("("),
         };
     };
 
@@ -406,7 +406,7 @@ smodules.templateParser = function() {
     var parseEndRoundBracket = function() {
         return {
             type: "endRoundBracket",
-            expr: next(")")
+            expr: next(")"),
         };
     };
 
@@ -419,7 +419,7 @@ smodules.templateParser = function() {
                 "value":           [                "endRoundBracket",                 "comp", "andor", "error"],
                 "var":             [                "endRoundBracket",                 "comp", "andor", "error"],
                 "comp":            [                                   "value", "var",                  "error"],
-                "andor":           ["roundBracket",                    "value", "var",                  "error"]
+                "andor":           ["roundBracket",                    "value", "var",                  "error"],
             };
 
             var method = {
@@ -428,7 +428,7 @@ smodules.templateParser = function() {
                 "value":           { read: readValue,           parse: parseValue },
                 "var":             { read: readVar,             parse: parseVar },
                 "comp":            { read: readComp,            parse: parseComp },
-                "andor":           { read: readAndOr,           parse: parseAndOr }
+                "andor":           { read: readAndOr,           parse: parseAndOr },
             };
 
             var history = (function() {
@@ -443,7 +443,7 @@ smodules.templateParser = function() {
                     },
                     get: function(idx) {
                         return stack[stack.length - idx] || null;
-                    }
+                    },
                 };
             })();
 
@@ -477,7 +477,7 @@ smodules.templateParser = function() {
                         if (operandOperatorBalance !== 1) {
                             exception("invalid usage of operand or operator");
                         }
-                    }
+                    },
                 };
             })();
 
@@ -489,7 +489,7 @@ smodules.templateParser = function() {
                     "comp":            4,
                     "value":           5,
                     "var":             5,
-                    "roundBracket":    6
+                    "roundBracket":    6,
                 };
 
                 return function(section) {
@@ -584,7 +584,7 @@ smodules.templateParser = function() {
 
             return {
                 type:  type,
-                stack: stack
+                stack: stack,
             };
         };
     })(); // parseCondition()
@@ -610,7 +610,7 @@ smodules.templateParser = function() {
 
         return {
             type: "normal",
-            expr: s
+            expr: s,
         };
     };
 
@@ -643,7 +643,7 @@ smodules.templateParser = function() {
 
         return {
             type: "literal",
-            expr: s
+            expr: s,
         };
     };
 
@@ -664,7 +664,7 @@ smodules.templateParser = function() {
 
                 return {
                     expr: s,
-                    name: s
+                    name: s,
                 };
             };
 
@@ -708,7 +708,7 @@ smodules.templateParser = function() {
 
                 return {
                     expr: s,
-                    args: args
+                    args: args,
                 };
             }; // getFilterArgsSection()
 
@@ -739,7 +739,7 @@ smodules.templateParser = function() {
 
                 return {
                     expr:    s,
-                    filters: filters
+                    filters: filters,
                 };
             };
 
@@ -757,7 +757,7 @@ smodules.templateParser = function() {
 
                 return {
                     expr:    s,
-                    filters: filters
+                    filters: filters,
                 };
             };
         })(); // getFilterSection()
@@ -781,7 +781,7 @@ smodules.templateParser = function() {
                 type:    "holder",
                 expr:    s,
                 keys:    keySection.keys,
-                filters: filterSection.filters
+                filters: filterSection.filters,
             };
         };
     })(); // parseHolderBlock()
@@ -821,7 +821,7 @@ smodules.templateParser = function() {
                 expr:  s,
                 k:     k,
                 v:     v,
-                array: array.keys
+                array: array.keys,
             };
         }; // parseHeader()
 
@@ -834,7 +834,7 @@ smodules.templateParser = function() {
             return {
                 type:   "for",
                 header: header,
-                blocks: blocks
+                blocks: blocks,
             };
         };
     })(); // parseForBlock()
@@ -845,14 +845,14 @@ smodules.templateParser = function() {
         while (readIfTag() || readElseifTag() || readElseTag()) {
             sections.push({
                 header: parseCondition(),
-                blocks: loop([], true)
+                blocks: loop([], true),
             });
         }
         eatEndIfTag();
 
         return {
             type:     "if",
-            sections: sections
+            sections: sections,
         };
     }; // parseIfBlock()
 

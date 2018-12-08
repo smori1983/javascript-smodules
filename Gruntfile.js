@@ -10,10 +10,10 @@ grunt.initConfig({
             " * Dual licensed under the MIT or GPL-2.0 licenses.\n" +
             " *\n" +
             " * Date <%= grunt.template.today('yyyy-mm-dd HH:MM:ss') %>\n" +
-            " */"
+            " */",
   },
   eslint: {
-    target: ["Gruntfile.js", "src/smodules/*.js", "test/smodules/*.js"]
+    target: ["Gruntfile.js", "src/smodules/*.js", "test/smodules/*.js"],
   },
   concat: {
     all: {
@@ -29,11 +29,11 @@ grunt.initConfig({
         "src/smodules/ui.*.js",
         "src/smodules/util.HEAD.js",
         "src/smodules/util.*.js",
-        "src/smodules/*.js"
+        "src/smodules/*.js",
       ],
-      dest: "dist/smodules-<%= pkg.version %>.js"
-    }
-  }
+      dest: "dist/smodules-<%= pkg.version %>.js",
+    },
+  },
 });
 
 grunt.loadNpmTasks("grunt-contrib-concat");

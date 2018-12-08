@@ -2,7 +2,7 @@ smodules.data.queueHash = function() {
     var that = smodules.data.hash(),
         parent = {
             add: smodules.mod.superior(that, "add"),
-            get: smodules.mod.superior(that, "get")
+            get: smodules.mod.superior(that, "get"),
         };
 
     delete that.add;

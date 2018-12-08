@@ -11,7 +11,7 @@ QUnit.test("single unit:1", function(assert) {
         interval: 0,
         callback: function(elements) {
             output.push(elements.join("."));
-        }
+        },
     }).start();
 
     window.setTimeout(function() {
@@ -35,7 +35,7 @@ QUnit.test("single unit:2", function(assert) {
         interval: 0,
         callback: function(elements) {
             output.push(elements.join("."));
-        }
+        },
     }).start();
 
     window.setTimeout(function() {
@@ -58,7 +58,7 @@ QUnit.test("multiple", function(assert) {
         interval: 10,
         callback: function(elements) {
             output1.push(elements.join("."));
-        }
+        },
     }).start();
 
     smodules.util.delayedArrayAccess({
@@ -67,7 +67,7 @@ QUnit.test("multiple", function(assert) {
         interval: 0,
         callback: function(elements) {
             output2.push(elements.join("."));
-        }
+        },
     }).start();
 
     window.setTimeout(function() {

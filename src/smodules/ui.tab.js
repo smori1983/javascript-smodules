@@ -27,7 +27,7 @@ smodules.ui.tab = (function() {
         spec = $.extend({
             mouseover: "mouse",
             selected:  "selected",
-            initial:   0
+            initial:   0,
         }, spec);
 
         $("#" + spec.id).

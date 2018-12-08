@@ -41,6 +41,6 @@ smodules.util.console = (function() {
         }
         return that;
     };
-    
+
     return that;
 })();

@@ -280,7 +280,7 @@ QUnit.test("if block - if elseif else - error", function(assert) {
 
 QUnit.test("if block - conditions", function(assert) {
     var parser = smodules.templateParser(),
-        source, section, stack, blocks;
+        source, stack;
 
     source = "{ if $foo === 'hoge' }<p>hoge</p>{ /if }";
     stack  = parser.parse(source)[0].sections[0].header.stack;
@@ -422,7 +422,7 @@ QUnit.test("if block - conditions - error", function(assert) {
     }, Error);
 
     // var -> roundBracket
-    soruce = "{if $foo ( === $bar )}<p>ok</p>{/if}";
+    source = "{if $foo ( === $bar )}<p>ok</p>{/if}";
     assert.raises(function() {
         parser.parse(source);
     }, Error);

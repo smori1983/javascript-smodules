@@ -14,7 +14,7 @@ QUnit.test("simple test", function(assert) {
     var sub = function() {
         var that = base(),
             parent = {
-                say: smodules.mod.superior(that, "say")
+                say: smodules.mod.superior(that, "say"),
             };
 
         that.say = function() {

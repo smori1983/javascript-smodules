@@ -106,7 +106,7 @@ QUnit.test("reduce - with initial value", function(assert) {
     assert.strictEqual("[0:a][1:b][2:a][3:c]", result);
 
     result = smodules.a.reduce([], function(memo, current) {
-        return memno + "[" + memo + "]";
+        return memo + "[" + memo + "]";
     }, "");
     assert.strictEqual("", result);
 
@@ -129,7 +129,7 @@ QUnit.test("reduce - without initial value", function(assert) {
 
     assert.raises(function() {
         result = smodules.a.reduce([], function(memo, current) {
-            return memno + "[" + memo + "]";
+            return memo + "[" + memo + "]";
         });
     }, TypeError);
 });
@@ -143,7 +143,7 @@ QUnit.test("reduceRight - with initial value", function(assert) {
     assert.strictEqual("[3:c][2:a][1:b][0:a]", result);
 
     result = smodules.a.reduceRight([], function(memo, current) {
-        return memno + "[" + memo + "]";
+        return memo + "[" + memo + "]";
     }, "");
     assert.strictEqual("", result);
 
@@ -166,7 +166,7 @@ QUnit.test("reduceRight - without initial value", function(assert) {
 
     assert.raises(function() {
         result = smodules.a.reduceRight([], function(memo, current) {
-            return memno + "[" + memo + "]";
+            return memo + "[" + memo + "]";
         });
     }, TypeError);
 });

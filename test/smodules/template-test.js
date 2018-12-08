@@ -51,8 +51,8 @@ QUnit.test("holder block", function(assert) {
         items: [
             { name: "a" },
             { name: "b" },
-            { name: "c" }
-        ]
+            { name: "c" },
+        ],
     };
     template.bind(src, param).appendTo(target);
     assert.strictEqual("<p>c</p>", $(target).html());
@@ -166,14 +166,14 @@ QUnit.test("for block", function(assert) {
 
     $(target).empty();
     src = "{ for $item in $items }<p>{ $item }</p>{ /for }";
-    param = { items: [ "one", "two", "three" ] };
+    param = { items: ["one", "two", "three"] };
     template.bind(src, param).appendTo(target);
     assert.strictEqual("<p>one</p><p>two</p><p>three</p>", $(target).html());
 
     // use index
     $(target).empty();
     src = "{ for $idx,$item in $items }<p>{ $idx }-{ $item }</p>{ /for }";
-    param = { items: [ "one", "two" ] };
+    param = { items: ["one", "two"] };
     template.bind(src, param).appendTo(target);
     assert.strictEqual("<p>0-one</p><p>1-two</p>", $(target).html());
 });

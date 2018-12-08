@@ -55,7 +55,7 @@ smodules.template = function() {
             },
             notifyFetched: function() {
                 check();
-            }
+            },
         };
     })();
 
@@ -83,7 +83,7 @@ smodules.template = function() {
                             queue = _remoteQueue.getFrom(source);
                             _execute(source, queue.bindParams, queue.callback);
                         }
-                    }
+                    },
                 });
             }
         };
@@ -329,7 +329,7 @@ smodules.template = function() {
                 _execute(source, bindParams, function(output) {
                     $(output).insertBefore(target);
                 });
-            }
+            },
         };
     };
 
@@ -391,7 +391,7 @@ smodules.template = function() {
             ">": "&gt;",
             "&": "&amp;",
             '"': "&quot;",
-            "'": "&#039;"
+            "'": "&#039;",
         };
 
         return function(value) {
