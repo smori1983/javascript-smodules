@@ -261,13 +261,13 @@ smodules.template = function() {
         };
 
         var loopIf = function(block, params) {
-            var i = 0, len = block.sections.length, section, sectionResult, output = "";
+            var i = 0, len = block.sections.length, section, output = "";
 
             for ( ; i < len; i++) {
                 section = block.sections[i];
 
                 if (section.header.type === "if" || section.header.type === "elseif") {
-                    if ((sectionResult = evaluate(section.header.stack, params))) {
+                    if (evaluate(section.header.stack, params)) {
                         output = loop(section.blocks, params);
                         break;
                     }
