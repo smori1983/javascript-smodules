@@ -208,6 +208,7 @@ smodules.templateParser = function() {
     };
 
     // NOTE: currently not used.
+    // eslint-disable-next-line no-unused-vars
     var readTmpVar = function() {
         return readRegex(/^\$\w+[^\w]/);
     };
