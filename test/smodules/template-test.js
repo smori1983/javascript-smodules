@@ -169,13 +169,105 @@ QUnit.test('for block', function(assert) {
     param = { items: ['one', 'two', 'three'] };
     template.bind(src, param).appendTo(target);
     assert.strictEqual('<p>one</p><p>two</p><p>three</p>', $(target).html());
+});
 
-    // use index
+QUnit.test('for block - use index', function(assert) {
+    var template = smodules.template(),
+        target = '#template-test', src, param;
+
     $(target).empty();
     src = '{ for $idx,$item in $items }<p>{ $idx }-{ $item }</p>{ /for }';
     param = { items: ['one', 'two'] };
     template.bind(src, param).appendTo(target);
     assert.strictEqual('<p>0-one</p><p>1-two</p>', $(target).html());
+});
+
+QUnit.test('for block - nested', function(assert) {
+    var template = smodules.template(),
+        target = '#template-test', src, param, expected;
+
+    $(target).empty();
+    src = '{ for $item in $items }' +
+          '<ul>' +
+          '{ for $id in $item.ids }' +
+          '<li>{ $id }</li>' +
+          '{ /for }' +
+          '</ul>' +
+          '{ /for }';
+    param = { items: [
+        { ids: [1, 2]},
+        { ids: [3, 4]},
+        { ids: [5, 6]},
+    ]};
+
+    expected = '<ul><li>1</li><li>2</li></ul>' +
+               '<ul><li>3</li><li>4</li></ul>' +
+               '<ul><li>5</li><li>6</li></ul>';
+
+    template.bind(src, param).appendTo(target);
+    assert.strictEqual($(target).html(), expected);
+});
+
+QUnit.test('for block - nested - if', function(assert) {
+    var template = smodules.template(),
+        target = '#template-test', src, param, expected;
+
+    $(target).empty();
+    src = '{ for $item in $items }' +
+          '<ul>' +
+          '{ for $id in $item.ids }' +
+          '{ if $id === 1 or $id === 3 or $id === 5 }' +
+          '<li>odd: { $id }</li>' +
+          '{ else }' +
+          '<li>even: { $id }</li>' +
+          '{ /if }' +
+          '{ /for }' +
+          '</ul>' +
+          '{ /for }';
+    param = { items: [
+        { ids: [1, 2]},
+        { ids: [3, 4]},
+        { ids: [5, 6]},
+    ]};
+
+    expected = '<ul><li>odd: 1</li><li>even: 2</li></ul>' +
+               '<ul><li>odd: 3</li><li>even: 4</li></ul>' +
+               '<ul><li>odd: 5</li><li>even: 6</li></ul>';
+
+    template.bind(src, param).appendTo(target);
+    assert.strictEqual($(target).html(), expected);
+});
+
+QUnit.test('for block - nested - if with property access', function(assert) {
+    var template = smodules.template(),
+        target = '#template-test', src, param, expected;
+
+    $(target).empty();
+    src = '{ for $item in $items }' +
+          '<ul>' +
+          '{ for $product in $item.products }' +
+          '{ if $product.id === 1 }' +
+          '<li>{ $product.name|h }</li>' +
+          '{ /if }' +
+          '{ /for }' +
+          '</ul>' +
+          '{ /for }';
+    param = { items: [
+        { products: [
+            { id: 1, name: 'A' },
+            { id: 2, name: 'B' },
+        ]},
+        { products: [
+            { id: 1, name: 'C' },
+            { id: 2, name: 'D' },
+        ]},
+    ]};
+
+    expected = '<ul><li>A</li></ul>' +
+               '<ul><li>C</li></ul>';
+
+    template.bind(src, param).appendTo(target);
+    assert.strictEqual($(target).html(), expected);
 });
 
 QUnit.test('preFetch and template cache', function(assert) {
