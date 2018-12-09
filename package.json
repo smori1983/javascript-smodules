@@ -20,6 +20,7 @@
         "eslint": "^5.9.0",
         "grunt": "^1.0.3",
         "grunt-contrib-concat": "^1.0.1",
+        "grunt-contrib-watch": "^1.1.0",
         "grunt-eslint": "^21.0.0"
     },
     "dependencies": {}
