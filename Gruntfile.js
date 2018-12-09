@@ -15,6 +15,22 @@ grunt.initConfig({
   eslint: {
     target: ['Gruntfile.js', 'src/smodules/*.js', 'test/smodules/*.js'],
   },
+  connect: {
+    server: {
+      options: {
+        port: 8000,
+        base: '.',
+      },
+    },
+  },
+  qunit: {
+    all: ['test/test.html'],
+    options: {
+      urls: [
+        'http://localhost:8000/test/test.html',
+      ],
+    },
+  },
   concat: {
     all: {
       src: [
@@ -37,9 +53,12 @@ grunt.initConfig({
 });
 
 grunt.loadNpmTasks('grunt-contrib-concat');
+grunt.loadNpmTasks('grunt-contrib-connect');
+grunt.loadNpmTasks('grunt-contrib-qunit');
 grunt.loadNpmTasks('grunt-eslint');
 
 grunt.registerTask('default', ['eslint', 'concat']);
 grunt.registerTask('lint', ['eslint']);
+grunt.registerTask('tools', ['eslint', 'connect', 'qunit']);
 
 };
