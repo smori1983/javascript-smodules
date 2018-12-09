@@ -4,22 +4,22 @@ QUnit.test('add', function(assert) {
     var hash = smodules.data.hash();
 
     hash.add('hoge', 'test');
-    assert.strictEqual(true,   hash.has('hoge'));
-    assert.strictEqual('test', hash.get('hoge'));
+    assert.strictEqual(hash.has('hoge'), true);
+    assert.strictEqual(hash.get('hoge'), 'test');
 
     hash.add('hoge', 'hogehoge');
-    assert.strictEqual('hogehoge', hash.get('hoge'));
+    assert.strictEqual(hash.get('hoge'), 'hogehoge');
 });
 
 QUnit.test('remove', function(assert) {
     var hash = smodules.data.hash();
 
     hash.add('name', 'anonymous');
-    assert.strictEqual(true, hash.has('name'));
+    assert.strictEqual(hash.has('name'), true);
 
     hash.remove('name');
-    assert.strictEqual(false, hash.has('name'));
-    assert.strictEqual('undefined', typeof hash.get('name'));
+    assert.strictEqual(hash.has('name'), false);
+    assert.strictEqual(typeof hash.get('name'), 'undefined');
 });
 
 QUnit.test('clear', function(assert) {
@@ -28,6 +28,6 @@ QUnit.test('clear', function(assert) {
     hash.add('name', 'anonymous');
     hash.add('mail', 'anonymous@example.com');
     hash.clear();
-    assert.strictEqual(false, hash.has('name'));
-    assert.strictEqual(false, hash.has('mail'));
+    assert.strictEqual(hash.has('name'), false);
+    assert.strictEqual(hash.has('mail'), false);
 });

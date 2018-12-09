@@ -26,5 +26,5 @@ QUnit.test('simple test', function(assert) {
 
     var s = sub();
 
-    assert.strictEqual('base sub', s.say());
+    assert.strictEqual(s.say(), 'base sub');
 });

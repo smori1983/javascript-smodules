@@ -3,29 +3,29 @@ QUnit.module('smodules.a.test');
 QUnit.test('indexOf', function(assert) {
     var array = ['a', 'b', 'a', 'c'];
 
-    assert.strictEqual(0,  smodules.a.indexOf(array, 'a'));
-    assert.strictEqual(0,  smodules.a.indexOf(array, 'a', 0));
-    assert.strictEqual(0,  smodules.a.indexOf(array, 'a', -5));
-    assert.strictEqual(0,  smodules.a.indexOf(array, 'a', -4));
-    assert.strictEqual(2,  smodules.a.indexOf(array, 'a', 1));
-    assert.strictEqual(2,  smodules.a.indexOf(array, 'a', -2));
-    assert.strictEqual(-1, smodules.a.indexOf(array, 'a', 3));
-    assert.strictEqual(-1, smodules.a.indexOf(array, 'a', -1));
-    assert.strictEqual(-1, smodules.a.indexOf(array, 'z'));
+    assert.strictEqual(smodules.a.indexOf(array, 'a'), 0);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', 0), 0);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', -5), 0);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', -4), 0);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', 1), 2);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', -2), 2);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', 3), -1);
+    assert.strictEqual(smodules.a.indexOf(array, 'a', -1), -1);
+    assert.strictEqual(smodules.a.indexOf(array, 'z'), -1);
 });
 
 QUnit.test('lastIndexOf', function(assert) {
     var array = ['a', 'b', 'a', 'c'];
 
-    assert.strictEqual(2,  smodules.a.lastIndexOf(array, 'a'));
-    assert.strictEqual(0,  smodules.a.lastIndexOf(array, 'a', 0));
-    assert.strictEqual(-1, smodules.a.lastIndexOf(array, 'a', -5));
-    assert.strictEqual(0,  smodules.a.lastIndexOf(array, 'a', -4));
-    assert.strictEqual(0,  smodules.a.lastIndexOf(array, 'a', 1));
-    assert.strictEqual(2,  smodules.a.lastIndexOf(array, 'a', -2));
-    assert.strictEqual(2,  smodules.a.lastIndexOf(array, 'a', 3));
-    assert.strictEqual(2,  smodules.a.lastIndexOf(array, 'a', -1));
-    assert.strictEqual(-1, smodules.a.lastIndexOf(array, 'z'));
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a'), 2);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', 0), 0);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', -5), -1);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', -4), 0);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', 1), 0);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', -2), 2);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', 3), 2);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'a', -1), 2);
+    assert.strictEqual(smodules.a.lastIndexOf(array, 'z'), -1);
 });
 
 QUnit.test('forEach', function(assert) {
@@ -35,7 +35,7 @@ QUnit.test('forEach', function(assert) {
     smodules.a.forEach(array, function(element, idx) {
         result += '[' + idx + ':' + element + ']';
     });
-    assert.strictEqual('[0:a][1:b][2:a][3:c]', result);
+    assert.strictEqual(result, '[0:a][1:b][2:a][3:c]');
 });
 
 QUnit.test('filter', function(assert) {
@@ -44,16 +44,16 @@ QUnit.test('filter', function(assert) {
     result = smodules.a.filter(array, function(element) {
         return element === 'a';
     });
-    assert.strictEqual(2, result.length);
-    assert.strictEqual('a', result[0]);
-    assert.strictEqual('a', result[1]);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0], 'a');
+    assert.strictEqual(result[1], 'a');
 
     result = smodules.a.filter(array, function(element, idx) {
         return idx % 2;
     });
-    assert.strictEqual(2, result.length);
-    assert.strictEqual('b', result[0]);
-    assert.strictEqual('c', result[1]);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0], 'b');
+    assert.strictEqual(result[1], 'c');
 });
 
 QUnit.test('every', function(assert) {
@@ -62,12 +62,12 @@ QUnit.test('every', function(assert) {
     result = smodules.a.every(array, function(element) {
         return (/^\w+$/).test(element);
     });
-    assert.strictEqual(true, result);
+    assert.strictEqual(result, true);
 
     result = smodules.a.every(array, function(element) {
         return element === 'a';
     });
-    assert.strictEqual(false, result);
+    assert.strictEqual(result, false);
 });
 
 QUnit.test('some', function(assert) {
@@ -76,12 +76,12 @@ QUnit.test('some', function(assert) {
     result = smodules.a.some(array, function(element) {
         return typeof element === 'string';
     });
-    assert.strictEqual(true, result);
+    assert.strictEqual(result, true);
 
     result = smodules.a.some(array, function(element) {
         return typeof element === 'number';
     });
-    assert.strictEqual(false, result);
+    assert.strictEqual(result, false);
 });
 
 QUnit.test('map', function(assert) {
@@ -90,11 +90,11 @@ QUnit.test('map', function(assert) {
     result = smodules.a.map(array, function(element) {
         return element.toUpperCase();
     });
-    assert.strictEqual(4, result.length);
-    assert.strictEqual('A', result[0]);
-    assert.strictEqual('B', result[1]);
-    assert.strictEqual('A', result[2]);
-    assert.strictEqual('C', result[3]);
+    assert.strictEqual(result.length, 4);
+    assert.strictEqual(result[0], 'A');
+    assert.strictEqual(result[1], 'B');
+    assert.strictEqual(result[2], 'A');
+    assert.strictEqual(result[3], 'C');
 });
 
 QUnit.test('reduce - with initial value', function(assert) {
@@ -103,20 +103,20 @@ QUnit.test('reduce - with initial value', function(assert) {
     result = smodules.a.reduce(array, function(memo, current, idx) {
         return memo + '[' + idx + ':' + current + ']';
     }, '');
-    assert.strictEqual('[0:a][1:b][2:a][3:c]', result);
+    assert.strictEqual(result, '[0:a][1:b][2:a][3:c]');
 
     result = smodules.a.reduce([], function(memo, current) {
         return memo + '[' + memo + ']';
     }, '');
-    assert.strictEqual('', result);
+    assert.strictEqual(result, '');
 
     result = smodules.a.reduce(array, function(memo, current) {
         memo[current] = memo.hasOwnProperty(current) ? (memo[current] + 1) : 1;
         return memo;
     }, {});
-    assert.strictEqual(2, result.a);
-    assert.strictEqual(1, result.b);
-    assert.strictEqual(1, result.c);
+    assert.strictEqual(result.a, 2);
+    assert.strictEqual(result.b, 1);
+    assert.strictEqual(result.c, 1);
 });
 
 QUnit.test('reduce - without initial value', function(assert) {
@@ -125,7 +125,7 @@ QUnit.test('reduce - without initial value', function(assert) {
     result = smodules.a.reduce(array, function(memo, current, idx) {
         return memo + '[' + idx + ':' + current + ']';
     });
-    assert.strictEqual('a[1:b][2:a][3:c]', result);
+    assert.strictEqual(result, 'a[1:b][2:a][3:c]');
 
     assert.raises(function() {
         result = smodules.a.reduce([], function(memo, current) {
@@ -140,20 +140,20 @@ QUnit.test('reduceRight - with initial value', function(assert) {
     result = smodules.a.reduceRight(array, function(memo, current, idx) {
         return memo + '[' + idx + ':' + current + ']';
     }, '');
-    assert.strictEqual('[3:c][2:a][1:b][0:a]', result);
+    assert.strictEqual(result, '[3:c][2:a][1:b][0:a]');
 
     result = smodules.a.reduceRight([], function(memo, current) {
         return memo + '[' + memo + ']';
     }, '');
-    assert.strictEqual('', result);
+    assert.strictEqual(result, '');
 
     result = smodules.a.reduceRight(array, function(memo, current) {
         memo[current] = memo.hasOwnProperty(current) ? (memo[current] + 1) : 1;
         return memo;
     }, {});
-    assert.strictEqual(2, result.a);
-    assert.strictEqual(1, result.b);
-    assert.strictEqual(1, result.c);
+    assert.strictEqual(result.a, 2);
+    assert.strictEqual(result.b, 1);
+    assert.strictEqual(result.c, 1);
 });
 
 QUnit.test('reduceRight - without initial value', function(assert) {

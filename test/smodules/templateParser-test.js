@@ -5,9 +5,9 @@ QUnit.test('normal block', function(assert) {
         source = '<div>foo {left}bar{right}</div>',
         result = parser.parse(source);
 
-    assert.strictEqual(1, result.length);
-    assert.strictEqual('normal', result[0].type);
-    assert.strictEqual('<div>foo {bar}</div>', result[0].expr);
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].type, 'normal');
+    assert.strictEqual(result[0].expr, '<div>foo {bar}</div>');
 });
 
 QUnit.test('normal block - error', function(assert) {
@@ -29,13 +29,13 @@ QUnit.test('literal block', function(assert) {
         source = '<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>',
         result = parser.parse(source);
 
-    assert.strictEqual(3, result.length);
-    assert.strictEqual('normal', result[0].type);
-    assert.strictEqual('<div>', result[0].expr);
-    assert.strictEqual('literal', result[1].type);
-    assert.strictEqual('{foo} {bar} {/literal} function() {};', result[1].expr);
-    assert.strictEqual('normal', result[2].type);
-    assert.strictEqual('</div>', result[2].expr);
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0].type, 'normal');
+    assert.strictEqual(result[0].expr, '<div>');
+    assert.strictEqual(result[1].type, 'literal');
+    assert.strictEqual(result[1].expr, '{foo} {bar} {/literal} function() {};');
+    assert.strictEqual(result[2].type, 'normal');
+    assert.strictEqual(result[2].expr, '</div>');
 });
 
 QUnit.test('literal block - error', function(assert) {
@@ -57,12 +57,12 @@ QUnit.test('holder block - no filters', function(assert) {
         source = '{ $foo.bar }',
         result = parser.parse(source);
 
-    assert.strictEqual(1, result.length);
-    assert.strictEqual('holder', result[0].type);
-    assert.strictEqual(2, result[0].keys.length);
-    assert.strictEqual('foo', result[0].keys[0]);
-    assert.strictEqual('bar', result[0].keys[1]);
-    assert.strictEqual(0, result[0].filters.length);
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].type, 'holder');
+    assert.strictEqual(result[0].keys.length, 2);
+    assert.strictEqual(result[0].keys[0], 'foo');
+    assert.strictEqual(result[0].keys[1], 'bar');
+    assert.strictEqual(result[0].filters.length, 0);
 });
 
 QUnit.test('holder block - no filters - error', function(assert) {
@@ -96,10 +96,10 @@ QUnit.test('holder block - filters with no args', function(assert) {
         filter1 = result[0].filters[0],
         filter2 = result[0].filters[1];
 
-    assert.strictEqual('filter1', filter1.name);
-    assert.strictEqual(0,         filter1.args.length);
-    assert.strictEqual('filter2', filter2.name);
-    assert.strictEqual(0,         filter2.args.length);
+    assert.strictEqual(filter1.name, 'filter1');
+    assert.strictEqual(filter1.args.length, 0);
+    assert.strictEqual(filter2.name, 'filter2');
+    assert.strictEqual(filter2.args.length, 0);
 });
 
 QUnit.test('holder block - filters with no args - error', function(assert) {
@@ -132,9 +132,9 @@ QUnit.test('holder block - filter with args - null, true and false', function(as
         result = parser.parse(source),
         filter = result[0].filters[0];
 
-    assert.strictEqual(null,  filter.args[0]);
-    assert.strictEqual(true,  filter.args[1]);
-    assert.strictEqual(false, filter.args[2]);
+    assert.strictEqual(filter.args[0], null);
+    assert.strictEqual(filter.args[1], true);
+    assert.strictEqual(filter.args[2], false);
 });
 
 QUnit.test('holder block - filter with args - null, true and false - error', function(assert) {
@@ -162,9 +162,9 @@ QUnit.test('holder block - filter with args - string', function(assert) {
         result = parser.parse(source),
         filter = result[0].filters[0];
 
-    assert.strictEqual('test',        filter.args[0]);
-    assert.strictEqual('{delimiter}', filter.args[1]);
-    assert.strictEqual('it\'s string', filter.args[2]);
+    assert.strictEqual(filter.args[0], 'test');
+    assert.strictEqual(filter.args[1], '{delimiter}');
+    assert.strictEqual(filter.args[2], 'it\'s string');
 });
 
 QUnit.test('holder block - filter with args - string - error', function(assert) {
@@ -197,14 +197,14 @@ QUnit.test('holder block - filter with args - number', function(assert) {
         result = parser.parse(source),
         filter = result[0].filters[0];
 
-    assert.strictEqual(0,      filter.args[0]);
-    assert.strictEqual(10,     filter.args[1]);
-    assert.strictEqual(-99,    filter.args[2]);
-    assert.strictEqual(12.3,   filter.args[3]);
-    assert.strictEqual(-0.123, filter.args[4]);
-    assert.strictEqual(10,     filter.args[5]);
-    assert.strictEqual(10,     filter.args[6]);
-    assert.strictEqual(1,      filter.args[7]);
+    assert.strictEqual(filter.args[0], 0);
+    assert.strictEqual(filter.args[1], 10);
+    assert.strictEqual(filter.args[2], -99);
+    assert.strictEqual(filter.args[3], 12.3);
+    assert.strictEqual(filter.args[4], -0.123);
+    assert.strictEqual(filter.args[5], 10);
+    assert.strictEqual(filter.args[6], 10);
+    assert.strictEqual(filter.args[7], 1);
 });
 
 QUnit.test('if block - if elseif else', function(assert) {
@@ -221,32 +221,32 @@ QUnit.test('if block - if elseif else', function(assert) {
         result = parser.parse(source)[0],
         section;
 
-    assert.strictEqual('if', result.type);
-    assert.strictEqual(4, result.sections.length);
+    assert.strictEqual(result.type, 'if');
+    assert.strictEqual(result.sections.length, 4);
 
     section = result.sections[0];
-    assert.strictEqual('if', section.header.type);
-    assert.strictEqual(1,    section.blocks.length);
-    assert.strictEqual('normal',            section.blocks[0].type);
-    assert.strictEqual('<div>value1</div>', section.blocks[0].expr);
+    assert.strictEqual(section.header.type, 'if');
+    assert.strictEqual(section.blocks.length, 1);
+    assert.strictEqual(section.blocks[0].type, 'normal');
+    assert.strictEqual(section.blocks[0].expr, '<div>value1</div>');
 
     section = result.sections[1];
-    assert.strictEqual('elseif', section.header.type);
-    assert.strictEqual(1,        section.blocks.length);
-    assert.strictEqual('normal',            section.blocks[0].type);
-    assert.strictEqual('<div>value2</div>', section.blocks[0].expr);
+    assert.strictEqual(section.header.type, 'elseif');
+    assert.strictEqual(section.blocks.length, 1);
+    assert.strictEqual(section.blocks[0].type, 'normal');
+    assert.strictEqual(section.blocks[0].expr, '<div>value2</div>');
 
     section = result.sections[2];
-    assert.strictEqual('elseif', section.header.type);
-    assert.strictEqual(1,        section.blocks.length);
-    assert.strictEqual('normal',            section.blocks[0].type);
-    assert.strictEqual('<div>value3</div>', section.blocks[0].expr);
+    assert.strictEqual(section.header.type, 'elseif');
+    assert.strictEqual(section.blocks.length, 1);
+    assert.strictEqual(section.blocks[0].type, 'normal');
+    assert.strictEqual(section.blocks[0].expr, '<div>value3</div>');
 
     section = result.sections[3];
-    assert.strictEqual('else', section.header.type);
-    assert.strictEqual(1,        section.blocks.length);
-    assert.strictEqual('normal',            section.blocks[0].type);
-    assert.strictEqual('<div>value4</div>', section.blocks[0].expr);
+    assert.strictEqual(section.header.type, 'else');
+    assert.strictEqual(section.blocks.length, 1);
+    assert.strictEqual(section.blocks[0].type, 'normal');
+    assert.strictEqual(section.blocks[0].expr, '<div>value4</div>');
 });
 
 QUnit.test('if block - if elseif else - error', function(assert) {
@@ -284,78 +284,78 @@ QUnit.test('if block - conditions', function(assert) {
 
     source = '{ if $foo === \'hoge\' }<p>hoge</p>{ /if }';
     stack  = parser.parse(source)[0].sections[0].header.stack;
-    assert.strictEqual(3, stack.length);
-    assert.strictEqual('var', stack[0].type);
-    assert.strictEqual('foo', stack[0].keys.join('.'));
-    assert.strictEqual('value', stack[1].type);
-    assert.strictEqual('hoge',  stack[1].value);
-    assert.strictEqual('comp', stack[2].type);
-    assert.strictEqual('===',  stack[2].expr);
+    assert.strictEqual(stack.length, 3);
+    assert.strictEqual(stack[0].type, 'var');
+    assert.strictEqual(stack[0].keys.join('.'), 'foo');
+    assert.strictEqual(stack[1].type, 'value');
+    assert.strictEqual(stack[1].value, 'hoge');
+    assert.strictEqual(stack[2].type, 'comp');
+    assert.strictEqual(stack[2].expr, '===');
 
     // redundant round brackets
     source = '{ if ( ( $foo === \'hoge\' ) ) }<p>hoge</p>{ /if }';
     stack  = parser.parse(source)[0].sections[0].header.stack;
-    assert.strictEqual(3, stack.length);
+    assert.strictEqual(stack.length, 3);
 
     source = '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }<p>ok</p>{ /if }';
     stack  = parser.parse(source)[0].sections[0].header.stack;
-    assert.strictEqual(15, stack.length);
-    assert.strictEqual('var',  stack[0].type);
-    assert.strictEqual('val1', stack[0].keys.join('.'));
-    assert.strictEqual('value', stack[1].type);
-    assert.strictEqual(10,      stack[1].value);
-    assert.strictEqual('comp', stack[2].type);
-    assert.strictEqual('gt',   stack[2].expr);
-    assert.strictEqual('var',  stack[3].type);
-    assert.strictEqual('val2', stack[3].keys.join('.'));
-    assert.strictEqual('value', stack[4].type);
-    assert.strictEqual(-1,      stack[4].value);
-    assert.strictEqual('comp', stack[5].type);
-    assert.strictEqual('gte',  stack[5].expr);
-    assert.strictEqual('andor', stack[6].type);
-    assert.strictEqual('and',   stack[6].expr);
-    assert.strictEqual('var',  stack[7].type);
-    assert.strictEqual('val3', stack[7].keys.join('.'));
-    assert.strictEqual('value', stack[8].type);
-    assert.strictEqual(1.0,     stack[8].value);
-    assert.strictEqual('comp', stack[9].type);
-    assert.strictEqual('lt',   stack[9].expr);
-    assert.strictEqual('var',  stack[10].type);
-    assert.strictEqual('val4', stack[10].keys.join('.'));
-    assert.strictEqual('value', stack[11].type);
-    assert.strictEqual(-1.0,    stack[11].value);
-    assert.strictEqual('comp', stack[12].type);
-    assert.strictEqual('lte',  stack[12].expr);
-    assert.strictEqual('andor', stack[13].type);
-    assert.strictEqual('and',   stack[13].expr);
-    assert.strictEqual('andor', stack[14].type);
-    assert.strictEqual('or',    stack[14].expr);
+    assert.strictEqual(stack.length, 15);
+    assert.strictEqual(stack[0].type, 'var');
+    assert.strictEqual(stack[0].keys.join('.'), 'val1');
+    assert.strictEqual(stack[1].type, 'value');
+    assert.strictEqual(stack[1].value, 10);
+    assert.strictEqual(stack[2].type, 'comp');
+    assert.strictEqual(stack[2].expr, 'gt');
+    assert.strictEqual(stack[3].type, 'var');
+    assert.strictEqual(stack[3].keys.join('.'), 'val2');
+    assert.strictEqual(stack[4].type, 'value');
+    assert.strictEqual(stack[4].value, -1);
+    assert.strictEqual(stack[5].type, 'comp');
+    assert.strictEqual(stack[5].expr, 'gte');
+    assert.strictEqual(stack[6].type, 'andor');
+    assert.strictEqual(stack[6].expr, 'and');
+    assert.strictEqual(stack[7].type, 'var');
+    assert.strictEqual(stack[7].keys.join('.'), 'val3');
+    assert.strictEqual(stack[8].type, 'value');
+    assert.strictEqual(stack[8].value, 1.0);
+    assert.strictEqual(stack[9].type, 'comp');
+    assert.strictEqual(stack[9].expr, 'lt');
+    assert.strictEqual(stack[10].type, 'var');
+    assert.strictEqual(stack[10].keys.join('.'), 'val4');
+    assert.strictEqual(stack[11].type, 'value');
+    assert.strictEqual(stack[11].value, -1.0);
+    assert.strictEqual(stack[12].type, 'comp');
+    assert.strictEqual(stack[12].expr, 'lte');
+    assert.strictEqual(stack[13].type, 'andor');
+    assert.strictEqual(stack[13].expr, 'and');
+    assert.strictEqual(stack[14].type, 'andor');
+    assert.strictEqual(stack[14].expr, 'or');
 
     // inversion of lval and rval
     source = '{ if 10 !== $price }<p>ok</p>{ /if }';
     stack  = parser.parse(source)[0].sections[0].header.stack;
-    assert.strictEqual(3, stack.length);
-    assert.strictEqual('value', stack[0].type);
-    assert.strictEqual(10,      stack[0].value);
-    assert.strictEqual('var',   stack[1].type);
-    assert.strictEqual('price', stack[1].keys.join('.'));
-    assert.strictEqual('comp', stack[2].type);
-    assert.strictEqual('!==',  stack[2].expr);
+    assert.strictEqual(stack.length, 3);
+    assert.strictEqual(stack[0].type, 'value');
+    assert.strictEqual(stack[0].value, 10);
+    assert.strictEqual(stack[1].type, 'var');
+    assert.strictEqual(stack[1].keys.join('.'), 'price');
+    assert.strictEqual(stack[2].type, 'comp');
+    assert.strictEqual(stack[2].expr, '!==');
 
     // priority of and/or
     source = '{ if ( $var1 or $var2 ) and $var3 }<p>ok</p>{ /if }';
     stack  = parser.parse(source)[0].sections[0].header.stack;
-    assert.strictEqual(5, stack.length);
-    assert.strictEqual('var',  stack[0].type);
-    assert.strictEqual('var1', stack[0].keys.join('.'));
-    assert.strictEqual('var',  stack[1].type);
-    assert.strictEqual('var2', stack[1].keys.join('.'));
-    assert.strictEqual('andor', stack[2].type);
-    assert.strictEqual('or',    stack[2].expr);
-    assert.strictEqual('var',  stack[3].type);
-    assert.strictEqual('var3', stack[3].keys.join('.'));
-    assert.strictEqual('andor', stack[4].type);
-    assert.strictEqual('and',   stack[4].expr);
+    assert.strictEqual(stack.length, 5);
+    assert.strictEqual(stack[0].type, 'var');
+    assert.strictEqual(stack[0].keys.join('.'), 'var1');
+    assert.strictEqual(stack[1].type, 'var');
+    assert.strictEqual(stack[1].keys.join('.'), 'var2');
+    assert.strictEqual(stack[2].type, 'andor');
+    assert.strictEqual(stack[2].expr, 'or');
+    assert.strictEqual(stack[3].type, 'var');
+    assert.strictEqual(stack[3].keys.join('.'), 'var3');
+    assert.strictEqual(stack[4].type, 'andor');
+    assert.strictEqual(stack[4].expr, 'and');
 });
 
 QUnit.test('if block - conditions - error', function(assert) {
@@ -512,16 +512,16 @@ QUnit.test('for block', function(assert) {
 
     source = '{ for $item in $items }<p>{ $item | h }</p>{ /for }';
     block  = parser.parse(source)[0];
-    assert.strictEqual('for', block.type);
-    assert.strictEqual('items', block.header.array.join('.'));
-    assert.strictEqual('undefined', typeof block.header.k);
-    assert.strictEqual('item', block.header.v);
-    assert.strictEqual(3, block.blocks.length);
+    assert.strictEqual(block.type, 'for');
+    assert.strictEqual(block.header.array.join('.'), 'items');
+    assert.strictEqual(typeof block.header.k, 'undefined');
+    assert.strictEqual(block.header.v, 'item');
+    assert.strictEqual(block.blocks.length, 3);
 
     source = '{ for $idx, $item in $items }<p>{ $item | h }</p>{ /for }';
     block  = parser.parse(source)[0];
-    assert.strictEqual('idx',  block.header.k);
-    assert.strictEqual('item', block.header.v);
+    assert.strictEqual(block.header.k, 'idx');
+    assert.strictEqual(block.header.v, 'item');
 });
 
 QUnit.test('for block - error', function(assert) {
