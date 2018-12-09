@@ -1,100 +1,120 @@
-QUnit.module('smodules.templateParser');
-
-QUnit.test('normal block', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '<div>foo {left}bar{right}</div>',
-        result = parser.parse(source);
-
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].type, 'normal');
-    assert.strictEqual(result[0].expr, '<div>foo {bar}</div>');
+QUnit.module('smodules.templateParser', {
+  before: function() {
+    this.parse = function() {
+      this.result = this.parser.parse(this.source);
+    };
+  },
+  beforeEach: function() {
+    this.parser = smodules.templateParser();
+    this.source = '';
+    this.result = null;
+  },
 });
 
-QUnit.test('normal block - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('normal block', function(assert) {
+    this.source = '<div>foo {left}bar{right}</div>';
+    this.parse();
 
-    source = '<div>{left} is ok, only { is forbidden.</div>';
+    assert.strictEqual(this.result.length, 1);
+    assert.strictEqual(this.result[0].type, 'normal');
+    assert.strictEqual(this.result[0].expr, '<div>foo {bar}</div>');
+});
+
+QUnit.test('normal block - error - 1', function(assert) {
+    this.source = '<div>{left} is ok, only { is forbidden.</div>';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '<div> } is forbidden.</div>';
+QUnit.test('normal block - error - 2', function(assert) {
+    this.source = '<div> } is forbidden.</div>';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('literal block', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>',
-        result = parser.parse(source);
+    this.source ='<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>',
+    this.parse();
 
-    assert.strictEqual(result.length, 3);
-    assert.strictEqual(result[0].type, 'normal');
-    assert.strictEqual(result[0].expr, '<div>');
-    assert.strictEqual(result[1].type, 'literal');
-    assert.strictEqual(result[1].expr, '{foo} {bar} {/literal} function() {};');
-    assert.strictEqual(result[2].type, 'normal');
-    assert.strictEqual(result[2].expr, '</div>');
+    assert.strictEqual(this.result.length, 3);
+    assert.strictEqual(this.result[0].type, 'normal');
+    assert.strictEqual(this.result[0].expr, '<div>');
+    assert.strictEqual(this.result[1].type, 'literal');
+    assert.strictEqual(this.result[1].expr, '{foo} {bar} {/literal} function() {};');
+    assert.strictEqual(this.result[2].type, 'normal');
+    assert.strictEqual(this.result[2].expr, '</div>');
 });
 
-QUnit.test('literal block - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('literal block - error - 1', function(assert) {
+    this.source = '<div>{literal}</div>';
 
-    source = '<div>{literal}</div>';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '<div>{/literal}</div>';
+QUnit.test('literal block - error - 2', function(assert) {
+    this.source = '<div>{/literal}</div>';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('holder block - no filters', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '{ $foo.bar }',
-        result = parser.parse(source);
+    this.source = '{ $foo.bar }',
+    this.parse();
 
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].type, 'holder');
-    assert.strictEqual(result[0].keys.length, 2);
-    assert.strictEqual(result[0].keys[0], 'foo');
-    assert.strictEqual(result[0].keys[1], 'bar');
-    assert.strictEqual(result[0].filters.length, 0);
+    assert.strictEqual(this.result.length, 1);
+    assert.strictEqual(this.result[0].type, 'holder');
+    assert.strictEqual(this.result[0].keys.length, 2);
+    assert.strictEqual(this.result[0].keys[0], 'foo');
+    assert.strictEqual(this.result[0].keys[1], 'bar');
+    assert.strictEqual(this.result[0].filters.length, 0);
 });
 
-QUnit.test('holder block - no filters - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('holder block - no filters - error - space between $ and property name', function(assert) {
+    this.source = '{ $ foo } has space between $ and property name.';
 
-    source = '{ $ foo } has space between $ and property name.';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $.foo }';
+QUnit.test('holder block - no filters - error - dot between $ and property name', function(assert) {
+    this.source = '{ $.foo }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo. }';
+QUnit.test('holder block - no filters - error - dot after property name', function(assert) {
+    this.source = '{ $foo. }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo..bar }';
+QUnit.test('holder block - no filters - error - continuous dots', function(assert) {
+    this.source = '{ $foo..bar }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('holder block - filters with no args', function(assert) {
-    var parser  = smodules.templateParser(),
-        source  = '{ $foo | filter1 | filter2 }',
-        result  = parser.parse(source),
-        filter1 = result[0].filters[0],
-        filter2 = result[0].filters[1];
+    this.source  = '{ $foo | filter1 | filter2 }';
+    this.parse();
+
+    var filter1 = this.result[0].filters[0];
+    var filter2 = this.result[0].filters[1];
 
     assert.strictEqual(filter1.name, 'filter1');
     assert.strictEqual(filter1.args.length, 0);
@@ -102,100 +122,121 @@ QUnit.test('holder block - filters with no args', function(assert) {
     assert.strictEqual(filter2.args.length, 0);
 });
 
-QUnit.test('holder block - filters with no args - error', function(assert) {
-    var parser = smodules.template(), source;
+QUnit.test('holder block - filter - error - filter name has space', function(assert) {
+    this.source = '{ $foo | invalid filter name }';
 
-    source = '{ $foo | invalid filter name }';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | invalid-filter-name }';
+QUnit.test('holder block - filter - error - filter name has symbol', function(assert) {
+    this.source = '{ $foo | filter! }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo pipeNotFound }';
+QUnit.test('holder block - filter - error - no pipe', function(assert) {
+    this.source = '{ $foo pipeNotFound }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | filter : }';
+QUnit.test('holder block - filter - error - no filter args after colon', function(assert) {
+    this.source = '{ $foo | filter : }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('holder block - filter with args - null, true and false', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '{ $foo | filter : null, true, false }',
-        result = parser.parse(source),
-        filter = result[0].filters[0];
+    this.source = '{ $foo | filter : null, true, false }';
+    this.parse();
+
+    var filter = this.result[0].filters[0];
 
     assert.strictEqual(filter.args[0], null);
     assert.strictEqual(filter.args[1], true);
     assert.strictEqual(filter.args[2], false);
 });
 
-QUnit.test('holder block - filter with args - null, true and false - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('holder block - filter with args - error - NULL', function(assert) {
+    this.source = '{ $foo | filter : NULL }';
 
-    source = '{ $foo | filter : NULL }';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | filter : TRUE }';
+QUnit.test('holder block - filter with args - error - TRUE', function(assert) {
+    this.source = '{ $foo | filter : TRUE }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | filter : FALSE }';
+QUnit.test('holder block - filter with args - error - FALSE', function(assert) {
+    this.source = '{ $foo | filter : FALSE }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('holder block - filter with args - string', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '{ $foo | filter : \'test\',\'{delimiter}\',\'it\\\'s string\' }',
-        result = parser.parse(source),
-        filter = result[0].filters[0];
+    this.source = '{ $foo | filter : "test", "{delimiter}", "it\'s string" }';
+    this.parse();
+
+    var filter = this.result[0].filters[0];
 
     assert.strictEqual(filter.args[0], 'test');
     assert.strictEqual(filter.args[1], '{delimiter}');
     assert.strictEqual(filter.args[2], 'it\'s string');
 });
 
-QUnit.test('holder block - filter with args - string - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('holder block - filter with args - string - error - quote 1', function(assert) {
+    this.source = '{ $foo | filter : \'test }';
 
-    source = '{ $foo | filter : \'test }';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | filter : test\' }';
+QUnit.test('holder block - filter with args - string - error - quote 2', function(assert) {
+    this.source = '{ $foo | filter : test\' }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | filter : "test\' }';
+QUnit.test('holder block - filter with args - string - error - quote char 1', function(assert) {
+    this.source = '{ $foo | filter : "test\' }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{ $foo | filter : \'test" }';
+QUnit.test('holder block - filter with args - string - error - quote char 2', function(assert) {
+    this.source = '{ $foo | filter : \'test" }';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('holder block - filter with args - number', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }',
-        result = parser.parse(source),
-        filter = result[0].filters[0];
+    this.source = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }',
+    this.parse();
+
+    var filter = this.result[0].filters[0];
 
     assert.strictEqual(filter.args[0], 0);
     assert.strictEqual(filter.args[1], 10);
@@ -208,82 +249,93 @@ QUnit.test('holder block - filter with args - number', function(assert) {
 });
 
 QUnit.test('if block - if elseif else', function(assert) {
-    var parser = smodules.templateParser(),
-        source = '{ if $value1 }' +
-                 '<div>value1</div>' +
-                 '{ elseif $value2 }' +
-                 '<div>value2</div>' +
-                 '{ elseif $value3 }' +
-                 '<div>value3</div>' +
-                 '{ else }' +
-                 '<div>value4</div>' +
-                 '{ /if }',
-        result = parser.parse(source)[0],
-        section;
+    var section;
 
-    assert.strictEqual(result.type, 'if');
-    assert.strictEqual(result.sections.length, 4);
+    this.source =
+        '{ if $value1 }' +
+        '<div>value1</div>' +
+        '{ elseif $value2 }' +
+        '<div>value2</div>' +
+        '{ elseif $value3 }' +
+        '<div>value3</div>' +
+        '{ else }' +
+        '<div>value4</div>' +
+        '{ /if }',
+    this.parse();
 
-    section = result.sections[0];
+    assert.strictEqual(this.result[0].type, 'if');
+    assert.strictEqual(this.result[0].sections.length, 4);
+
+    section = this.result[0].sections[0];
     assert.strictEqual(section.header.type, 'if');
     assert.strictEqual(section.blocks.length, 1);
     assert.strictEqual(section.blocks[0].type, 'normal');
     assert.strictEqual(section.blocks[0].expr, '<div>value1</div>');
 
-    section = result.sections[1];
+    section = this.result[0].sections[1];
     assert.strictEqual(section.header.type, 'elseif');
     assert.strictEqual(section.blocks.length, 1);
     assert.strictEqual(section.blocks[0].type, 'normal');
     assert.strictEqual(section.blocks[0].expr, '<div>value2</div>');
 
-    section = result.sections[2];
+    section = this.result[0].sections[2];
     assert.strictEqual(section.header.type, 'elseif');
     assert.strictEqual(section.blocks.length, 1);
     assert.strictEqual(section.blocks[0].type, 'normal');
     assert.strictEqual(section.blocks[0].expr, '<div>value3</div>');
 
-    section = result.sections[3];
+    section = this.result[0].sections[3];
     assert.strictEqual(section.header.type, 'else');
     assert.strictEqual(section.blocks.length, 1);
     assert.strictEqual(section.blocks[0].type, 'normal');
     assert.strictEqual(section.blocks[0].expr, '<div>value4</div>');
 });
 
-QUnit.test('if block - if elseif else - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('if block - if elseif else - error 1', function(assert) {
+    this.source = '{if $foo}<p>hoge</p>';
 
-    source = '{if $foo}<p>hoge</p>';
     assert.raises(function() {
-        parser.parse(source);
-    }, Error);
-
-    source = '{elseif $foo}<p>hoge</p>{/if}';
-    assert.raises(function() {
-        parser.parse(source);
-    }, Error);
-
-    source = '{else}<p>hoge</p>{/if}';
-    assert.raises(function() {
-        parser.parse(source);
-    }, Error);
-
-    source = '{/if}';
-    assert.raises(function() {
-        parser.parse(source);
-    }, Error);
-
-    source = '{if $foo}<p>foo</p>{if $bar}<p>bar</p>{/if}';
-    assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
-QUnit.test('if block - conditions', function(assert) {
-    var parser = smodules.templateParser(),
-        source, stack;
+QUnit.test('if block - if elseif else - error 2', function(assert) {
+    this.source = '{elseif $foo}<p>hoge</p>{/if}';
 
-    source = '{ if $foo === \'hoge\' }<p>hoge</p>{ /if }';
-    stack  = parser.parse(source)[0].sections[0].header.stack;
+    assert.raises(function() {
+        this.parse();
+    }, Error);
+});
+
+QUnit.test('if block - if elseif else - error 3', function(assert) {
+    this.source = '{else}<p>hoge</p>{/if}';
+
+    assert.raises(function() {
+        this.parse();
+    }, Error);
+});
+
+QUnit.test('if block - if elseif else - error 4', function(assert) {
+    this.source = '{/if}';
+
+    assert.raises(function() {
+        this.parse();
+    }, Error);
+});
+QUnit.test('if block - if elseif else - error 5', function(assert) {
+    this.source = '{if $foo}<p>foo</p>{if $bar}<p>bar</p>{/if}';
+
+    assert.raises(function() {
+        this.parse();
+    }, Error);
+});
+
+QUnit.test('if block - condition - simple', function(assert) {
+    this.source = '{ if $foo === "hoge" }<p>hoge</p>{ /if }';
+    this.parse();
+
+    var stack = this.result[0].sections[0].header.stack;
+
     assert.strictEqual(stack.length, 3);
     assert.strictEqual(stack[0].type, 'var');
     assert.strictEqual(stack[0].keys.join('.'), 'foo');
@@ -291,14 +343,29 @@ QUnit.test('if block - conditions', function(assert) {
     assert.strictEqual(stack[1].value, 'hoge');
     assert.strictEqual(stack[2].type, 'comp');
     assert.strictEqual(stack[2].expr, '===');
+});
 
-    // redundant round brackets
-    source = '{ if ( ( $foo === \'hoge\' ) ) }<p>hoge</p>{ /if }';
-    stack  = parser.parse(source)[0].sections[0].header.stack;
+QUnit.test('if block - condition - redundant round brackets', function(assert) {
+    this.source = '{ if ( ( ( $foo === "hoge" ) ) ) }<p>hoge</p>{ /if }';
+    this.parse();
+
+    var stack = this.result[0].sections[0].header.stack;
+
     assert.strictEqual(stack.length, 3);
+    assert.strictEqual(stack[0].type, 'var');
+    assert.strictEqual(stack[0].keys.join('.'), 'foo');
+    assert.strictEqual(stack[1].type, 'value');
+    assert.strictEqual(stack[1].value, 'hoge');
+    assert.strictEqual(stack[2].type, 'comp');
+    assert.strictEqual(stack[2].expr, '===');
+});
 
-    source = '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }<p>ok</p>{ /if }';
-    stack  = parser.parse(source)[0].sections[0].header.stack;
+QUnit.test('if block - condition - complicated', function(assert) {
+    this.source = '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }<p>ok</p>{ /if }';
+    this.parse();
+
+    var stack  = this.result[0].sections[0].header.stack;
+
     assert.strictEqual(stack.length, 15);
     assert.strictEqual(stack[0].type, 'var');
     assert.strictEqual(stack[0].keys.join('.'), 'val1');
@@ -330,10 +397,14 @@ QUnit.test('if block - conditions', function(assert) {
     assert.strictEqual(stack[13].expr, 'and');
     assert.strictEqual(stack[14].type, 'andor');
     assert.strictEqual(stack[14].expr, 'or');
+});
 
-    // inversion of lval and rval
-    source = '{ if 10 !== $price }<p>ok</p>{ /if }';
-    stack  = parser.parse(source)[0].sections[0].header.stack;
+QUnit.test('if block - condition - inversion of lval and rval', function(assert) {
+    this.source = '{ if 10 !== $price }<p>ok</p>{ /if }';
+    this.parse();
+
+    var stack  = this.result[0].sections[0].header.stack;
+
     assert.strictEqual(stack.length, 3);
     assert.strictEqual(stack[0].type, 'value');
     assert.strictEqual(stack[0].value, 10);
@@ -341,10 +412,14 @@ QUnit.test('if block - conditions', function(assert) {
     assert.strictEqual(stack[1].keys.join('.'), 'price');
     assert.strictEqual(stack[2].type, 'comp');
     assert.strictEqual(stack[2].expr, '!==');
+});
 
-    // priority of and/or
-    source = '{ if ( $var1 or $var2 ) and $var3 }<p>ok</p>{ /if }';
-    stack  = parser.parse(source)[0].sections[0].header.stack;
+QUnit.test('if block - condition - priority of and/or', function(assert) {
+    this.source = '{ if ( $var1 or $var2 ) and $var3 }<p>ok</p>{ /if }';
+    this.parse();
+
+    var stack  = this.result[0].sections[0].header.stack;
+
     assert.strictEqual(stack.length, 5);
     assert.strictEqual(stack[0].type, 'var');
     assert.strictEqual(stack[0].keys.join('.'), 'var1');
@@ -358,192 +433,249 @@ QUnit.test('if block - conditions', function(assert) {
     assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('if block - conditions - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('if block - conditions - error - roundBracket -> endRoundBracket', function(assert) {
+    this.source = '{if () }<p>ok</p>{/if}';
 
-    // roundBracket -> endRoundBracket
-    source = '{if () }<p>ok</p>{/if}';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // roundBracket -> comp
-    source = '{if ( === $foo )}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - roundBracket -> comp', function(assert) {
+    this.source = '{if ( === $foo )}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // roundBracket -> andor
-    source = '{if ( and $foo )}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - roundBracket -> andor', function(assert) {
+    this.source = '{if ( and $foo )}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // endRoundBracket -> roundBracket
-    source = '{if ( $foo ) ( === $bar )}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - endRoundBracket -> roundBracket', function(assert) {
+    this.source = '{if ( $foo ) ( === $bar )}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // endRoundBracket -> value
-    source = '{if ( $foo ) 10 === $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - endRoundBracket -> value', function(assert) {
+    this.source = '{if ( $foo ) 10 === $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // endRoundBracket -> var
-    source = '{if ( $foo ) $bar gte 10}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - endRoundBracket -> var', function(assert) {
+    this.source = '{if ( $foo ) $bar gte 10}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // endRoundBracket -> comp
-    source = '{if ( $foo ) === $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - endRoundBracket -> comp', function(assert) {
+    this.source = '{if ( $foo ) === $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // value -> roundBracket
-    source = '{if 10 ( === $foo )}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - value -> roundBracket', function(assert) {
+    this.source = '{if 10 ( === $foo )}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // value -> value
-    source = '{if 10 20}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - value -> value', function(assert) {
+    this.source = '{if 10 20}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // value -> var
-    source = '{if 10 $foo}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - value -> var', function(assert) {
+    this.source = '{if 10 $foo}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // var -> roundBracket
-    source = '{if $foo ( === $bar )}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - var -> roundBracket', function(assert) {
+    this.source = '{if $foo ( === $bar )}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // var -> value
-    source = '{if $foo 10}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - var -> value', function(assert) {
+    this.source = '{if $foo 10}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // var -> var
-    source = '{if $foo $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - var -> var', function(assert) {
+    this.source = '{if $foo $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // comp -> roundBracket
-    source = '{if $foo lte ( $bar ) }<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - comp -> roundBracket', function(assert) {
+    this.source = '{if $foo lte ( $bar ) }<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // comp -> endRoundBracket
-    source = '{if ( $foo gte ) $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - comp -> endRoundBracket', function(assert) {
+    this.source = '{if ( $foo gte ) $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // comp -> comp
-    source = '{if $foo === === $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - comp -> comp', function(assert) {
+    this.source = '{if $foo === === $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // comp -> andor
-    source = '{if $foo !== or $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - comp -> andor', function(assert) {
+    this.source = '{if $foo !== or $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // comp -> value -> comp
-    source = '{if 10 === 10 === 10}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - comp -> value -> comp', function(assert) {
+    this.source = '{if 10 === 10 === 10}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // comp -> var -> comp
-    source = '{if $foo gt $bar gt $baz}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - comp -> var -> comp', function(assert) {
+    this.source = '{if $foo gt $bar gt $baz}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // andor -> endRoundBracket
-    source = '{if ( $foo or ) $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - andor -> endRoundBracket', function(assert) {
+    this.source = '{if ( $foo or ) $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // andor -> comp
-    source = '{if $foo or === $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - andor -> comp', function(assert) {
+    this.source = '{if $foo or === $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // andor -> andor
-    source = '{if $foo or or $bar}<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - andor -> andor', function(assert) {
+    this.source = '{if $foo or or $bar}<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // lack of endRoundBracket
-    source = '{if ( $foo }<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - lack of endRoundBracket', function(assert) {
+    this.source = '{if ( $foo }<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    // lack of roundBracket
-    source = '{if ( $foo ) ) }<p>ok</p>{/if}';
+QUnit.test('if block - conditions - error - lack of roundBracket', function(assert) {
+    this.source = '{if ( $foo ) ) }<p>ok</p>{/if}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
 
 QUnit.test('for block', function(assert) {
-    var parser = smodules.templateParser(),
-        source, block;
+    this.source = '{ for $item in $items }<p>{ $item | h }</p>{ /for }';
+    this.parse();
 
-    source = '{ for $item in $items }<p>{ $item | h }</p>{ /for }';
-    block  = parser.parse(source)[0];
+    var block  = this.result[0];
+
     assert.strictEqual(block.type, 'for');
     assert.strictEqual(block.header.array.join('.'), 'items');
     assert.strictEqual(typeof block.header.k, 'undefined');
     assert.strictEqual(block.header.v, 'item');
     assert.strictEqual(block.blocks.length, 3);
+});
 
-    source = '{ for $idx, $item in $items }<p>{ $item | h }</p>{ /for }';
-    block  = parser.parse(source)[0];
+QUnit.test('for block - use index', function(assert) {
+    this.source = '{ for $idx, $item in $items }<p>{ $item | h }</p>{ /for }';
+    this.parse();
+
+    var block  = this.result[0];
+
     assert.strictEqual(block.header.k, 'idx');
     assert.strictEqual(block.header.v, 'item');
 });
 
-QUnit.test('for block - error', function(assert) {
-    var parser = smodules.templateParser(), source;
+QUnit.test('for block - error - lack of comma', function(assert) {
+    this.source = '{for $idx $item in $items}<p>{$item}</p>{/for}';
 
-    source = '{for $idx $item in $items}<p>{$item}</p>{/for}';
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{for $idx , in $items}<p>{$idx}</p>{/for}';
+QUnit.test('for block - error - lack of value argument', function(assert) {
+    this.source = '{for $idx , in $items}<p>{$idx}</p>{/for}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{for , $item in $items}<p>{$item}</p>{/for}';
+QUnit.test('for block - error - lack of index argument', function(assert) {
+    this.source = '{for , $item in $items}<p>{$item}</p>{/for}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
+});
 
-    source = '{for $idx , $item , $foo in $items}<p>{$item}</p>{/for}';
+QUnit.test('for block - error - too many arguments', function(assert) {
+    this.source = '{for $idx , $item , $foo in $items}<p>{$item}</p>{/for}';
+
     assert.raises(function() {
-        parser.parse(source);
+        this.parse();
     }, Error);
 });
