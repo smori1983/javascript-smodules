@@ -34,9 +34,19 @@ grunt.initConfig({
       dest: 'dist/smodules-<%= pkg.version %>.js',
     },
   },
+  watch: {
+    scripts: {
+      files: ['src/smodules/*.js', 'test/smodules/*.js'],
+      tasks: ['eslint'],
+      options: {
+        event: ['all'],
+      },
+    },
+  },
 });
 
 grunt.loadNpmTasks('grunt-contrib-concat');
+grunt.loadNpmTasks('grunt-contrib-watch');
 grunt.loadNpmTasks('grunt-eslint');
 
 grunt.registerTask('default', ['eslint', 'concat']);
