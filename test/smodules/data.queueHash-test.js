@@ -6,16 +6,16 @@ QUnit.test('addTo and getFrom', function(assert) {
     qh.addTo('list', 'a');
     qh.addTo('list', 'b');
 
-    assert.strictEqual(true, qh.has('list'));
-    assert.strictEqual(2,    qh.sizeOf('list'));
-    assert.strictEqual('a',  qh.getFrom('list'));
-    assert.strictEqual(1,    qh.sizeOf('list'));
-    assert.strictEqual('b',  qh.getFrom('list'));
-    assert.strictEqual(0,    qh.sizeOf('list'));
+    assert.strictEqual(qh.has('list'), true);
+    assert.strictEqual(qh.sizeOf('list'), 2);
+    assert.strictEqual(qh.getFrom('list'), 'a');
+    assert.strictEqual(qh.sizeOf('list'), 1);
+    assert.strictEqual(qh.getFrom('list'), 'b');
+    assert.strictEqual(qh.sizeOf('list'), 0);
 
     qh.remove('list');
 
-    assert.strictEqual(false, qh.has('list'));
+    assert.strictEqual(qh.has('list'), false);
 });
 
 QUnit.test('check keys', function(assert) {
@@ -23,14 +23,14 @@ QUnit.test('check keys', function(assert) {
 
     qh.addTo('queue1', 'a');
 
-    assert.strictEqual(1,        qh.getKeys().length);
-    assert.strictEqual('queue1', qh.getKeys()[0]);
+    assert.strictEqual(qh.getKeys().length, 1);
+    assert.strictEqual(qh.getKeys()[0], 'queue1');
 
     qh.addTo('queue2', 'A');
 
-    assert.strictEqual(2,        qh.getKeys().length);
-    assert.strictEqual('queue1', qh.getKeys()[0]);
-    assert.strictEqual('queue2', qh.getKeys()[1]);
+    assert.strictEqual(qh.getKeys().length, 2);
+    assert.strictEqual(qh.getKeys()[0], 'queue1');
+    assert.strictEqual(qh.getKeys()[1], 'queue2');
 
     qh.clear();
 
@@ -40,7 +40,7 @@ QUnit.test('check keys', function(assert) {
 QUnit.test('using not existing key', function(assert) {
     var qh = smodules.data.queueHash();
 
-    assert.strictEqual(false, qh.has('hoge'));
-    assert.strictEqual(0,     qh.sizeOf('hoge'));
-    assert.strictEqual('undefined', typeof qh.getFrom('hoge'));
+    assert.strictEqual(qh.has('hoge'), false);
+    assert.strictEqual(qh.sizeOf('hoge'), 0);
+    assert.strictEqual(typeof qh.getFrom('hoge'), 'undefined');
 });

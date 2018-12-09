@@ -15,10 +15,10 @@ QUnit.test('single unit:1', function(assert) {
     }).start();
 
     window.setTimeout(function() {
-        assert.strictEqual(3, output.length);
-        assert.strictEqual('a', output[0]);
-        assert.strictEqual('b', output[1]);
-        assert.strictEqual('c', output[2]);
+        assert.strictEqual(output.length, 3);
+        assert.strictEqual(output[0], 'a');
+        assert.strictEqual(output[1], 'b');
+        assert.strictEqual(output[2], 'c');
 
         done();
     }, 150);
@@ -39,9 +39,9 @@ QUnit.test('single unit:2', function(assert) {
     }).start();
 
     window.setTimeout(function() {
-        assert.strictEqual(2, output.length);
-        assert.strictEqual('a.b', output[0]);
-        assert.strictEqual('c',   output[1]);
+        assert.strictEqual(output.length, 2);
+        assert.strictEqual(output[0], 'a.b');
+        assert.strictEqual(output[1], 'c');
 
         done();
     }, 150);
@@ -71,17 +71,17 @@ QUnit.test('multiple', function(assert) {
     }).start();
 
     window.setTimeout(function() {
-        assert.strictEqual(4, output1.length);
-        assert.strictEqual('a.b', output1[0]);
-        assert.strictEqual('c.d', output1[1]);
-        assert.strictEqual('e.f', output1[2]);
-        assert.strictEqual('g.h', output1[3]);
+        assert.strictEqual(output1.length, 4);
+        assert.strictEqual(output1[0], 'a.b');
+        assert.strictEqual(output1[1], 'c.d');
+        assert.strictEqual(output1[2], 'e.f');
+        assert.strictEqual(output1[3], 'g.h');
 
-        assert.strictEqual(4, output2.length);
-        assert.strictEqual('A.B', output2[0]);
-        assert.strictEqual('C.D', output2[1]);
-        assert.strictEqual('E.F', output2[2]);
-        assert.strictEqual('G.H', output2[3]);
+        assert.strictEqual(output2.length, 4);
+        assert.strictEqual(output2[0], 'A.B');
+        assert.strictEqual(output2[1], 'C.D');
+        assert.strictEqual(output2[2], 'E.F');
+        assert.strictEqual(output2[3], 'G.H');
 
         done();
     }, 150);
