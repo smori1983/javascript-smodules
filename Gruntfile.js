@@ -16,8 +16,15 @@ grunt.initConfig({
     target: ['Gruntfile.js', 'src/smodules/*.js', 'test/smodules/*.js'],
   },
   connect: {
-    server: {
+    qunit: {
       options: {
+        port: 8000,
+        base: '.',
+      },
+    },
+    keepalive: {
+      options: {
+        keepalive: true,
         port: 8000,
         base: '.',
       },
@@ -59,6 +66,6 @@ grunt.loadNpmTasks('grunt-eslint');
 
 grunt.registerTask('default', ['eslint', 'concat']);
 grunt.registerTask('lint', ['eslint']);
-grunt.registerTask('tools', ['eslint', 'connect', 'qunit']);
+grunt.registerTask('tools', ['eslint', 'connect:qunit', 'qunit']);
 
 };
