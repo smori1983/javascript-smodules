@@ -30,6 +30,7 @@
     "eol-last": ["error", "always"],
     "eqeqeq": "error",
     "func-call-spacing": ["error", "never"],
+    "indent": ["error", 2],
     "no-console": ["error", {
       "allow": ["warn", "error"]
     }],
