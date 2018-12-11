@@ -369,7 +369,7 @@ QUnit.test('bind - get - string source - without callback', function(assert) {
 QUnit.test('error - filter not found', function(assert) {
   this.src = '<p>{ $value | hoge }</p>';
 
-  assert.raises(function() {
+  assert.throws(function() {
     this.template.bind(this.src, { value: 'test' }).get(function(output) {});
   }, Error);
 });
