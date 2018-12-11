@@ -13,7 +13,7 @@ grunt.initConfig({
             ' */',
   },
   eslint: {
-    target: ['Gruntfile.js', 'src/smodules/*.js', 'test/smodules/*.js'],
+    target: ['src/smodules/*.js', 'test/smodules/*.js'],
   },
   connect: {
     qunit: {
