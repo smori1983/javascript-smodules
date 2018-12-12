@@ -27,7 +27,7 @@ QUnit.test('normal block - error - 2', function(assert) {
   }, Error);
 });
 
-QUnit.test('literal block - error - 1', function(assert) {
+QUnit.test('literal block - error - only open tag', function(assert) {
   this.source = '<div>{literal}</div>';
 
   assert.throws(function() {
@@ -35,7 +35,7 @@ QUnit.test('literal block - error - 1', function(assert) {
   }, Error);
 });
 
-QUnit.test('literal block - error - 2', function(assert) {
+QUnit.test('literal block - error - only close tag', function(assert) {
   this.source = '<div>{/literal}</div>';
 
   assert.throws(function() {
