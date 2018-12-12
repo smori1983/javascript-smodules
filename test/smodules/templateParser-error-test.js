@@ -394,6 +394,14 @@ QUnit.test('if block - conditions - error - lack of roundBracket', function(asse
   }, Error);
 });
 
+QUnit.test('for block - error - lack of index argument', function(assert) {
+  this.source = '{for , $item in $items}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('for block - error - lack of comma', function(assert) {
   this.source = '{for $idx $item in $items}<p>{$item}</p>{/for}';
 
@@ -410,16 +418,42 @@ QUnit.test('for block - error - lack of value argument', function(assert) {
   }, Error);
 });
 
-QUnit.test('for block - error - lack of index argument', function(assert) {
-  this.source = '{for , $item in $items}<p>{$item}</p>{/for}';
+QUnit.test('for block - error - lack of in', function(assert) {
+  this.source = '{for $idx , $item $items}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
     this.parse();
   }, Error);
 });
 
-QUnit.test('for block - error - too many arguments', function(assert) {
+QUnit.test('for block - error - lack of haystack', function(assert) {
+  this.source = '{for $idx , $item in}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - too many elements 1', function(assert) {
   this.source = '{for $idx , $item , $foo in $items}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - too many elements 2', function(assert) {
+
+  this.source = '{for $idx , $item in $items1 , $items2}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - too many elements 3', function(assert) {
+
+  this.source = '{for $idx , $item in $items1 $items2}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
     this.parse();
