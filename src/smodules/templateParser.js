@@ -12,7 +12,7 @@ smodules.templateParser = function() {
     throw new Error('smodules.templateParser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
   };
 
-  var next = (function(expr, replace) {
+  var next = (function() {
     var position = function(expr) {
       while (expr.length > 0) {
         if (expr.slice(0, 1) === '\n') {
