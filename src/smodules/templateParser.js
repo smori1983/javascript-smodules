@@ -833,8 +833,7 @@ smodules.templateParser = function() {
     }; // parseHeader()
 
     return function() {
-      var header = parseHeader(),
-        blocks = loop([], true);
+      var header = parseHeader(), blocks = loop([], true);
 
       eatEndForTag();
 
