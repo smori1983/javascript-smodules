@@ -1,52 +1,46 @@
-module("smodules.data.queueHash");
+QUnit.module('smodules.data.queueHash');
 
-test("addTo and getFrom", function() {
-    var qh = smodules.data.queueHash();
+QUnit.test('addTo and getFrom', function(assert) {
+  var qh = smodules.data.queueHash();
 
-    qh.addTo("list", "a");
-    qh.addTo("list", "b");
+  qh.addTo('list', 'a');
+  qh.addTo('list', 'b');
 
-    strictEqual(true, qh.has("list"));
-    strictEqual(2,    qh.sizeOf("list"));
-    strictEqual("a",  qh.getFrom("list"));
-    strictEqual(1,    qh.sizeOf("list"));
-    strictEqual("b",  qh.getFrom("list"));
-    strictEqual(0,    qh.sizeOf("list"));
+  assert.strictEqual(qh.has('list'), true);
+  assert.strictEqual(qh.sizeOf('list'), 2);
+  assert.strictEqual(qh.getFrom('list'), 'a');
+  assert.strictEqual(qh.sizeOf('list'), 1);
+  assert.strictEqual(qh.getFrom('list'), 'b');
+  assert.strictEqual(qh.sizeOf('list'), 0);
 
-    qh.remove("list");
+  qh.remove('list');
 
-    strictEqual(false, qh.has("list"));
-
-    start();
+  assert.strictEqual(qh.has('list'), false);
 });
 
-test("check keys", function() {
-    var qh = smodules.data.queueHash();
+QUnit.test('check keys', function(assert) {
+  var qh = smodules.data.queueHash();
 
-    qh.addTo("queue1", "a");
+  qh.addTo('queue1', 'a');
 
-    strictEqual(1,        qh.getKeys().length);
-    strictEqual("queue1", qh.getKeys()[0]);
+  assert.strictEqual(qh.getKeys().length, 1);
+  assert.strictEqual(qh.getKeys()[0], 'queue1');
 
-    qh.addTo("queue2", "A");
+  qh.addTo('queue2', 'A');
 
-    strictEqual(2,        qh.getKeys().length);
-    strictEqual("queue1", qh.getKeys()[0]);
-    strictEqual("queue2", qh.getKeys()[1]);
+  assert.strictEqual(qh.getKeys().length, 2);
+  assert.strictEqual(qh.getKeys()[0], 'queue1');
+  assert.strictEqual(qh.getKeys()[1], 'queue2');
 
-    qh.clear();
+  qh.clear();
 
-    strictEqual(0, qh.getKeys().length);
-
-    start();
+  assert.strictEqual(0, qh.getKeys().length);
 });
 
-test("using not existing key", function() {
-    var qh = smodules.data.queueHash();
+QUnit.test('using not existing key', function(assert) {
+  var qh = smodules.data.queueHash();
 
-    strictEqual(false, qh.has("hoge"));
-    strictEqual(0,     qh.sizeOf("hoge"));
-    strictEqual("undefined", typeof qh.getFrom("hoge"));
-
-    start();
+  assert.strictEqual(qh.has('hoge'), false);
+  assert.strictEqual(qh.sizeOf('hoge'), 0);
+  assert.strictEqual(typeof qh.getFrom('hoge'), 'undefined');
 });

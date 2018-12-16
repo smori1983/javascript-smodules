@@ -10,48 +10,48 @@
  * stop()
  */
 smodules.util.delayedArrayAccess = function(spec) {
-    if (!$.isArray(spec.array) ||
-        typeof spec.unit !== "number" ||
-        typeof spec.interval !== "number" ||
-        typeof spec.callback !== "function") {
+  if (!$.isArray(spec.array) ||
+      typeof spec.unit !== 'number' ||
+      typeof spec.interval !== 'number' ||
+      typeof spec.callback !== 'function') {
 
-        return;
-    }
+    return;
+  }
 
-    spec.size = spec.array.length;
+  spec.size = spec.array.length;
 
-    var that = {},
-        timeoutId = null;
+  var that = {};
+  var timeoutId = null;
 
-    var execute = function(start) {
-        var next = start + spec.unit;
+  var execute = function(start) {
+    var next = start + spec.unit;
 
-        spec.callback(spec.array.slice(start, next));
+    spec.callback(spec.array.slice(start, next));
 
-        if (next < spec.size) {
-            timeoutId = window.setTimeout(function() {
-                execute(next);
-            }, spec.interval);
-        } else if (spec.loop) {
-            timeoutId = window.setTimeout(function() {
-                execute(0);
-            }, spec.interval);
-        } else {
-            timeoutId = null;
-        }
-    };
-
-    that.start = function() {
+    if (next < spec.size) {
+      timeoutId = window.setTimeout(function() {
+        execute(next);
+      }, spec.interval);
+    } else if (spec.loop) {
+      timeoutId = window.setTimeout(function() {
         execute(0);
-        return that;
-    };
+      }, spec.interval);
+    } else {
+      timeoutId = null;
+    }
+  };
 
-    that.stop = function() {
-        if (timeoutId) {
-            window.clearTimeout(timeoutId);
-        }
-        return that;
-    };
-
+  that.start = function() {
+    execute(0);
     return that;
+  };
+
+  that.stop = function() {
+    if (timeoutId) {
+      window.clearTimeout(timeoutId);
+    }
+    return that;
+  };
+
+  return that;
 };

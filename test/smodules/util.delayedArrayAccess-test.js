@@ -1,81 +1,88 @@
-module("smodules.util.delayedArrayAccess");
+QUnit.module('smodules.util.delayedArrayAccess');
 
-asyncTest("single unit:1", function() {
-    var output = [];
+QUnit.test('single unit:1', function(assert) {
+  var done = assert.async();
 
-    smodules.util.delayedArrayAccess({
-        array:    ["a", "b", "c"],
-        unit:     1,
-        interval: 0,
-        callback: function(elements) {
-            output.push(elements.join("."));
-        }
-    }).start();
+  var output = [];
 
-    window.setTimeout(function() {
-        strictEqual(3, output.length);
-        strictEqual("a", output[0]);
-        strictEqual("b", output[1]);
-        strictEqual("c", output[2]);
-        start();
-    }, 150);
+  smodules.util.delayedArrayAccess({
+    array:    ['a', 'b', 'c'],
+    unit:     1,
+    interval: 0,
+    callback: function(elements) {
+      output.push(elements.join('.'));
+    },
+  }).start();
+
+  window.setTimeout(function() {
+    assert.strictEqual(output.length, 3);
+    assert.strictEqual(output[0], 'a');
+    assert.strictEqual(output[1], 'b');
+    assert.strictEqual(output[2], 'c');
+
+    done();
+  }, 500);
 });
 
-asyncTest("single unit:2", function() {
-    var output = [];
+QUnit.test('single unit:2', function(assert) {
+  var done = assert.async();
 
-    smodules.util.delayedArrayAccess({
-        array:    ["a", "b", "c"],
-        unit:     2,
-        interval: 0,
-        callback: function(elements) {
-            output.push(elements.join("."));
-        }
-    }).start();
+  var output = [];
 
-    window.setTimeout(function() {
-        strictEqual(2, output.length);
-        strictEqual("a.b", output[0]);
-        strictEqual("c",   output[1]);
-        start();
-    }, 150);
+  smodules.util.delayedArrayAccess({
+    array:    ['a', 'b', 'c'],
+    unit:     2,
+    interval: 0,
+    callback: function(elements) {
+      output.push(elements.join('.'));
+    },
+  }).start();
+
+  window.setTimeout(function() {
+    assert.strictEqual(output.length, 2);
+    assert.strictEqual(output[0], 'a.b');
+    assert.strictEqual(output[1], 'c');
+
+    done();
+  }, 200);
 });
 
-asyncTest("multiple", function() {
-    var output1 = [], output2 = [];
+QUnit.test('multiple', function(assert) {
+  var done = assert.async();
 
-    smodules.util.delayedArrayAccess({
-        array:    ["a", "b", "c", "d", "e", "f", "g", "h"],
-        unit:     2,
-        interval: 10,
-        callback: function(elements) {
-            output1.push(elements.join("."));
-        }
-    }).start();
+  var output1 = [], output2 = [];
 
-    smodules.util.delayedArrayAccess({
-        array:    ["A", "B", "C", "D", "E", "F", "G", "H"],
-        unit:     2,
-        interval: 0,
-        callback: function(elements) {
-            output2.push(elements.join("."));
-        }
-    }).start();
+  smodules.util.delayedArrayAccess({
+    array:    ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+    unit:     2,
+    interval: 10,
+    callback: function(elements) {
+      output1.push(elements.join('.'));
+    },
+  }).start();
 
-    window.setTimeout(function() {
-        strictEqual(4, output1.length);
-        strictEqual("a.b", output1[0]);
-        strictEqual("c.d", output1[1]);
-        strictEqual("e.f", output1[2]);
-        strictEqual("g.h", output1[3]);
+  smodules.util.delayedArrayAccess({
+    array:    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+    unit:     2,
+    interval: 0,
+    callback: function(elements) {
+      output2.push(elements.join('.'));
+    },
+  }).start();
 
-        strictEqual(4, output2.length);
-        strictEqual("A.B", output2[0]);
-        strictEqual("C.D", output2[1]);
-        strictEqual("E.F", output2[2]);
-        strictEqual("G.H", output2[3]);
+  window.setTimeout(function() {
+    assert.strictEqual(output1.length, 4);
+    assert.strictEqual(output1[0], 'a.b');
+    assert.strictEqual(output1[1], 'c.d');
+    assert.strictEqual(output1[2], 'e.f');
+    assert.strictEqual(output1[3], 'g.h');
 
-        start();
-    }, 150);
+    assert.strictEqual(output2.length, 4);
+    assert.strictEqual(output2[0], 'A.B');
+    assert.strictEqual(output2[1], 'C.D');
+    assert.strictEqual(output2[2], 'E.F');
+    assert.strictEqual(output2[3], 'G.H');
+
+    done();
+  }, 200);
 });
-

@@ -1,39 +1,33 @@
-module("smodules.data.hash");
+QUnit.module('smodules.data.hash');
 
-test("add", function() {
-    var hash = smodules.data.hash();
+QUnit.test('add', function(assert) {
+  var hash = smodules.data.hash();
 
-    hash.add("hoge", "test");
-    strictEqual(true,   hash.has("hoge"));
-    strictEqual("test", hash.get("hoge"));
+  hash.add('hoge', 'test');
+  assert.strictEqual(hash.has('hoge'), true);
+  assert.strictEqual(hash.get('hoge'), 'test');
 
-    hash.add("hoge", "hogehoge");
-    strictEqual("hogehoge", hash.get("hoge"));
-
-    start();
+  hash.add('hoge', 'hogehoge');
+  assert.strictEqual(hash.get('hoge'), 'hogehoge');
 });
 
-test("remove", function() {
-    var hash = smodules.data.hash();
+QUnit.test('remove', function(assert) {
+  var hash = smodules.data.hash();
 
-    hash.add("name", "anonymous");
-    strictEqual(true, hash.has("name"));
+  hash.add('name', 'anonymous');
+  assert.strictEqual(hash.has('name'), true);
 
-    hash.remove("name");
-    strictEqual(false, hash.has("name"));
-    strictEqual("undefined", typeof hash.get("name"));
-
-    start();
+  hash.remove('name');
+  assert.strictEqual(hash.has('name'), false);
+  assert.strictEqual(typeof hash.get('name'), 'undefined');
 });
 
-test("clear", function() {
-    var hash = smodules.data.hash();
+QUnit.test('clear', function(assert) {
+  var hash = smodules.data.hash();
 
-    hash.add("name", "anonymous");
-    hash.add("mail", "anonymous@example.com");
-    hash.clear();
-    strictEqual(false, hash.has("name"));
-    strictEqual(false, hash.has("mail"));
-
-    start();
+  hash.add('name', 'anonymous');
+  hash.add('mail', 'anonymous@example.com');
+  hash.clear();
+  assert.strictEqual(hash.has('name'), false);
+  assert.strictEqual(hash.has('mail'), false);
 });
