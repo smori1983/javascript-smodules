@@ -12,6 +12,10 @@ smodules.templateParser = function() {
     throw new Error('smodules.templateParser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
   };
 
+  var eatable = function() {
+    return ptr < len;
+  };
+
   var next = (function() {
     var position = function(expr) {
       while (expr.length > 0) {
@@ -530,7 +534,8 @@ smodules.templateParser = function() {
 
         history.init();
         sectionTypeStat.init();
-        while (ptr < len) {
+
+        while (eatable()) {
           if (ch === '}') {
             break;
           } else {
@@ -598,7 +603,7 @@ smodules.templateParser = function() {
   var parseNormalBlock = function() {
     var s = '';
 
-    while (ptr < len) {
+    while (eatable()) {
       if (ch === '{') {
         if (readLeftTag()) {
           s += eatLeftTag();
@@ -625,7 +630,7 @@ smodules.templateParser = function() {
 
     eatLiteralTag();
 
-    while (ptr < len) {
+    while (eatable()) {
       if (ch === '{') {
         if (readLeftTag()) {
           s += eatLeftTag();
@@ -682,7 +687,7 @@ smodules.templateParser = function() {
         if (ch === ':') {
           s += next(':');
 
-          while (ptr < len) {
+          while (eatable()) {
             skipWhitespace();
 
             if (ch === 'n') {
@@ -721,7 +726,7 @@ smodules.templateParser = function() {
       var mainLoop = function() {
         var s = '', filters = [], filter, nameSection, argsSection;
 
-        while (ptr < len) {
+        while (eatable()) {
           filter = {};
 
           s += next('|');
@@ -863,7 +868,7 @@ smodules.templateParser = function() {
   }; // parseIfBlock()
 
   var loop = function(result, inBlock) {
-    while (ptr < len) {
+    while (eatable()) {
       if (ch === '{') {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
