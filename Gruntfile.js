@@ -18,7 +18,7 @@ grunt.initConfig({
   connect: {
     qunit: {
       options: {
-        port: 8000,
+        port: 8888,
         base: '.',
       },
     },
@@ -31,11 +31,12 @@ grunt.initConfig({
     },
   },
   qunit: {
-    all: ['test/test.html'],
-    options: {
-      urls: [
-        'http://localhost:8000/test/test.html',
-      ],
+    all: {
+      options: {
+        urls: [
+          'http://localhost:8888/test/test.html',
+        ],
+      },
     },
   },
   concat: {
@@ -60,7 +61,7 @@ grunt.initConfig({
   watch: {
     scripts: {
       files: ['src/smodules/*.js', 'test/smodules/*.js'],
-      tasks: ['eslint'],
+      tasks: ['eslint', 'connect:qunit', 'qunit'],
       options: {
         event: ['all'],
       },
@@ -76,6 +77,6 @@ grunt.loadNpmTasks('grunt-eslint');
 
 grunt.registerTask('default', ['eslint', 'concat']);
 grunt.registerTask('lint', ['eslint']);
-grunt.registerTask('tools', ['eslint', 'connect:qunit', 'qunit']);
+grunt.registerTask('unit', ['connect:qunit', 'qunit']);
 
 };

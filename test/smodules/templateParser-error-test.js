@@ -27,7 +27,7 @@ QUnit.test('normal block - error - 2', function(assert) {
   }, Error);
 });
 
-QUnit.test('literal block - error - 1', function(assert) {
+QUnit.test('literal block - error - only open tag', function(assert) {
   this.source = '<div>{literal}</div>';
 
   assert.throws(function() {
@@ -35,7 +35,7 @@ QUnit.test('literal block - error - 1', function(assert) {
   }, Error);
 });
 
-QUnit.test('literal block - error - 2', function(assert) {
+QUnit.test('literal block - error - only close tag', function(assert) {
   this.source = '<div>{/literal}</div>';
 
   assert.throws(function() {
@@ -202,6 +202,14 @@ QUnit.test('if block - if elseif else - error 5', function(assert) {
   }, Error);
 });
 
+QUnit.test('if block - conditions - error - no space', function(assert) {
+  this.source = '{if$foo }<p>ok</p>{/if}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('if block - conditions - error - roundBracket -> endRoundBracket', function(assert) {
   this.source = '{if () }<p>ok</p>{/if}';
 
@@ -227,7 +235,7 @@ QUnit.test('if block - conditions - error - roundBracket -> andor', function(ass
 });
 
 QUnit.test('if block - conditions - error - endRoundBracket -> roundBracket', function(assert) {
-  this.source = '{if ( $foo ) ( === $bar )}<p>ok</p>{/if}';
+  this.source = '{if ( $foo ) ( $bar )}<p>ok</p>{/if}';
 
   assert.throws(function() {
     this.parse();
@@ -394,6 +402,14 @@ QUnit.test('if block - conditions - error - lack of roundBracket', function(asse
   }, Error);
 });
 
+QUnit.test('for block - error - lack of index argument', function(assert) {
+  this.source = '{for , $item in $items}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('for block - error - lack of comma', function(assert) {
   this.source = '{for $idx $item in $items}<p>{$item}</p>{/for}';
 
@@ -410,16 +426,42 @@ QUnit.test('for block - error - lack of value argument', function(assert) {
   }, Error);
 });
 
-QUnit.test('for block - error - lack of index argument', function(assert) {
-  this.source = '{for , $item in $items}<p>{$item}</p>{/for}';
+QUnit.test('for block - error - lack of in', function(assert) {
+  this.source = '{for $idx , $item $items}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
     this.parse();
   }, Error);
 });
 
-QUnit.test('for block - error - too many arguments', function(assert) {
+QUnit.test('for block - error - lack of haystack', function(assert) {
+  this.source = '{for $idx , $item in}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - too many elements 1', function(assert) {
   this.source = '{for $idx , $item , $foo in $items}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - too many elements 2', function(assert) {
+
+  this.source = '{for $idx , $item in $items1 , $items2}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - too many elements 3', function(assert) {
+
+  this.source = '{for $idx , $item in $items1 $items2}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
     this.parse();

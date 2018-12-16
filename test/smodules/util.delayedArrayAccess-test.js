@@ -21,7 +21,7 @@ QUnit.test('single unit:1', function(assert) {
     assert.strictEqual(output[2], 'c');
 
     done();
-  }, 150);
+  }, 500);
 });
 
 QUnit.test('single unit:2', function(assert) {
@@ -44,7 +44,7 @@ QUnit.test('single unit:2', function(assert) {
     assert.strictEqual(output[1], 'c');
 
     done();
-  }, 150);
+  }, 200);
 });
 
 QUnit.test('multiple', function(assert) {
@@ -84,5 +84,5 @@ QUnit.test('multiple', function(assert) {
     assert.strictEqual(output2[3], 'G.H');
 
     done();
-  }, 150);
+  }, 200);
 });
