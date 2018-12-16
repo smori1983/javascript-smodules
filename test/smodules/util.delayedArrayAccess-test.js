@@ -21,7 +21,7 @@ QUnit.test('single unit:1', function(assert) {
     assert.strictEqual(output[2], 'c');
 
     done();
-  }, 200);
+  }, 500);
 });
 
 QUnit.test('single unit:2', function(assert) {
