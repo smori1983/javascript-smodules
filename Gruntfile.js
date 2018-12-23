@@ -44,7 +44,6 @@ grunt.initConfig({
       src: [
         '<banner:meta.banner>',
         'src/smodules/HEAD.js',
-        'src/smodules/a.js',
         'src/smodules/data.HEAD.js',
         'src/smodules/data.*.js',
         'src/smodules/mod.HEAD.js',
@@ -58,7 +57,11 @@ grunt.initConfig({
   },
   watch: {
     scripts: {
-      files: ['src/smodules/*.js', 'test/smodules/*.js'],
+      files: [
+        'src/smodules/*.js',
+        'test/smodules/*.js',
+        'test/test.html',
+      ],
       tasks: ['eslint', 'connect:qunit', 'qunit'],
       options: {
         event: ['all'],
