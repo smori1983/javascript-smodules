@@ -49,8 +49,6 @@ grunt.initConfig({
         'src/smodules/data.*.js',
         'src/smodules/mod.HEAD.js',
         'src/smodules/mod.*.js',
-        'src/smodules/ui.HEAD.js',
-        'src/smodules/ui.*.js',
         'src/smodules/util.HEAD.js',
         'src/smodules/util.*.js',
         'src/smodules/*.js',
