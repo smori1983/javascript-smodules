@@ -3,14 +3,13 @@ module.exports = function(grunt) {
 grunt.initConfig({
   pkg: grunt.file.readJSON('package.json'),
   meta: {
-    banner: '/*!\n' +
-            ' * <%= pkg.name %> v<%= pkg.version %>\n' +
-            ' *\n' +
-            ' * Copyright (c) <%= grunt.template.today(\'yyyy\') %> smori <shinichiro.mori.19833@gmail.com>\n' +
-            ' * Dual licensed under the MIT or GPL-2.0 licenses.\n' +
-            ' *\n' +
-            ' * Date <%= grunt.template.today(\'yyyy-mm-dd HH:MM:ss\') %>\n' +
-            ' */',
+    banner:
+      '/*!\n' +
+      ' * <%= pkg.name %> v<%= pkg.version %>\n' +
+      ' *\n' +
+      ' * Copyright (c) <%= grunt.template.today(\'yyyy\') %> <%= pkg.author.name %> <<%= pkg.author.email%>>\n' +
+      ' * Dual licensed under the MIT or GPL-2.0 licenses.\n' +
+      ' */\n',
   },
   eslint: {
     target: ['src/smodules/*.js', 'test/smodules/*.js'],
@@ -41,8 +40,10 @@ grunt.initConfig({
   },
   concat: {
     all: {
+      options: {
+        banner: '<%= meta.banner %>',
+      },
       src: [
-        '<banner:meta.banner>',
         'src/smodules/HEAD.js',
         'src/smodules/data.HEAD.js',
         'src/smodules/data.*.js',
