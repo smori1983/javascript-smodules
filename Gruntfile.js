@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
 grunt.initConfig({
-  pkg: '<json:package.json>',
+  pkg: grunt.file.readJSON('package.json'),
   meta: {
     banner: '/*!\n' +
             ' * <%= pkg.name %> v<%= pkg.version %>\n' +
