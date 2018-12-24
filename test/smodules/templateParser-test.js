@@ -258,7 +258,7 @@ QUnit.test('if block - condition - priority of and/or', function(assert) {
   assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('for block', function(assert) {
+QUnit.test('for block - only value part in dummy variable', function(assert) {
   this.source =
     '{ for $item in $items }' +
     '<p>{ $item | h }</p>' +
@@ -274,7 +274,7 @@ QUnit.test('for block', function(assert) {
   assert.strictEqual(block.blocks.length, 3);
 });
 
-QUnit.test('for block - use index', function(assert) {
+QUnit.test('for block - use index in dummy variable', function(assert) {
   this.source =
     '{ for $idx, $item in $items }' +
     '<p>{ $item | h }</p>' +
