@@ -11,13 +11,35 @@ QUnit.module('templateParser', {
   },
 });
 
-QUnit.test('normal block', function(assert) {
-  this.source = '<div>foo {left}bar{right}</div>';
+QUnit.test('normal block - plain text', function(assert) {
+  this.source = 'Hello, world!';
   this.parse();
 
   assert.strictEqual(this.result.length, 1);
   assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, '<div>foo {bar}</div>');
+  assert.strictEqual(this.result[0].expr, 'Hello, world!');
+});
+
+QUnit.test('normal block - html tags', function(assert) {
+  this.source =
+    '<ul>' +
+    '<li>one</li>' +
+    '<li>two</li>' +
+    '</ul>';
+  this.parse();
+
+  assert.strictEqual(this.result.length, 1);
+  assert.strictEqual(this.result[0].type, 'normal');
+  assert.strictEqual(this.result[0].expr, '<ul><li>one</li><li>two</li></ul>');
+});
+
+QUnit.test('normal block - literal tag', function(assert) {
+  this.source = '<div>{left}Hello, world!{right}</div>';
+  this.parse();
+
+  assert.strictEqual(this.result.length, 1);
+  assert.strictEqual(this.result[0].type, 'normal');
+  assert.strictEqual(this.result[0].expr, '<div>{Hello, world!}</div>');
 });
 
 QUnit.test('literal block', function(assert) {
