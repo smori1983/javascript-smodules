@@ -141,7 +141,10 @@ QUnit.test('if block - if elseif else', function(assert) {
 });
 
 QUnit.test('if block - condition - simple', function(assert) {
-  this.source = '{ if $foo === "hoge" }<p>hoge</p>{ /if }';
+  this.source =
+    '{ if $foo === "hoge" }' +
+    '<p>hoge</p>' + 
+    '{ /if }';
   this.parse();
 
   var stack = this.result[0].sections[0].header.stack;
@@ -156,7 +159,10 @@ QUnit.test('if block - condition - simple', function(assert) {
 });
 
 QUnit.test('if block - condition - redundant round brackets', function(assert) {
-  this.source = '{ if ( ( ( $foo === "hoge" ) ) ) }<p>hoge</p>{ /if }';
+  this.source =
+    '{ if ( ( ( $foo === "hoge" ) ) ) }' +
+    '<p>hoge</p>' +
+    '{ /if }';
   this.parse();
 
   var stack = this.result[0].sections[0].header.stack;
@@ -171,7 +177,10 @@ QUnit.test('if block - condition - redundant round brackets', function(assert) {
 });
 
 QUnit.test('if block - condition - complicated', function(assert) {
-  this.source = '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }<p>ok</p>{ /if }';
+  this.source =
+    '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
   var stack  = this.result[0].sections[0].header.stack;
@@ -210,7 +219,10 @@ QUnit.test('if block - condition - complicated', function(assert) {
 });
 
 QUnit.test('if block - condition - inversion of lval and rval', function(assert) {
-  this.source = '{ if 10 !== $price }<p>ok</p>{ /if }';
+  this.source =
+    '{ if 10 !== $price }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
   var stack  = this.result[0].sections[0].header.stack;
@@ -225,7 +237,10 @@ QUnit.test('if block - condition - inversion of lval and rval', function(assert)
 });
 
 QUnit.test('if block - condition - priority of and/or', function(assert) {
-  this.source = '{ if ( $var1 or $var2 ) and $var3 }<p>ok</p>{ /if }';
+  this.source =
+    '{ if ( $var1 or $var2 ) and $var3 }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
   var stack  = this.result[0].sections[0].header.stack;
@@ -244,7 +259,10 @@ QUnit.test('if block - condition - priority of and/or', function(assert) {
 });
 
 QUnit.test('for block', function(assert) {
-  this.source = '{ for $item in $items }<p>{ $item | h }</p>{ /for }';
+  this.source =
+    '{ for $item in $items }' +
+    '<p>{ $item | h }</p>' +
+    '{ /for }';
   this.parse();
 
   var block  = this.result[0];
@@ -257,7 +275,10 @@ QUnit.test('for block', function(assert) {
 });
 
 QUnit.test('for block - use index', function(assert) {
-  this.source = '{ for $idx, $item in $items }<p>{ $item | h }</p>{ /for }';
+  this.source =
+    '{ for $idx, $item in $items }' +
+    '<p>{ $item | h }</p>' +
+    '{ /for }';
   this.parse();
 
   var block  = this.result[0];
