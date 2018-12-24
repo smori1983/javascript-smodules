@@ -1,4 +1,4 @@
-QUnit.module('smodules.data.queueHash');
+QUnit.module('data.queueHash');
 
 QUnit.test('addTo and getFrom', function(assert) {
   var qh = smodules.data.queueHash();

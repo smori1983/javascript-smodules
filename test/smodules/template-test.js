@@ -1,4 +1,4 @@
-QUnit.module('smodules.template', {
+QUnit.module('template', {
   before: function() {
     this.execBind = function(param) {
       this.template.bind(this.src, param).appendTo(this.target);

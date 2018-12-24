@@ -1,4 +1,4 @@
-QUnit.module('smodules.data.hash');
+QUnit.module('data.hash');
 
 QUnit.test('add', function(assert) {
   var hash = smodules.data.hash();
