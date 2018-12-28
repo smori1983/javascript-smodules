@@ -36,6 +36,9 @@ QUnit.test('for block - use index in dummy variable', function(assert) {
 
   var block  = this.result[0];
 
+  assert.strictEqual(block.type, 'for');
+  assert.strictEqual(block.header.array.join('.'), 'items');
   assert.strictEqual(block.header.k, 'idx');
   assert.strictEqual(block.header.v, 'item');
+  assert.strictEqual(block.blocks.length, 3);
 });
