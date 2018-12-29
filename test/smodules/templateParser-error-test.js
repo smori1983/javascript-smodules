@@ -1,4 +1,4 @@
-QUnit.module('smodules.templateParser', {
+QUnit.module('templateParser - error', {
   before: function() {
     this.parse = function() {
       this.result = this.parser.parse(this.source);

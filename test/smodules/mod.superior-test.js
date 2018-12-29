@@ -1,4 +1,4 @@
-QUnit.module('smodules.mod.superior');
+QUnit.module('mod.superior');
 
 QUnit.test('simple test', function(assert) {
   var base = function() {

@@ -1,4 +1,4 @@
-QUnit.module('smodules.util.delayedArrayAccess');
+QUnit.module('util.delayedArrayAccess');
 
 QUnit.test('single unit:1', function(assert) {
   var done = assert.async();

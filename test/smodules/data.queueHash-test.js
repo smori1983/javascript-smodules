@@ -1,46 +1,44 @@
-QUnit.module('smodules.data.queueHash');
+QUnit.module('data.queueHash', {
+  beforeEach: function() {
+    this.qh = smodules.data.queueHash();
+  },
+});
 
 QUnit.test('addTo and getFrom', function(assert) {
-  var qh = smodules.data.queueHash();
+  this.qh.addTo('list', 'a');
+  this.qh.addTo('list', 'b');
 
-  qh.addTo('list', 'a');
-  qh.addTo('list', 'b');
+  assert.strictEqual(this.qh.has('list'), true);
+  assert.strictEqual(this.qh.sizeOf('list'), 2);
+  assert.strictEqual(this.qh.getFrom('list'), 'a');
+  assert.strictEqual(this.qh.sizeOf('list'), 1);
+  assert.strictEqual(this.qh.getFrom('list'), 'b');
+  assert.strictEqual(this.qh.sizeOf('list'), 0);
 
-  assert.strictEqual(qh.has('list'), true);
-  assert.strictEqual(qh.sizeOf('list'), 2);
-  assert.strictEqual(qh.getFrom('list'), 'a');
-  assert.strictEqual(qh.sizeOf('list'), 1);
-  assert.strictEqual(qh.getFrom('list'), 'b');
-  assert.strictEqual(qh.sizeOf('list'), 0);
+  this.qh.remove('list');
 
-  qh.remove('list');
-
-  assert.strictEqual(qh.has('list'), false);
+  assert.strictEqual(this.qh.has('list'), false);
 });
 
 QUnit.test('check keys', function(assert) {
-  var qh = smodules.data.queueHash();
+  this.qh.addTo('queue1', 'a');
 
-  qh.addTo('queue1', 'a');
+  assert.strictEqual(this.qh.getKeys().length, 1);
+  assert.strictEqual(this.qh.getKeys()[0], 'queue1');
 
-  assert.strictEqual(qh.getKeys().length, 1);
-  assert.strictEqual(qh.getKeys()[0], 'queue1');
+  this.qh.addTo('queue2', 'A');
 
-  qh.addTo('queue2', 'A');
+  assert.strictEqual(this.qh.getKeys().length, 2);
+  assert.strictEqual(this.qh.getKeys()[0], 'queue1');
+  assert.strictEqual(this.qh.getKeys()[1], 'queue2');
 
-  assert.strictEqual(qh.getKeys().length, 2);
-  assert.strictEqual(qh.getKeys()[0], 'queue1');
-  assert.strictEqual(qh.getKeys()[1], 'queue2');
+  this.qh.clear();
 
-  qh.clear();
-
-  assert.strictEqual(0, qh.getKeys().length);
+  assert.strictEqual(this.qh.getKeys().length, 0);
 });
 
 QUnit.test('using not existing key', function(assert) {
-  var qh = smodules.data.queueHash();
-
-  assert.strictEqual(qh.has('hoge'), false);
-  assert.strictEqual(qh.sizeOf('hoge'), 0);
-  assert.strictEqual(typeof qh.getFrom('hoge'), 'undefined');
+  assert.strictEqual(this.qh.has('hoge'), false);
+  assert.strictEqual(this.qh.sizeOf('hoge'), 0);
+  assert.strictEqual(typeof this.qh.getFrom('hoge'), 'undefined');
 });
