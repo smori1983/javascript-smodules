@@ -297,6 +297,18 @@ QUnit.test('for block - nested - if with property access', function(assert) {
   assert.strictEqual(this.getHtml(), expected);
 });
 
+QUnit.test('for block - not iterable', function(assert) {
+  var param = { items: 'hello, world!' };
+
+  this.src =
+    '{ for $item in $items }' +
+    '<p>{ $item }</p>' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '');
+});
+
 QUnit.test('error - filter not found', function(assert) {
   this.src = '<p>{ $value | hoge }</p>';
 
