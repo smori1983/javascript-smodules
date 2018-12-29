@@ -281,11 +281,12 @@ smodules.template = function() {
     };
 
     var loopFor = function(block, params) {
-      var array = getValue(block.header.array, params, true), output = '', additional;
+      var array = getValue(block.header.array, params, true);
+      var output = '';
 
-      if ($.isArray(array)) {
+      if (Array.isArray(array)) {
         array.forEach(function(value, idx) {
-          additional = {};
+          var additional = {};
 
           if (block.header.k) {
             additional[block.header.k] = idx;
