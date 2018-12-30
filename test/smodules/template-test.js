@@ -76,10 +76,29 @@ QUnit.test('holder block - array index access', function(assert) {
     ],
   };
 
-  this.src = '<p>{ $items.2.name }</p>';
+  this.src =
+    '<p>{ $items.0.name }</p>' +
+    '<p>{ $items.1.name }</p>' +
+    '<p>{ $items.2.name }</p>';
   this.execBind(param);
 
-  assert.strictEqual(this.getHtml(), '<p>c</p>');
+  assert.strictEqual(this.getHtml(), '<p>a</p><p>b</p><p>c</p>');
+});
+
+QUnit.test('holder block - array index access - not chainable', function(assert) {
+  // under current specification, array is accessible by like this.
+  var param = {
+    items: [
+      { name: 'a' },
+      { name: 'b' },
+      { name: 'c' },
+    ],
+  };
+
+  this.src = '<p>{ $items.3.name }</p>';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p></p>');
 });
 
 QUnit.test('holder block - default filter - h', function(assert) {
