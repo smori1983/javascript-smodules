@@ -173,7 +173,12 @@ QUnit.test('holder block - original filter', function(assert) {
 QUnit.test('if block - simple', function(assert) {
   var param = { foo: true };
 
-  this.src = '{ if $foo }<p>yes</p>{ else }<p>no</p>{ /if }';
+  this.src =
+    '{ if $foo }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>yes</p>');
@@ -182,7 +187,12 @@ QUnit.test('if block - simple', function(assert) {
 QUnit.test('if block - logical operator - and', function(assert) {
   var param = { foo: true, bar: false };
 
-  this.src = '{ if $foo and $bar }<p>yes</p>{ else }<p>no</p>{ /if }';
+  this.src =
+    '{ if $foo and $bar }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>no</p>');
@@ -191,7 +201,12 @@ QUnit.test('if block - logical operator - and', function(assert) {
 QUnit.test('if block - logical operator - combination', function(assert) {
   var param = { foo: true, bar: false, baz: true };
 
-  this.src = '{ if $foo and ( $bar or $baz ) }<p>yes</p>{ else }<p>no</p>{ /if }';
+  this.src =
+    '{ if $foo and ( $bar or $baz ) }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>yes</p>');
@@ -216,7 +231,13 @@ QUnit.test('if block - comparative operator', function(assert) {
 QUnit.test('if block - comparative operator - "===" and "=="', function(assert) {
   var param = { foo: true };
 
-  this.src = '{ if $foo === 1 }<p>one</p>{ /if }{ if $foo == 1}<p>two</p>{ /if }';
+  this.src =
+    '{ if $foo === 1 }' +
+    '<p>one</p>' +
+    '{ /if }' +
+    '{ if $foo == 1}' +
+    '<p>two</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>two</p>');
@@ -300,7 +321,10 @@ QUnit.test('if block - property not chainable - or 2', function(assert) {
 QUnit.test('for block', function(assert) {
   var param = { items: ['one', 'two', 'three'] };
 
-  this.src = '{ for $item in $items }<p>{ $item }</p>{ /for }';
+  this.src =
+    '{ for $item in $items }' +
+    '<p>{ $item }</p>' +
+    '{ /for }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>one</p><p>two</p><p>three</p>');
@@ -309,7 +333,10 @@ QUnit.test('for block', function(assert) {
 QUnit.test('for block - use index', function(assert) {
   var param = { items: ['one', 'two'] };
 
-  this.src = '{ for $idx,$item in $items }<p>{ $idx }-{ $item }</p>{ /for }';
+  this.src =
+    '{ for $idx,$item in $items }' +
+    '<p>{ $idx }-{ $item }</p>' +
+    '{ /for }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>0-one</p><p>1-two</p>');
