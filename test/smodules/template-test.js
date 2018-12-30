@@ -39,6 +39,15 @@ QUnit.test('holder block', function(assert) {
   assert.strictEqual(this.getHtml(), '<p>hoge</p>');
 });
 
+QUnit.test('holder block - property not chainable', function(assert) {
+  var param = { foo: { bar : 'hoge' } };
+
+  this.src = '<p>{ $foo.bar.baz }</p>';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p></p>');
+});
+
 QUnit.test('holder block - same holder in multiple places', function(assert) {
   var param = { user: { name: 'Tom' } };
 
@@ -194,6 +203,81 @@ QUnit.test('if block - comparative operator - "===" and "=="', function(assert) 
   assert.strictEqual(this.getHtml(), '<p>two</p>');
 });
 
+QUnit.test('if block - property chainable', function(assert) {
+  var param = {
+    data1: { key: true },
+    data2: { key: true },
+  };
+
+  this.src =
+    '{ if $data1.key and $data2.key }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>OK</p>');
+});
+
+QUnit.test('if block - property not chainable - and 1', function(assert) {
+  var param = {
+    data1: { key1: true },
+    data2: { key1: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 and $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '');
+});
+
+QUnit.test('if block - property not chainable - and 2', function(assert) {
+  var param = {
+    data1: { key2: true },
+    data2: { key2: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 and $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '');
+});
+
+QUnit.test('if block - property not chainable - or 1', function(assert) {
+  var param = {
+    data1: { key1: true },
+    data2: { key1: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 or $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>OK</p>');
+});
+
+QUnit.test('if block - property not chainable - or 2', function(assert) {
+  var param = {
+    data1: { key2: true },
+    data2: { key2: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 or $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>OK</p>');
+});
+
 QUnit.test('for block', function(assert) {
   var param = { items: ['one', 'two', 'three'] };
 
@@ -307,6 +391,65 @@ QUnit.test('for block - not iterable', function(assert) {
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '');
+});
+
+QUnit.test('for block - haystack property chainable', function(assert) {
+  var param = { items: {
+    data: [1, 2, 3],
+  }};
+
+  this.src =
+    '{ for $value in $items.data }' +
+    '<p>{ $value | h }</p>' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>1</p><p>2</p><p>3</p>');
+});
+
+QUnit.test('for block - haystack property not chainable 1', function(assert) {
+  var param = { items: [1, 2, 3] };
+
+  this.src =
+    '{ for $item in $items.foo.bar }' +
+    '<p>{ $item }</p>' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '');
+});
+
+QUnit.test('for block - haystack property not chainable 2', function(assert) {
+  var param = { items: [
+    { name: 'name1', data: 'data1'},
+    { name: 'name2', data: 'data2'},
+  ]};
+
+  this.src =
+    '{ for $item in $items }' +
+    '<div>{ $item.name | h }</div>' +
+    '{ for $data in $item.data }' +
+    '<p>{ $data | h }</p>' +
+    '{ /for}' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<div>name1</div><div>name2</div>');
+});
+
+QUnit.test('for block - dummy variable chainable', function(assert) {
+  var param = { items: [
+    { data: { key1: 'value1'} },
+    { data: { key1: 'value2'} },
+  ]};
+
+  this.src =
+    '{ for $item in $items }' +
+    '<div>{ $item.data.key1 | h }</div>' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<div>value1</div><div>value2</div>');
 });
 
 QUnit.test('error - filter not found', function(assert) {
