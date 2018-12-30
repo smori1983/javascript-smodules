@@ -317,7 +317,8 @@ smodules.templateParser = function() {
   };
 
   var parseNumber = function() {
-    var value, matched = text.slice(ptr).match(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
+    var value;
+    var matched = text.slice(ptr).match(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
 
     if (matched && !isNaN(value = +(matched[0]))) {
       next(matched[0]);
@@ -508,9 +509,10 @@ smodules.templateParser = function() {
       })();
 
       var parse = function() {
-        var list = state[history.get(1)], i = 0, size = list.length, type, result;
+        var list = state[history.get(1)];
+        var i, size, type, result;
 
-        for ( ; i < size; i++) {
+        for (i = 0, size = list.length; i < size; i++) {
           type = list[i];
 
           if (type === 'error') {
@@ -626,7 +628,10 @@ smodules.templateParser = function() {
   };
 
   var parseLiteralBlock = function() {
-    var s = '', closed = false, startLine = line, startAt = at;
+    var s = '';
+    var closed = false;
+    var startLine = line;
+    var startAt = at;
 
     eatLiteralTag();
 
@@ -680,7 +685,9 @@ smodules.templateParser = function() {
       };
 
       var getFilterArgsSection = function() {
-        var s = '', args = [], arg;
+        var s = '';
+        var args = [];
+        var arg;
 
         skipWhitespace();
 
@@ -724,7 +731,9 @@ smodules.templateParser = function() {
       }; // getFilterArgsSection()
 
       var mainLoop = function() {
-        var s = '', filters = [], filter, nameSection, argsSection;
+        var s = '';
+        var filters = [];
+        var filter, nameSection, argsSection;
 
         while (eatable()) {
           filter = {};
@@ -755,7 +764,9 @@ smodules.templateParser = function() {
       };
 
       return function() {
-        var s = '', filters = [], mainResult;
+        var s = '';
+        var filters = [];
+        var mainResult;
 
         skipWhitespace();
 
@@ -774,7 +785,8 @@ smodules.templateParser = function() {
     })(); // getFilterSection()
 
     return function() {
-      var s = '', keySection, filterSection;
+      var s = '';
+      var keySection, filterSection;
 
       s += next('{');
 
@@ -799,7 +811,8 @@ smodules.templateParser = function() {
 
   var parseForBlock = (function() {
     var parseHeader = function() {
-      var s = eatForTag(), k, v, array;
+      var s = eatForTag()
+      var k, v, array;
 
       v = eatTmpVar();
       s += v;
@@ -838,7 +851,8 @@ smodules.templateParser = function() {
     }; // parseHeader()
 
     return function() {
-      var header = parseHeader(), blocks = loop([], true);
+      var header = parseHeader();
+      var blocks = loop([], true);
 
       eatEndForTag();
 
