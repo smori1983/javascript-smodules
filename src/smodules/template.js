@@ -144,11 +144,11 @@ smodules.template = function() {
     };
 
     var getValue = function(keys, params, asis) {
-      var pIdx = params.length - 1, i, len = keys.length, value;
+      var pIdx, i, len, value;
 
-      for ( ; pIdx >= 0; pIdx--) {
+      for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
         value = params[pIdx];
-        for (i = 0; i < len; i++) {
+        for (i = 0, len = keys.length; i < len; i++) {
           if (typeof value[keys[i]] === 'undefined') {
             value = null;
             break;
@@ -234,9 +234,9 @@ smodules.template = function() {
     };
 
     var evaluate = function(conditions, params) {
-      var result = [], i = 0, len = conditions.length, section, lval, rval;
+      var result = [], i, len, section, lval, rval;
 
-      for ( ; i < len; i++) {
+      for (i = 0, len = conditions.length; i < len; i++) {
         section = conditions[i];
 
         if (section.type === 'value') {
@@ -262,9 +262,10 @@ smodules.template = function() {
     };
 
     var loopIf = function(block, params) {
-      var i = 0, len = block.sections.length, section, output = '';
+      var i, len, section;
+      var output = '';
 
-      for ( ; i < len; i++) {
+      for (i = 0, len = block.sections.length; i < len; i++) {
         section = block.sections[i];
 
         if (section.header.type === 'if' || section.header.type === 'elseif') {
