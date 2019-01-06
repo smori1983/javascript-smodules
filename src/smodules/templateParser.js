@@ -526,8 +526,8 @@ smodules.templateParser = function() {
             break;
           }
         }
-        history.add(result.type);
-        sectionTypeStat.add(result.type);
+
+        addParsed(result);
 
         return result;
       };
@@ -535,6 +535,11 @@ smodules.templateParser = function() {
       var init = function() {
         history.init();
         sectionTypeStat.init();
+      };
+
+      var addParsed = function(result) {
+        history.add(result.type);
+        sectionTypeStat.add(result.type);
       };
 
       return function() {
