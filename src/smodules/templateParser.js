@@ -532,11 +532,15 @@ smodules.templateParser = function() {
         return result;
       };
 
+      var init = function() {
+        history.init();
+        sectionTypeStat.init();
+      };
+
       return function() {
         var section, polish = [], stack = [], stackTop;
 
-        history.init();
-        sectionTypeStat.init();
+        init();
 
         while (eatable()) {
           if (ch === '}') {
