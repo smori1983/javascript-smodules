@@ -509,6 +509,7 @@ smodules.templateParser = function() {
       })();
 
       var parse = function() {
+        // By history.init(), history has at least 'start' state.
         var list = state[history.get(1)];
         var i, size, type, result;
 
