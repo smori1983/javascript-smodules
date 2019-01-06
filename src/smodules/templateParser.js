@@ -444,7 +444,7 @@ smodules.templateParser = function() {
       var history = (function() {
         var stack;
 
-        var _get = function(index) {
+        var get = function(index) {
           return stack[stack.length - index] || null;
         };
 
@@ -453,14 +453,14 @@ smodules.templateParser = function() {
             stack = ['start'];
           },
           add: function(type) {
-            if (type === 'comp' && _get(2) === 'comp') {
+            if (type === 'comp' && get(2) === 'comp') {
               exception('can not write comparer here');
             }
 
             stack.push(type);
           },
-          get: function(idx) {
-            return _get(idx);
+          latest: function() {
+            return get(1);
           },
         };
       })();
@@ -518,7 +518,7 @@ smodules.templateParser = function() {
 
       var parse = function() {
         // By history.init(), history has at least 'start' state.
-        var list = state[history.get(1)];
+        var list = state[history.latest()];
         var i, size, type, result;
 
         for (i = 0, size = list.length; i < size; i++) {
