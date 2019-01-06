@@ -444,15 +444,23 @@ smodules.templateParser = function() {
       var history = (function() {
         var stack;
 
+        var _get = function(index) {
+          return stack[stack.length - index] || null;
+        };
+
         return {
           init: function() {
             stack = ['start'];
           },
           add: function(type) {
+            if (type === 'comp' && _get(2) === 'comp') {
+              exception('can not write comparer here');
+            }
+
             stack.push(type);
           },
           get: function(idx) {
-            return stack[stack.length - idx] || null;
+            return _get(idx);
           },
         };
       })();
@@ -519,9 +527,6 @@ smodules.templateParser = function() {
           if (type === 'error') {
             exception('invalid condition expression');
           } else if (method[type].read()) {
-            if (type === 'comp' && history.get(2) === 'comp') {
-              exception('can not write comparer here');
-            }
             result = method[type].parse();
             break;
           }
