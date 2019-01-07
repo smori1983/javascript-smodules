@@ -513,6 +513,8 @@ smodules.templateParser = function() {
         };
 
         return function(section) {
+          // parseAndor() returns section.type with 'andor'.
+          // Use section.expr instead.
           return orders[section.type] || orders[section.expr];
         };
       })();
