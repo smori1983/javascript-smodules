@@ -420,6 +420,7 @@ smodules.templateParser = function() {
 
   var parseCondition = (function() {
     var getReversePolish = (function() {
+      // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
       var state = {
         'start':           ['roundBracket',                    'value', 'var',                  'error'],
@@ -526,16 +527,17 @@ smodules.templateParser = function() {
 
           if (type === 'error') {
             exception('invalid condition expression');
-          } else if (method[type].read()) {
+          }
+
+          if (method[type].read()) {
             result = method[type].parse();
             result.order = getOrder(result);
-            break;
+
+            addParsed(result);
+
+            return result;
           }
         }
-
-        addParsed(result);
-
-        return result;
       };
 
       var init = function() {
