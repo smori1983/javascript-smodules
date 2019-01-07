@@ -528,6 +528,7 @@ smodules.templateParser = function() {
             exception('invalid condition expression');
           } else if (method[type].read()) {
             result = method[type].parse();
+            result.order = getOrder(result);
             break;
           }
         }
@@ -557,7 +558,6 @@ smodules.templateParser = function() {
             break;
           } else {
             section = parse();
-            section.order = getOrder(section);
           }
 
           while (stack.length > 0) {
