@@ -551,6 +551,10 @@ smodules.templateParser = function() {
         typeHistory.add(result.type);
         typeStat.add(result.type);
       };
+      
+      var finish = function() {
+        typeStat.finish();
+      }
 
       return function() {
         var section, polish = [], stack = [], stackTop;
@@ -587,7 +591,8 @@ smodules.templateParser = function() {
         while (stack.length > 0) {
           polish.push(stack.pop());
         }
-        typeStat.finish();
+
+        finish();
 
         return polish;
       };
