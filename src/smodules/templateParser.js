@@ -442,7 +442,7 @@ smodules.templateParser = function() {
         'andor':           { read: readAndOr,           parse: parseAndOr },
       };
 
-      var history = (function() {
+      var typeHistory = (function() {
         var stack;
 
         var get = function(index) {
@@ -466,7 +466,7 @@ smodules.templateParser = function() {
         };
       })();
 
-      var sectionTypeStat = (function() {
+      var typeStat = (function() {
         var roundBracketBalance, operandOperatorBalance;
 
         return {
@@ -520,8 +520,8 @@ smodules.templateParser = function() {
       })();
 
       var parse = function() {
-        // By history.init(), history has at least 'start' state.
-        var list = state[history.latest()];
+        // By typeHistory.init(), history has at least 'start' type.
+        var list = state[typeHistory.latest()];
         var i, size, type, result;
 
         for (i = 0, size = list.length; i < size; i++) {
@@ -543,13 +543,13 @@ smodules.templateParser = function() {
       };
 
       var init = function() {
-        history.init();
-        sectionTypeStat.init();
+        typeHistory.init();
+        typeStat.init();
       };
 
       var addParsed = function(result) {
-        history.add(result.type);
-        sectionTypeStat.add(result.type);
+        typeHistory.add(result.type);
+        typeStat.add(result.type);
       };
 
       return function() {
@@ -587,7 +587,7 @@ smodules.templateParser = function() {
         while (stack.length > 0) {
           polish.push(stack.pop());
         }
-        sectionTypeStat.finish();
+        typeStat.finish();
 
         return polish;
       };
