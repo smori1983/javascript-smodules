@@ -564,9 +564,9 @@ smodules.templateParser = function() {
         while (eatable()) {
           if (ch === '}') {
             break;
-          } else {
-            section = parse();
           }
+
+          section = parse();
 
           while (stack.length > 0) {
             stackTop = stack.pop();
