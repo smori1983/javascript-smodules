@@ -527,11 +527,11 @@ smodules.templateParser = function() {
 
       var parse = function() {
         // By typeHistory.init(), history has at least 'start' type.
-        var list = state[typeHistory.latest()];
+        var transitableTypes = state[typeHistory.latest()];
         var i, size, type, result;
 
-        for (i = 0, size = list.length; i < size; i++) {
-          type = list[i];
+        for (i = 0, size = transitableTypes.length; i < size; i++) {
+          type = transitableTypes[i];
 
           if (type === 'error') {
             exception('invalid condition expression');
