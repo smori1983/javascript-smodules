@@ -525,9 +525,8 @@ smodules.templateParser = function() {
         };
       })();
 
-      var parse = function() {
-        // By typeHistory.init(), history has at least 'start' type.
-        var transitableTypes = state[typeHistory.latest()];
+      var parse = function(sourceType) {
+        var transitableTypes = state[sourceType];
         var i, size, type, result;
 
         for (i = 0, size = transitableTypes.length; i < size; i++) {
@@ -556,7 +555,8 @@ smodules.templateParser = function() {
             break;
           }
 
-          section = parse();
+          // By typeHistory.init(), history has at least 'start' type.
+          section = parse(typeHistory.latest());
 
           typeHistory.add(section.type);
 
