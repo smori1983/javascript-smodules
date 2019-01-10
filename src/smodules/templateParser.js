@@ -443,22 +443,22 @@ smodules.templateParser = function() {
       };
 
       var typeHistory = (function() {
-        var stack;
+        var history;
 
         var get = function(index) {
-          return stack[stack.length - index] || null;
+          return history[history.length - index] || null;
         };
 
         return {
           init: function() {
-            stack = ['start'];
+            history = ['start'];
           },
           add: function(type) {
             if (type === 'comp' && get(2) === 'comp') {
               exception('can not write comparer here');
             }
 
-            stack.push(type);
+            history.push(type);
           },
           latest: function() {
             return get(1);
