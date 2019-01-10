@@ -468,10 +468,20 @@ smodules.templateParser = function() {
 
       var typeStat = (function() {
         var history;
-        var roundBracketBalance, operandOperatorBalance;
+        var operandOperatorBalance;
 
         var calcRoundBracketBalance = function() {
-          return roundBracketBalance;
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'roundBracket') {
+              balance++;
+            } else if (type === 'endRoundBracket') {
+              balance--;
+            }
+          });
+
+          return balance;
         };
 
         var calcOperandOperatorBalance = function() {
@@ -482,7 +492,6 @@ smodules.templateParser = function() {
           init: function() {
             history = [];
 
-            roundBracketBalance    = 0;
             operandOperatorBalance = 0;
           },
           add: function(type) {
@@ -492,10 +501,6 @@ smodules.templateParser = function() {
               operandOperatorBalance++;
             } else if (type === 'comp' || type === 'andor') {
               operandOperatorBalance--;
-            } else if (type === 'roundBracket') {
-              roundBracketBalance++;
-            } else if (type === 'endRoundBracket') {
-              roundBracketBalance--;
             }
 
             if (calcRoundBracketBalance() < 0) {
