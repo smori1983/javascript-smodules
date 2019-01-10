@@ -443,58 +443,64 @@ smodules.templateParser = function() {
       };
 
       var typeHistory = (function() {
-        var stack;
+        var history;
 
         var get = function(index) {
-          return stack[stack.length - index] || null;
+          return history[history.length - index] || null;
+        };
+
+        var calcRoundBracketBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'roundBracket') {
+              balance++;
+            } else if (type === 'endRoundBracket') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
+
+        var calcOperandOperatorBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'var' || type === 'value') {
+              balance++;
+            } else if (type === 'comp' || type === 'andor') {
+              balance--;
+            }
+          });
+
+          return balance;
         };
 
         return {
           init: function() {
-            stack = ['start'];
+            history = ['start'];
           },
           add: function(type) {
             if (type === 'comp' && get(2) === 'comp') {
               exception('can not write comparer here');
             }
 
-            stack.push(type);
-          },
-          latest: function() {
-            return get(1);
-          },
-        };
-      })();
+            history.push(type);
 
-      var typeStat = (function() {
-        var roundBracketBalance, operandOperatorBalance;
-
-        return {
-          init: function() {
-            roundBracketBalance    = 0;
-            operandOperatorBalance = 0;
-          },
-          add: function(type) {
-            if (type === 'var' || type === 'value') {
-              operandOperatorBalance++;
-            } else if (type === 'comp' || type === 'andor') {
-              operandOperatorBalance--;
-            } else if (type === 'roundBracket') {
-              roundBracketBalance++;
-            } else if (type === 'endRoundBracket') {
-              roundBracketBalance--;
-            }
-
-            if (roundBracketBalance < 0) {
+            if (calcRoundBracketBalance() < 0) {
               // eslint-disable-next-line quotes
               exception("can not use ')' here");
             }
           },
+          latest: function() {
+            return get(1);
+          },
           finish: function() {
-            if (roundBracketBalance !== 0) {
+            if (calcRoundBracketBalance() !== 0) {
               exception('invalid usage of round bracket');
             }
-            if (operandOperatorBalance !== 1) {
+            if (calcOperandOperatorBalance() !== 1) {
               exception('invalid usage of operand or operator');
             }
           },
@@ -535,31 +541,15 @@ smodules.templateParser = function() {
             result = method[type].parse();
             result.order = getOrder(result);
 
-            addParsed(result);
-
             return result;
           }
         }
       };
 
-      var init = function() {
-        typeHistory.init();
-        typeStat.init();
-      };
-
-      var addParsed = function(result) {
-        typeHistory.add(result.type);
-        typeStat.add(result.type);
-      };
-      
-      var finish = function() {
-        typeStat.finish();
-      }
-
       return function() {
         var section, polish = [], stack = [], stackTop;
 
-        init();
+        typeHistory.init();
 
         while (eatable()) {
           if (ch === '}') {
@@ -567,6 +557,8 @@ smodules.templateParser = function() {
           }
 
           section = parse();
+
+          typeHistory.add(section.type);
 
           while (stack.length > 0) {
             stackTop = stack.pop();
@@ -592,7 +584,7 @@ smodules.templateParser = function() {
           polish.push(stack.pop());
         }
 
-        finish();
+        typeHistory.finish();
 
         return polish;
       };
