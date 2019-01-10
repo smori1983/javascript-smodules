@@ -541,8 +541,6 @@ smodules.templateParser = function() {
             result = method[type].parse();
             result.order = getOrder(result);
 
-            typeHistory.add(result.type);
-
             return result;
           }
         }
@@ -559,6 +557,8 @@ smodules.templateParser = function() {
           }
 
           section = parse();
+
+          typeHistory.add(section.type);
 
           while (stack.length > 0) {
             stackTop = stack.pop();
