@@ -467,6 +467,7 @@ smodules.templateParser = function() {
       })();
 
       var typeStat = (function() {
+        var history;
         var roundBracketBalance, operandOperatorBalance;
 
         var calcRoundBracketBalance = function() {
@@ -479,10 +480,14 @@ smodules.templateParser = function() {
 
         return {
           init: function() {
+            history = [];
+
             roundBracketBalance    = 0;
             operandOperatorBalance = 0;
           },
           add: function(type) {
+            history.push(type);
+
             if (type === 'var' || type === 'value') {
               operandOperatorBalance++;
             } else if (type === 'comp' || type === 'andor') {
