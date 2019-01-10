@@ -469,6 +469,14 @@ smodules.templateParser = function() {
       var typeStat = (function() {
         var roundBracketBalance, operandOperatorBalance;
 
+        var calcRoundBracketBalance = function() {
+          return roundBracketBalance;
+        };
+
+        var calcOperandOperatorBalance = function() {
+          return operandOperatorBalance;
+        };
+
         return {
           init: function() {
             roundBracketBalance    = 0;
@@ -485,16 +493,16 @@ smodules.templateParser = function() {
               roundBracketBalance--;
             }
 
-            if (roundBracketBalance < 0) {
+            if (calcRoundBracketBalance() < 0) {
               // eslint-disable-next-line quotes
               exception("can not use ')' here");
             }
           },
           finish: function() {
-            if (roundBracketBalance !== 0) {
+            if (calcRoundBracketBalance() !== 0) {
               exception('invalid usage of round bracket');
             }
-            if (operandOperatorBalance !== 1) {
+            if (calcOperandOperatorBalance() !== 1) {
               exception('invalid usage of operand or operator');
             }
           },
