@@ -468,7 +468,6 @@ smodules.templateParser = function() {
 
       var typeStat = (function() {
         var history;
-        var operandOperatorBalance;
 
         var calcRoundBracketBalance = function() {
           var balance = 0;
@@ -485,23 +484,25 @@ smodules.templateParser = function() {
         };
 
         var calcOperandOperatorBalance = function() {
-          return operandOperatorBalance;
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'var' || type === 'value') {
+              balance++;
+            } else if (type === 'comp' || type === 'andor') {
+              balance--;
+            }
+          });
+
+          return balance;
         };
 
         return {
           init: function() {
             history = [];
-
-            operandOperatorBalance = 0;
           },
           add: function(type) {
             history.push(type);
-
-            if (type === 'var' || type === 'value') {
-              operandOperatorBalance++;
-            } else if (type === 'comp' || type === 'andor') {
-              operandOperatorBalance--;
-            }
 
             if (calcRoundBracketBalance() < 0) {
               // eslint-disable-next-line quotes
