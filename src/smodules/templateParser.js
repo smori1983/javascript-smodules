@@ -507,60 +507,6 @@ smodules.templateParser = function() {
         };
       })();
 
-      var typeStat = (function() {
-        var history;
-
-        var calcRoundBracketBalance = function() {
-          var balance = 0;
-
-          history.forEach(function(type) {
-            if (type === 'roundBracket') {
-              balance++;
-            } else if (type === 'endRoundBracket') {
-              balance--;
-            }
-          });
-
-          return balance;
-        };
-
-        var calcOperandOperatorBalance = function() {
-          var balance = 0;
-
-          history.forEach(function(type) {
-            if (type === 'var' || type === 'value') {
-              balance++;
-            } else if (type === 'comp' || type === 'andor') {
-              balance--;
-            }
-          });
-
-          return balance;
-        };
-
-        return {
-          init: function() {
-            history = [];
-          },
-          add: function(type) {
-            history.push(type);
-
-            if (calcRoundBracketBalance() < 0) {
-              // eslint-disable-next-line quotes
-              exception("can not use ')' here");
-            }
-          },
-          finish: function() {
-            if (calcRoundBracketBalance() !== 0) {
-              exception('invalid usage of round bracket');
-            }
-            if (calcOperandOperatorBalance() !== 1) {
-              exception('invalid usage of operand or operator');
-            }
-          },
-        };
-      })();
-
       var getOrder = (function() {
         var orders = {
           'endRoundBracket': 1,
@@ -604,17 +550,14 @@ smodules.templateParser = function() {
 
       var init = function() {
         typeHistory.init();
-        typeStat.init();
       };
 
       var addParsed = function(result) {
         typeHistory.add(result.type);
-        typeStat.add(result.type);
       };
       
       var finish = function() {
         typeHistory.finish();
-        typeStat.finish();
       }
 
       return function() {
