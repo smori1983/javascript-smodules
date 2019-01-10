@@ -541,17 +541,13 @@ smodules.templateParser = function() {
             result = method[type].parse();
             result.order = getOrder(result);
 
-            addParsed(result);
+            typeHistory.add(result.type);
 
             return result;
           }
         }
       };
 
-      var addParsed = function(result) {
-        typeHistory.add(result.type);
-      };
-      
       return function() {
         var section, polish = [], stack = [], stackTop;
 
