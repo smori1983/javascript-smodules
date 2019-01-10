@@ -548,10 +548,6 @@ smodules.templateParser = function() {
         }
       };
 
-      var init = function() {
-        typeHistory.init();
-      };
-
       var addParsed = function(result) {
         typeHistory.add(result.type);
       };
@@ -563,7 +559,7 @@ smodules.templateParser = function() {
       return function() {
         var section, polish = [], stack = [], stackTop;
 
-        init();
+        typeHistory.init();
 
         while (eatable()) {
           if (ch === '}') {
