@@ -449,6 +449,34 @@ smodules.templateParser = function() {
           return history[history.length - index] || null;
         };
 
+        var calcRoundBracketBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'roundBracket') {
+              balance++;
+            } else if (type === 'endRoundBracket') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
+
+        var calcOperandOperatorBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'var' || type === 'value') {
+              balance++;
+            } else if (type === 'comp' || type === 'andor') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
+
         return {
           init: function() {
             history = ['start'];
@@ -459,9 +487,22 @@ smodules.templateParser = function() {
             }
 
             history.push(type);
+
+            if (calcRoundBracketBalance() < 0) {
+              // eslint-disable-next-line quotes
+              exception("can not use ')' here");
+            }
           },
           latest: function() {
             return get(1);
+          },
+          finish: function() {
+            if (calcRoundBracketBalance() !== 0) {
+              exception('invalid usage of round bracket');
+            }
+            if (calcOperandOperatorBalance() !== 1) {
+              exception('invalid usage of operand or operator');
+            }
           },
         };
       })();
@@ -572,6 +613,7 @@ smodules.templateParser = function() {
       };
       
       var finish = function() {
+        typeHistory.finish();
         typeStat.finish();
       }
 
