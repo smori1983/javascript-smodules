@@ -202,8 +202,16 @@ QUnit.test('if block - if elseif else - error 5', function(assert) {
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - no space', function(assert) {
+QUnit.test('if block - conditions - error - no space 1', function(assert) {
   this.source = '{if$foo }<p>ok</p>{/if}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('if block - conditions - error - no space 2', function(assert) {
+  this.source = '{if $foo }<p>foo</p>{elseif$bar}<p>bar</p>{/if}';
 
   assert.throws(function() {
     this.parse();
