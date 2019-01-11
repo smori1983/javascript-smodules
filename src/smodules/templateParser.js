@@ -546,7 +546,7 @@ smodules.templateParser = function() {
       })();
 
       return function() {
-        var section, polish = [], stack = [], stackTop;
+        var parsed, polish = [], stack = [], stackTop;
 
         typeHistory.init();
 
@@ -556,14 +556,14 @@ smodules.templateParser = function() {
           }
 
           // By typeHistory.init(), history has at least 'start' type.
-          section = parse(typeHistory.latest());
+          parsed = parse(typeHistory.latest());
 
-          typeHistory.add(section.type);
+          typeHistory.add(parsed.type);
 
           while (stack.length > 0) {
             stackTop = stack.pop();
 
-            if (section.order <= stackTop.order && stackTop.type !== 'roundBracket') {
+            if (parsed.order <= stackTop.order && stackTop.type !== 'roundBracket') {
               polish.push(stackTop);
             } else {
               stack.push(stackTop);
@@ -571,10 +571,10 @@ smodules.templateParser = function() {
             }
           }
 
-          if (section.type === 'endRoundBracket') {
+          if (parsed.type === 'endRoundBracket') {
             stack.pop();
           } else {
-            stack.push(section);
+            stack.push(parsed);
           }
 
           skipWhitespace();
