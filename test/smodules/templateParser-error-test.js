@@ -291,7 +291,7 @@ QUnit.test('if block - conditions - error - endRoundBracket -> comp', function(a
 });
 
 QUnit.test('if block - conditions - error - value -> roundBracket', function(assert) {
-  this.source = '{if 10 ( === $foo )}<p>ok</p>{/if}';
+  this.source = '{if 10 ( $foo === 1 )}<p>ok</p>{/if}';
 
   assert.throws(function() {
     this.parse();
@@ -315,7 +315,7 @@ QUnit.test('if block - conditions - error - value -> var', function(assert) {
 });
 
 QUnit.test('if block - conditions - error - var -> roundBracket', function(assert) {
-  this.source = '{if $foo ( === $bar )}<p>ok</p>{/if}';
+  this.source = '{if $foo ( $bar === 1 )}<p>ok</p>{/if}';
 
   assert.throws(function() {
     this.parse();
