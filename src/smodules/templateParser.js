@@ -161,7 +161,6 @@ smodules.templateParser = function() {
     return '{else}';
   };
 
-  // NOTE: currently not used.
   var readEndIfTag = function() {
     return readRegex(/^\{\s*\/\s*if\s*\}/);
   };
