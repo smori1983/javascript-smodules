@@ -442,6 +442,44 @@ smodules.templateParser = function() {
         'andor':           { read: readAndOr,           parse: parseAndOr },
       };
 
+      var getOrder = (function() {
+        var orders = {
+          'endRoundBracket': 1,
+          'or':              2,
+          'and':             3,
+          'comp':            4,
+          'value':           5,
+          'var':             5,
+          'roundBracket':    6,
+        };
+
+        return function(section) {
+          // parseAndor() returns section.type with 'andor'.
+          // Use section.expr instead.
+          return orders[section.type] || orders[section.expr];
+        };
+      })();
+
+      var parse = function(sourceType) {
+        var transitableTypes = state[sourceType];
+        var i, size, type, result;
+
+        for (i = 0, size = transitableTypes.length; i < size; i++) {
+          type = transitableTypes[i];
+
+          if (type === 'error') {
+            exception('invalid condition expression');
+          }
+
+          if (method[type].read()) {
+            result = method[type].parse();
+            result.order = getOrder(result);
+
+            return result;
+          }
+        }
+      };
+
       var typeHistory = (function() {
         var history;
 
@@ -506,44 +544,6 @@ smodules.templateParser = function() {
           },
         };
       })();
-
-      var getOrder = (function() {
-        var orders = {
-          'endRoundBracket': 1,
-          'or':              2,
-          'and':             3,
-          'comp':            4,
-          'value':           5,
-          'var':             5,
-          'roundBracket':    6,
-        };
-
-        return function(section) {
-          // parseAndor() returns section.type with 'andor'.
-          // Use section.expr instead.
-          return orders[section.type] || orders[section.expr];
-        };
-      })();
-
-      var parse = function(sourceType) {
-        var transitableTypes = state[sourceType];
-        var i, size, type, result;
-
-        for (i = 0, size = transitableTypes.length; i < size; i++) {
-          type = transitableTypes[i];
-
-          if (type === 'error') {
-            exception('invalid condition expression');
-          }
-
-          if (method[type].read()) {
-            result = method[type].parse();
-            result.order = getOrder(result);
-
-            return result;
-          }
-        }
-      };
 
       return function() {
         var section, polish = [], stack = [], stackTop;
