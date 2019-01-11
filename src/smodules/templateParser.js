@@ -442,23 +442,21 @@ smodules.templateParser = function() {
         'andor':           { read: readAndOr,           parse: parseAndOr },
       };
 
-      var getOrder = (function() {
-        var orders = {
-          'endRoundBracket': 1,
-          'or':              2,
-          'and':             3,
-          'comp':            4,
-          'value':           5,
-          'var':             5,
-          'roundBracket':    6,
-        };
+      var order = {
+        'endRoundBracket': 1,
+        'or':              2,
+        'and':             3,
+        'comp':            4,
+        'value':           5,
+        'var':             5,
+        'roundBracket':    6,
+      };
 
-        return function(section) {
-          // parseAndor() returns section.type with 'andor'.
-          // Use section.expr instead.
-          return orders[section.type] || orders[section.expr];
-        };
-      })();
+      var getOrder = function(section) {
+        // parseAndor() returns section.type with 'andor'.
+        // Use section.expr instead.
+        return order[section.type] || order[section.expr];
+      };
 
       var parse = function(sourceType) {
         var transitableTypes = state[sourceType];
