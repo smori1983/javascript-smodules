@@ -210,6 +210,30 @@ QUnit.test('if block - conditions - error - no space', function(assert) {
   }, Error);
 });
 
+QUnit.test('if block - conditions - error - round bracket balance', function(assert) {
+  this.source = '{if ($foo) and $bar) }<p>ok</p>{/if}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('if block - conditions - error - lack of endRoundBracket', function(assert) {
+  this.source = '{if ( $foo }<p>ok</p>{/if}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('if block - conditions - error - lack of roundBracket', function(assert) {
+  this.source = '{if ( $foo ) ) }<p>ok</p>{/if}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('if block - conditions - error - roundBracket -> endRoundBracket', function(assert) {
   this.source = '{if () }<p>ok</p>{/if}';
 
@@ -380,22 +404,6 @@ QUnit.test('if block - conditions - error - andor -> comp', function(assert) {
 
 QUnit.test('if block - conditions - error - andor -> andor', function(assert) {
   this.source = '{if $foo or or $bar}<p>ok</p>{/if}';
-
-  assert.throws(function() {
-    this.parse();
-  }, Error);
-});
-
-QUnit.test('if block - conditions - error - lack of endRoundBracket', function(assert) {
-  this.source = '{if ( $foo }<p>ok</p>{/if}';
-
-  assert.throws(function() {
-    this.parse();
-  }, Error);
-});
-
-QUnit.test('if block - conditions - error - lack of roundBracket', function(assert) {
-  this.source = '{if ( $foo ) ) }<p>ok</p>{/if}';
 
   assert.throws(function() {
     this.parse();

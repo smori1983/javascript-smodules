@@ -420,6 +420,7 @@ smodules.templateParser = function() {
 
   var parseCondition = (function() {
     var getReversePolish = (function() {
+      // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
       var state = {
         'start':           ['roundBracket',                    'value', 'var',                  'error'],
@@ -441,114 +442,126 @@ smodules.templateParser = function() {
         'andor':           { read: readAndOr,           parse: parseAndOr },
       };
 
-      var history = (function() {
-        var stack;
+      var order = {
+        'endRoundBracket': 1,
+        'or':              2,
+        'and':             3,
+        'comp':            4,
+        'value':           5,
+        'var':             5,
+        'roundBracket':    6,
+      };
 
-        return {
-          init: function() {
-            stack = ['start'];
-          },
-          add: function(type) {
-            stack.push(type);
-          },
-          get: function(idx) {
-            return stack[stack.length - idx] || null;
-          },
+      var getOrder = function(section) {
+        // parseAndor() returns section.type with 'andor'.
+        // Use section.expr instead.
+        return order[section.type] || order[section.expr];
+      };
+
+      var parse = function(sourceType) {
+        var transitableTypes = state[sourceType];
+        var i, size, type, result;
+
+        for (i = 0, size = transitableTypes.length; i < size; i++) {
+          type = transitableTypes[i];
+
+          if (type === 'error') {
+            exception('invalid condition expression');
+          }
+
+          if (method[type].read()) {
+            result = method[type].parse();
+            result.order = getOrder(result);
+
+            return result;
+          }
+        }
+      };
+
+      var typeHistory = (function() {
+        var history;
+
+        var get = function(index) {
+          return history[history.length - index] || null;
         };
-      })();
 
-      var sectionTypeStat = (function() {
-        var roundBracketBalance, operandOperatorBalance;
+        var calcRoundBracketBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'roundBracket') {
+              balance++;
+            } else if (type === 'endRoundBracket') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
+
+        var calcOperandOperatorBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'var' || type === 'value') {
+              balance++;
+            } else if (type === 'comp' || type === 'andor') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
 
         return {
           init: function() {
-            roundBracketBalance    = 0;
-            operandOperatorBalance = 0;
+            history = ['start'];
           },
           add: function(type) {
-            if (type === 'var' || type === 'value') {
-              operandOperatorBalance++;
-            } else if (type === 'comp' || type === 'andor') {
-              operandOperatorBalance--;
-            } else if (type === 'roundBracket') {
-              roundBracketBalance++;
-            } else if (type === 'endRoundBracket') {
-              roundBracketBalance--;
+            if (type === 'comp' && get(2) === 'comp') {
+              exception('can not write comparer here');
             }
 
-            if (roundBracketBalance < 0) {
+            history.push(type);
+
+            if (calcRoundBracketBalance() < 0) {
               // eslint-disable-next-line quotes
               exception("can not use ')' here");
             }
           },
+          latest: function() {
+            return get(1);
+          },
           finish: function() {
-            if (roundBracketBalance !== 0) {
+            if (calcRoundBracketBalance() !== 0) {
               exception('invalid usage of round bracket');
             }
-            if (operandOperatorBalance !== 1) {
+            if (calcOperandOperatorBalance() !== 1) {
               exception('invalid usage of operand or operator');
             }
           },
         };
       })();
 
-      var getOrder = (function() {
-        var orders = {
-          'endRoundBracket': 1,
-          'or':              2,
-          'and':             3,
-          'comp':            4,
-          'value':           5,
-          'var':             5,
-          'roundBracket':    6,
-        };
-
-        return function(section) {
-          return orders[section.type] || orders[section.expr];
-        };
-      })();
-
-      var parse = function() {
-        var list = state[history.get(1)];
-        var i, size, type, result;
-
-        for (i = 0, size = list.length; i < size; i++) {
-          type = list[i];
-
-          if (type === 'error') {
-            exception('invalid condition expression');
-          } else if (method[type].read()) {
-            if (type === 'comp' && history.get(2) === 'comp') {
-              exception('can not write comparer here');
-            }
-            result = method[type].parse();
-            break;
-          }
-        }
-        history.add(result.type);
-        sectionTypeStat.add(result.type);
-
-        return result;
-      };
-
       return function() {
-        var section, polish = [], stack = [], stackTop;
+        var parsed, polish = [], stack = [], stackTop;
 
-        history.init();
-        sectionTypeStat.init();
+        typeHistory.init();
 
         while (eatable()) {
           if (ch === '}') {
             break;
-          } else {
-            section = parse();
-            section.order = getOrder(section);
           }
+
+          // By typeHistory.init(), history has at least 'start' type.
+          parsed = parse(typeHistory.latest());
+
+          typeHistory.add(parsed.type);
 
           while (stack.length > 0) {
             stackTop = stack.pop();
 
-            if (section.order <= stackTop.order && stackTop.type !== 'roundBracket') {
+            if (parsed.order <= stackTop.order && stackTop.type !== 'roundBracket') {
               polish.push(stackTop);
             } else {
               stack.push(stackTop);
@@ -556,10 +569,10 @@ smodules.templateParser = function() {
             }
           }
 
-          if (section.type === 'endRoundBracket') {
+          if (parsed.type === 'endRoundBracket') {
             stack.pop();
           } else {
-            stack.push(section);
+            stack.push(parsed);
           }
 
           skipWhitespace();
@@ -568,7 +581,8 @@ smodules.templateParser = function() {
         while (stack.length > 0) {
           polish.push(stack.pop());
         }
-        sectionTypeStat.finish();
+
+        typeHistory.finish();
 
         return polish;
       };

@@ -171,3 +171,47 @@ QUnit.test('if block - condition - priority of and/or', function(assert) {
   assert.strictEqual(stack[4].type, 'andor');
   assert.strictEqual(stack[4].expr, 'and');
 });
+
+QUnit.test('if block - and chain', function(assert) {
+  this.source =
+    '{ if $var1 and $var2 and $var3 }' +
+    '<p>ok</p>' +
+    '{ /if }';
+  this.parse();
+
+  var stack  = this.result[0].sections[0].header.stack;
+
+  assert.strictEqual(stack.length, 5);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'var1');
+  assert.strictEqual(stack[1].type, 'var');
+  assert.strictEqual(stack[1].keys.join('.'), 'var2');
+  assert.strictEqual(stack[2].type, 'andor');
+  assert.strictEqual(stack[2].expr, 'and');
+  assert.strictEqual(stack[3].type, 'var');
+  assert.strictEqual(stack[3].keys.join('.'), 'var3');
+  assert.strictEqual(stack[4].type, 'andor');
+  assert.strictEqual(stack[4].expr, 'and');
+});
+
+QUnit.test('if block - or chain', function(assert) {
+  this.source =
+    '{ if $var1 or $var2 or $var3 }' +
+    '<p>ok</p>' +
+    '{ /if }';
+  this.parse();
+
+  var stack  = this.result[0].sections[0].header.stack;
+
+  assert.strictEqual(stack.length, 5);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'var1');
+  assert.strictEqual(stack[1].type, 'var');
+  assert.strictEqual(stack[1].keys.join('.'), 'var2');
+  assert.strictEqual(stack[2].type, 'andor');
+  assert.strictEqual(stack[2].expr, 'or');
+  assert.strictEqual(stack[3].type, 'var');
+  assert.strictEqual(stack[3].keys.join('.'), 'var3');
+  assert.strictEqual(stack[4].type, 'andor');
+  assert.strictEqual(stack[4].expr, 'or');
+});

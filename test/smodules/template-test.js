@@ -198,6 +198,132 @@ QUnit.test('if block - logical operator - and', function(assert) {
   assert.strictEqual(this.getHtml(), '<p>no</p>');
 });
 
+QUnit.test('if block - logical operator - and chain 1', function(assert) {
+  var param = { foo: true, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - and chain 2', function(assert) {
+  var param = { foo: false, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>no</p>');
+});
+
+QUnit.test('if block - logical operator - and chain 3', function(assert) {
+  var param = { foo: true, bar: false, baz: true };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>no</p>');
+});
+
+QUnit.test('if block - logical operator - and chain 4', function(assert) {
+  var param = { foo: true, bar: true, baz: false };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>no</p>');
+});
+
+QUnit.test('if block - logical operator - or', function(assert) {
+  var param = { foo: true, bar: false };
+
+  this.src =
+    '{ if $foo or $bar }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 1', function(assert) {
+  var param = { foo: true, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 2', function(assert) {
+  var param = { foo: false, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 3', function(assert) {
+  var param = { foo: true, bar: false, baz: true };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 4', function(assert) {
+  var param = { foo: true, bar: true, baz: false };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
 QUnit.test('if block - logical operator - combination', function(assert) {
   var param = { foo: true, bar: false, baz: true };
 
