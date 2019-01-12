@@ -775,7 +775,7 @@ smodules.templateParser = function() {
       };
 
       return function() {
-        var s = '';
+        var expr = '';
         var filters = [];
         var mainResult;
 
@@ -784,12 +784,12 @@ smodules.templateParser = function() {
         if (ch === '|') {
           mainResult = mainLoop();
 
-          s       = mainResult.expr;
+          expr    = mainResult.expr;
           filters = mainResult.filters;
         }
 
         return {
-          expr:    s,
+          expr:    expr,
           filters: filters,
         };
       };
