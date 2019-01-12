@@ -729,6 +729,8 @@ smodules.templateParser = function() {
               s += next(',');
             } else if (ch === '|' || ch === '}') {
               break;
+            } else {
+              exception('invalid filter args expression');
             }
           }
         }

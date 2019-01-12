@@ -123,6 +123,14 @@ QUnit.test('holder block - filter - error - colon only', function(assert) {
   }, Error);
 });
 
+QUnit.test('holder block - filter with args - error - args not separated', function(assert) {
+  this.source = '{ $foo | filter : 1 2 }';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('holder block - filter with args - error - NULL', function(assert) {
   this.source = '{ $foo | filter : NULL }';
 
