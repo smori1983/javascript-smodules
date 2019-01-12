@@ -649,24 +649,20 @@ smodules.templateParser = function() {
     eatLiteralTag();
 
     while (eatable()) {
-      if (ch === '{') {
-        if (readLeftTag()) {
-          s += eatLeftTag();
-        } else if (readRightTag()) {
-          s += eatRightTag();
-        } else if (readEndLiteralTag()) {
-          eatEndLiteralTag();
-          closed = true;
-          break;
-        } else {
-          s += next(ch);
-        }
+      if (readLeftTag()) {
+        s += eatLeftTag();
+      } else if (readRightTag()) {
+        s += eatRightTag();
+      } else if (readEndLiteralTag()) {
+        eatEndLiteralTag();
+        closed = true;
+        break;
       } else {
         s += next(ch);
       }
     }
 
-    if (!closed) {
+    if (closed === false) {
       exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by {/literal}');
     }
 
