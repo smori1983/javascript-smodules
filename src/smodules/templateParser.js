@@ -744,14 +744,12 @@ smodules.templateParser = function() {
       var mainLoop = function() {
         var expr = '';
         var filters = [];
-        var filter, nameSection, argsSection;
+        var nameSection, argsSection;
 
         while (eatable()) {
           if (ch !== '|') {
             break;
           }
-
-          filter = {};
 
           expr += next('|');
 
@@ -760,9 +758,6 @@ smodules.templateParser = function() {
 
           expr += nameSection.expr;
           expr += argsSection.expr;
-
-          filter.name = nameSection.name;
-          filter.args = argsSection.args;
 
           filters.push({
             name: nameSection.name,
