@@ -694,39 +694,31 @@ smodules.templateParser = function() {
       };
 
       var getFilterArgsSection = function() {
-        var s = '';
+        var expr = '';
         var args = [];
         var arg;
 
         skipWhitespace();
 
         if (ch === ':') {
-          s += next(':');
+          expr += next(':');
 
           while (eatable()) {
             skipWhitespace();
 
-            if (ch === 'n') {
-              arg = parseNull();
-            } else if (ch === 't') {
-              arg = parseTrue();
-            } else if (ch === 'f') {
-              arg = parseFalse();
-            } else if (ch === "'" || ch === '"') { // eslint-disable-line quotes
-              arg = parseString();
-            } else if (ch === '-' || ch === '+' || (ch >= '0' && ch <= '9')) {
-              arg = parseNumber();
+            if (readValue()) {
+              arg = parseValue();
             } else {
               exception('invalid filter args');
             }
 
-            s += arg.expr;
+            expr += arg.expr;
             args.push(arg.value);
 
             skipWhitespace();
 
             if (ch === ',') {
-              s += next(',');
+              expr += next(',');
             } else if (ch === '|' || ch === '}') {
               break;
             } else {
@@ -736,7 +728,7 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr: s,
+          expr: expr,
           args: args,
         };
       }; // getFilterArgsSection()
