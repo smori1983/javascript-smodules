@@ -63,6 +63,10 @@ smodules.templateParser = function() {
     return regex.test(text.slice(ptr));
   };
 
+  var regexMatched = function(regex) {
+    return text.slice(ptr).match(regex);
+  };
+
   var readLeftTag = function() {
     return readRegex(/^\{\s*left\s*\}/);
   };
@@ -296,9 +300,9 @@ smodules.templateParser = function() {
   };
 
   var parseString = function() {
-    var matched;
+    var matched = regexMatched(/^(["'])(?:\\\1|\s|\S)*?\1/);
 
-    if ((matched = text.slice(ptr).match(/^(["'])(?:\\\1|\s|\S)*?\1/))) {
+    if (matched) {
       next(matched[0]);
 
       return {
@@ -316,8 +320,8 @@ smodules.templateParser = function() {
   };
 
   var parseNumber = function() {
+    var matched = regexMatched(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
     var value;
-    var matched = text.slice(ptr).match(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
 
     if (matched && !isNaN(value = +(matched[0]))) {
       next(matched[0]);
@@ -381,9 +385,10 @@ smodules.templateParser = function() {
   };
 
   var parseComp = function() {
-    var matched, expr;
+    var matched = regexMatched(compRegex);
+    var expr;
 
-    if ((matched = text.slice(ptr).match(compRegex))) {
+    if (matched) {
       expr = next(matched[0]);
     } else {
       exception('comparer should be written');
