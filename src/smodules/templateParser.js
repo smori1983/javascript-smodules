@@ -764,7 +764,10 @@ smodules.templateParser = function() {
           filter.name = nameSection.name;
           filter.args = argsSection.args;
 
-          filters.push(filter);
+          filters.push({
+            name: nameSection.name,
+            args: argsSection.args,
+          });
 
           if (ch === '}') {
             break;
