@@ -742,7 +742,7 @@ smodules.templateParser = function() {
       }; // getFilterArgsSection()
 
       var mainLoop = function() {
-        var s = '';
+        var expr = '';
         var filters = [];
         var filter, nameSection, argsSection;
 
@@ -753,14 +753,14 @@ smodules.templateParser = function() {
 
           filter = {};
 
-          s += next('|');
+          expr += next('|');
 
           nameSection = getFilterNameSection();
-          s += nameSection.expr;
+          expr += nameSection.expr;
           filter.name = nameSection.name;
 
           argsSection = getFilterArgsSection();
-          s += argsSection.expr;
+          expr += argsSection.expr;
           filter.args = argsSection.args;
 
           filters.push(filter);
@@ -773,7 +773,7 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr:    s,
+          expr:    expr,
           filters: filters,
         };
       };
