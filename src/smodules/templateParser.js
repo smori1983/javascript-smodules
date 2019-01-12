@@ -747,6 +747,10 @@ smodules.templateParser = function() {
         var filter, nameSection, argsSection;
 
         while (eatable()) {
+          if (ch !== '|') {
+            break;
+          }
+
           filter = {};
 
           s += next('|');
@@ -775,23 +779,9 @@ smodules.templateParser = function() {
       };
 
       return function() {
-        var expr = '';
-        var filters = [];
-        var mainResult;
-
         skipWhitespace();
 
-        if (ch === '|') {
-          mainResult = mainLoop();
-
-          expr    = mainResult.expr;
-          filters = mainResult.filters;
-        }
-
-        return {
-          expr:    expr,
-          filters: filters,
-        };
+        return mainLoop();
       };
     })(); // getFilterSection()
 
