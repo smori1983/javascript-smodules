@@ -43,6 +43,14 @@ QUnit.test('literal block - error - only close tag', function(assert) {
   }, Error);
 });
 
+QUnit.test('holder block - no filters - error - tag not closed', function(assert) {
+  this.source = '{ $foo';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('holder block - no filters - error - space between $ and property name', function(assert) {
   this.source = '{ $ foo } has space between $ and property name.';
 
@@ -75,6 +83,14 @@ QUnit.test('holder block - no filters - error - continuous dots', function(asser
   }, Error);
 });
 
+QUnit.test('holder block - filter - error - tag not closed', function(assert) {
+  this.source = '{ $foo | filter';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('holder block - filter - error - filter name has space', function(assert) {
   this.source = '{ $foo | invalid filter name }';
 
@@ -99,8 +115,40 @@ QUnit.test('holder block - filter - error - no pipe', function(assert) {
   }, Error);
 });
 
+QUnit.test('holder block - filter - error - no filter name before colon', function(assert) {
+  this.source = '{ $foo | : 1 }';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('holder block - filter - error - no filter args after colon', function(assert) {
   this.source = '{ $foo | filter : }';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('holder block - filter - error - colon only', function(assert) {
+  this.source = '{ $foo | : }';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('holder block - filter with args - error - tag not closed', function(assert) {
+  this.source = '{ $foo | filter : 1';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('holder block - filter with args - error - args not separated', function(assert) {
+  this.source = '{ $foo | filter : 1 2 }';
 
   assert.throws(function() {
     this.parse();

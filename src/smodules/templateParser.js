@@ -729,6 +729,8 @@ smodules.templateParser = function() {
               s += next(',');
             } else if (ch === '|' || ch === '}') {
               break;
+            } else {
+              exception('invalid filter args expression');
             }
           }
         }
@@ -739,25 +741,30 @@ smodules.templateParser = function() {
         };
       }; // getFilterArgsSection()
 
-      var mainLoop = function() {
-        var s = '';
+      return function() {
+        var expr = '';
         var filters = [];
-        var filter, nameSection, argsSection;
+        var nameSection, argsSection;
+
+        skipWhitespace();
 
         while (eatable()) {
-          filter = {};
+          if (ch !== '|') {
+            break;
+          }
 
-          s += next('|');
+          expr += next('|');
 
           nameSection = getFilterNameSection();
-          s += nameSection.expr;
-          filter.name = nameSection.name;
-
           argsSection = getFilterArgsSection();
-          s += argsSection.expr;
-          filter.args = argsSection.args;
 
-          filters.push(filter);
+          expr += nameSection.expr;
+          expr += argsSection.expr;
+
+          filters.push({
+            name: nameSection.name,
+            args: argsSection.args,
+          });
 
           if (ch === '}') {
             break;
@@ -767,51 +774,30 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr:    s,
-          filters: filters,
-        };
-      };
-
-      return function() {
-        var s = '';
-        var filters = [];
-        var mainResult;
-
-        skipWhitespace();
-
-        if (ch === '|') {
-          mainResult = mainLoop();
-
-          s       = mainResult.expr;
-          filters = mainResult.filters;
-        }
-
-        return {
-          expr:    s,
+          expr:    expr,
           filters: filters,
         };
       };
     })(); // getFilterSection()
 
     return function() {
-      var s = '';
+      var expr = '';
       var keySection, filterSection;
 
-      s += next('{');
+      expr += next('{');
 
       skipWhitespace();
 
       keySection = parseVar();
-      s += keySection.expr;
-
       filterSection = getFilterSection();
-      s += filterSection.expr;
 
-      s += next('}');
+      expr += keySection.expr;
+      expr += filterSection.expr;
+      expr += next('}');
 
       return {
         type:    'holder',
-        expr:    s,
+        expr:    expr,
         keys:    keySection.keys,
         filters: filterSection.filters,
       };
