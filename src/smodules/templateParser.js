@@ -789,11 +789,10 @@ smodules.templateParser = function() {
       skipWhitespace();
 
       keySection = parseVar();
-      s += keySection.expr;
-
       filterSection = getFilterSection();
-      s += filterSection.expr;
 
+      s += keySection.expr;
+      s += filterSection.expr;
       s += next('}');
 
       return {
