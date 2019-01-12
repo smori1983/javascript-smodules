@@ -756,11 +756,12 @@ smodules.templateParser = function() {
           expr += next('|');
 
           nameSection = getFilterNameSection();
-          expr += nameSection.expr;
-          filter.name = nameSection.name;
-
           argsSection = getFilterArgsSection();
+
+          expr += nameSection.expr;
           expr += argsSection.expr;
+
+          filter.name = nameSection.name;
           filter.args = argsSection.args;
 
           filters.push(filter);
