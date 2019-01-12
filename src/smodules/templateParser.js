@@ -694,14 +694,14 @@ smodules.templateParser = function() {
       };
 
       var getFilterArgsSection = function() {
-        var s = '';
+        var expr = '';
         var args = [];
         var arg;
 
         skipWhitespace();
 
         if (ch === ':') {
-          s += next(':');
+          expr += next(':');
 
           while (eatable()) {
             skipWhitespace();
@@ -712,13 +712,13 @@ smodules.templateParser = function() {
               exception('invalid filter args');
             }
 
-            s += arg.expr;
+            expr += arg.expr;
             args.push(arg.value);
 
             skipWhitespace();
 
             if (ch === ',') {
-              s += next(',');
+              expr += next(',');
             } else if (ch === '|' || ch === '}') {
               break;
             } else {
@@ -728,7 +728,7 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr: s,
+          expr: expr,
           args: args,
         };
       }; // getFilterArgsSection()
