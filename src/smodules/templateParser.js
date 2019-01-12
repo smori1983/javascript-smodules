@@ -781,23 +781,23 @@ smodules.templateParser = function() {
     })(); // getFilterSection()
 
     return function() {
-      var s = '';
+      var expr = '';
       var keySection, filterSection;
 
-      s += next('{');
+      expr += next('{');
 
       skipWhitespace();
 
       keySection = parseVar();
       filterSection = getFilterSection();
 
-      s += keySection.expr;
-      s += filterSection.expr;
-      s += next('}');
+      expr += keySection.expr;
+      expr += filterSection.expr;
+      expr += next('}');
 
       return {
         type:    'holder',
-        expr:    s,
+        expr:    expr,
         keys:    keySection.keys,
         filters: filterSection.filters,
       };
