@@ -621,14 +621,12 @@ smodules.templateParser = function() {
     var s = '';
 
     while (eatable()) {
-      if (ch === '{') {
-        if (readLeftTag()) {
-          s += eatLeftTag();
-        } else if (readRightTag()) {
-          s += eatRightTag();
-        } else {
-          break;
-        }
+      if (readLeftTag()) {
+        s += eatLeftTag();
+      } else if (readRightTag()) {
+        s += eatRightTag();
+      } else if (ch === '{') {
+        break;
       } else if (ch === '}') {
         exception('syntax error');
       } else {
