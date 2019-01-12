@@ -99,8 +99,24 @@ QUnit.test('holder block - filter - error - no pipe', function(assert) {
   }, Error);
 });
 
+QUnit.test('holder block - filter - error - no filter name before colon', function(assert) {
+  this.source = '{ $foo | : 1 }';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
 QUnit.test('holder block - filter - error - no filter args after colon', function(assert) {
   this.source = '{ $foo | filter : }';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('holder block - filter - error - colon only', function(assert) {
+  this.source = '{ $foo | : }';
 
   assert.throws(function() {
     this.parse();
