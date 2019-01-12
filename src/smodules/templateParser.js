@@ -741,10 +741,12 @@ smodules.templateParser = function() {
         };
       }; // getFilterArgsSection()
 
-      var mainLoop = function() {
+      return function() {
         var expr = '';
         var filters = [];
         var nameSection, argsSection;
+
+        skipWhitespace();
 
         while (eatable()) {
           if (ch !== '|') {
@@ -775,12 +777,6 @@ smodules.templateParser = function() {
           expr:    expr,
           filters: filters,
         };
-      };
-
-      return function() {
-        skipWhitespace();
-
-        return mainLoop();
       };
     })(); // getFilterSection()
 
