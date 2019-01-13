@@ -257,9 +257,7 @@ smodules.templateParser = function() {
       s += next(ch);
     }
 
-    if (s === '$') {
-      exception('variable not found');
-    } else if (/^\$\.|\.$|\.\./.test(s)) {
+    if (s === '$' || /^\$\.|\.$|\.\./.test(s)) {
       exception('invalid variable expression');
     }
 
