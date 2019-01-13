@@ -263,7 +263,6 @@ smodules.templateParser = function() {
 
     return {
       type: 'var',
-      expr: s,
       keys: s.slice(1).split('.'),
     };
   };
@@ -273,9 +272,10 @@ smodules.templateParser = function() {
   };
 
   var parseNull = function() {
+    next('null');
+
     return {
       type:  'value',
-      expr:  next('null'),
       value: null,
     };
   };
@@ -285,9 +285,10 @@ smodules.templateParser = function() {
   };
 
   var parseTrue = function() {
+    next('true');
+
     return {
       type:  'value',
-      expr:  next('true'),
       value: true,
     };
   };
@@ -297,9 +298,10 @@ smodules.templateParser = function() {
   };
 
   var parseFalse = function() {
+    next('false');
+
     return {
       type:  'value',
-      expr:  next('false'),
       value: false,
     };
   };
@@ -317,7 +319,6 @@ smodules.templateParser = function() {
 
     return {
       type:  'value',
-      expr:  matched[0],
       value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
     };
   };
@@ -335,7 +336,6 @@ smodules.templateParser = function() {
 
       return {
         type:  'value',
-        expr:  matched[0],
         value: value,
       };
     } else {
@@ -405,9 +405,10 @@ smodules.templateParser = function() {
   };
 
   var parseRoundBracket = function() {
+    next('(');
+
     return {
       type: 'roundBracket',
-      expr: next('('),
     };
   };
 
@@ -416,9 +417,10 @@ smodules.templateParser = function() {
   };
 
   var parseEndRoundBracket = function() {
+    next(')');
+
     return {
       type: 'endRoundBracket',
-      expr: next(')'),
     };
   };
 
@@ -678,50 +680,42 @@ smodules.templateParser = function() {
   var parseHolderBlock = (function() {
     var getFilterSection = (function() {
       var getFilterNameSection = function() {
-        var s = '';
+        var name = '';
 
         skipWhitespace();
 
         while (/[\w-]/.test(ch)) {
-          s += next(ch);
+          name += next(ch);
         }
 
-        if (s === '') {
+        if (name === '') {
           exception('filter name not found');
         }
 
-        return {
-          expr: s,
-          name: s,
-        };
+        return name;
       };
 
       var getFilterArgsSection = function() {
-        var expr = '';
         var args = [];
-        var arg;
 
         skipWhitespace();
 
         if (ch === ':') {
-          expr += next(':');
+          next(':');
 
           while (eatable()) {
             skipWhitespace();
 
-            if (readValue()) {
-              arg = parseValue();
-            } else {
+            if (readValue() === false) {
               exception('invalid filter args');
             }
 
-            expr += arg.expr;
-            args.push(arg.value);
+            args.push(parseValue().value);
 
             skipWhitespace();
 
             if (ch === ',') {
-              expr += next(',');
+              next(',');
             } else if (ch === '|' || ch === '}') {
               break;
             } else {
@@ -730,16 +724,11 @@ smodules.templateParser = function() {
           }
         }
 
-        return {
-          expr: expr,
-          args: args,
-        };
-      }; // getFilterArgsSection()
+        return args;
+      };
 
       return function() {
-        var expr = '';
         var filters = [];
-        var nameSection, argsSection;
 
         skipWhitespace();
 
@@ -748,17 +737,11 @@ smodules.templateParser = function() {
             break;
           }
 
-          expr += next('|');
-
-          nameSection = getFilterNameSection();
-          argsSection = getFilterArgsSection();
-
-          expr += nameSection.expr;
-          expr += argsSection.expr;
+          next('|');
 
           filters.push({
-            name: nameSection.name,
-            args: argsSection.args,
+            name: getFilterNameSection(),
+            args: getFilterArgsSection(),
           });
 
           if (ch === '}') {
@@ -769,30 +752,25 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr:    expr,
           filters: filters,
         };
       };
     })(); // getFilterSection()
 
     return function() {
-      var expr = '';
       var keySection, filterSection;
 
-      expr += next('{');
+      next('{');
 
       skipWhitespace();
 
       keySection = parseVar();
       filterSection = getFilterSection();
 
-      expr += keySection.expr;
-      expr += filterSection.expr;
-      expr += next('}');
+      next('}');
 
       return {
         type:    'holder',
-        expr:    expr,
         keys:    keySection.keys,
         filters: filterSection.filters,
       };
@@ -801,36 +779,31 @@ smodules.templateParser = function() {
 
   var parseForBlock = (function() {
     var parseHeader = function() {
-      var s = eatForTag()
       var k, v, array;
 
+      eatForTag();
+
       v = eatTmpVar();
-      s += v;
 
       if (readRegex(/^\s*,\s*/)) {
         skipWhitespace();
-        s += next(',');
+        next(',');
         skipWhitespace();
         k = v;
         v = eatTmpVar();
-        s += v;
       }
 
       checkRegex(/^\s+in\s+/, 'invalid for expression');
       skipWhitespace();
-      s += ' ';
-      s += next('in');
-      s += ' ';
+      next('in');
       skipWhitespace();
 
       array = parseVar();
 
-      s += array.expr;
       skipWhitespace();
-      s += next('}');
+      next('}');
 
       return {
-        expr:  s,
         k:     k,
         v:     v,
         array: array.keys,
