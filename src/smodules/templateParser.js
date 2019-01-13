@@ -725,9 +725,7 @@ smodules.templateParser = function() {
           }
         }
 
-        return {
-          args: args,
-        };
+        return args;
       }; // getFilterArgsSection()
 
       return function() {
@@ -744,7 +742,7 @@ smodules.templateParser = function() {
 
           filters.push({
             name: getFilterNameSection(),
-            args: getFilterArgsSection().args,
+            args: getFilterArgsSection(),
           });
 
           if (ch === '}') {
