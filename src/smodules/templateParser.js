@@ -726,7 +726,7 @@ smodules.templateParser = function() {
         }
 
         return args;
-      }; // getFilterArgsSection()
+      };
 
       return function() {
         var filters = [];
