@@ -490,7 +490,15 @@ QUnit.test('for block - error - lack of value argument', function(assert) {
   }, Error);
 });
 
-QUnit.test('for block - error - lack of in', function(assert) {
+QUnit.test('for block - error - lack of in 1', function(assert) {
+  this.source = '{for $item $items}<p>{$item}</p>{/for}';
+
+  assert.throws(function() {
+    this.parse();
+  }, Error);
+});
+
+QUnit.test('for block - error - lack of in 2', function(assert) {
   this.source = '{for $idx , $item $items}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
