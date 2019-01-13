@@ -46,13 +46,13 @@ smodules.templateParser = function() {
   })();
 
   var skipWhitespace = function() {
-    var s = '';
+    var skipped = '';
 
     while (/\s/.test(ch)) {
-      s += next(ch);
+      skipped += next(ch);
     }
 
-    return s;
+    return skipped;
   };
 
   var read = function(expr) {
