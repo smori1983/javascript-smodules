@@ -281,9 +281,10 @@ smodules.templateParser = function() {
   };
 
   var parseTrue = function() {
+    next('true');
+
     return {
       type:  'value',
-      expr:  next('true'),
       value: true,
     };
   };
