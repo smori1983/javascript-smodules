@@ -29,7 +29,7 @@ smodules.templateParser = function() {
       }
     };
 
-    return function(expr, replace) {
+    return function(expr) {
       expr = expr || ch;
 
       if (text.indexOf(expr, ptr) !== ptr) {
@@ -41,7 +41,7 @@ smodules.templateParser = function() {
       ptr += expr.length;
       ch = text.charAt(ptr);
 
-      return replace || expr;
+      return expr;
     };
   })();
 
@@ -61,6 +61,12 @@ smodules.templateParser = function() {
 
   var readRegex = function(regex) {
     return regex.test(text.slice(ptr));
+  };
+
+  var checkRegex = function(regex, errorMessage ) {
+    if (regex.test(text.slice(ptr)) === false) {
+      exception(errorMessage);
+    }
   };
 
   var regexMatched = function(regex) {
@@ -803,30 +809,27 @@ smodules.templateParser = function() {
 
       v = eatTmpVar();
       s += v;
-      skipWhitespace();
 
-      if (ch === ',') {
-        k = v;
-        s += next(',');
-
+      if (readRegex(/^\s*,\s*/)) {
         skipWhitespace();
+        s += next(',');
+        skipWhitespace();
+        k = v;
         v = eatTmpVar();
         s += v;
-        skipWhitespace();
       }
 
-      s += ' ';
-      if (!readRegex(/^in\s/)) {
-        exception('invalid for expression');
-      }
-      s += next('in');
+      checkRegex(/^\s+in\s+/, 'invalid for expression');
       skipWhitespace();
       s += ' ';
+      s += next('in');
+      s += ' ';
+      skipWhitespace();
 
       array = parseVar();
+
       s += array.expr;
       skipWhitespace();
-
       s += next('}');
 
       return {
