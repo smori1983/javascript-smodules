@@ -647,7 +647,7 @@ smodules.templateParser = function() {
   };
 
   var parseLiteralBlock = function() {
-    var s = '';
+    var expr = '';
     var closed = false;
     var startLine = line;
     var startAt = at;
@@ -656,15 +656,15 @@ smodules.templateParser = function() {
 
     while (eatable()) {
       if (readLeftTag()) {
-        s += eatLeftTag();
+        expr += eatLeftTag();
       } else if (readRightTag()) {
-        s += eatRightTag();
+        expr += eatRightTag();
       } else if (readEndLiteralTag()) {
         eatEndLiteralTag();
         closed = true;
         break;
       } else {
-        s += next(ch);
+        expr += next(ch);
       }
     }
 
@@ -674,7 +674,7 @@ smodules.templateParser = function() {
 
     return {
       type: 'literal',
-      expr: s,
+      expr: expr,
     };
   };
 
