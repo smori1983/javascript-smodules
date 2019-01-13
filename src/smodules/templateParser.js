@@ -624,25 +624,25 @@ smodules.templateParser = function() {
   })(); // parseCondition()
 
   var parseNormalBlock = function() {
-    var s = '';
+    var expr = '';
 
     while (eatable()) {
       if (readLeftTag()) {
-        s += eatLeftTag();
+        expr += eatLeftTag();
       } else if (readRightTag()) {
-        s += eatRightTag();
+        expr += eatRightTag();
       } else if (ch === '{') {
         break;
       } else if (ch === '}') {
         exception('syntax error');
       } else {
-        s += next(ch);
+        expr += next(ch);
       }
     }
 
     return {
       type: 'normal',
-      expr: s,
+      expr: expr,
     };
   };
 
