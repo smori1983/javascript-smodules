@@ -268,9 +268,10 @@ smodules.templateParser = function() {
   };
 
   var parseNull = function() {
+    next('null');
+
     return {
       type:  'value',
-      expr:  next('null'),
       value: null,
     };
   };
