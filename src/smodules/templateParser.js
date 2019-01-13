@@ -734,7 +734,6 @@ smodules.templateParser = function() {
 
       return function() {
         var filters = [];
-        var nameSection, argsSection;
 
         skipWhitespace();
 
@@ -745,12 +744,9 @@ smodules.templateParser = function() {
 
           next('|');
 
-          nameSection = getFilterNameSection();
-          argsSection = getFilterArgsSection();
-
           filters.push({
-            name: nameSection.name,
-            args: argsSection.args,
+            name: getFilterNameSection().name,
+            args: getFilterArgsSection().args,
           });
 
           if (ch === '}') {
