@@ -806,10 +806,10 @@ smodules.templateParser = function() {
       skipWhitespace();
 
       if (ch === ',') {
-        k = v;
         s += next(',');
 
         skipWhitespace();
+        k = v;
         v = eatTmpVar();
         s += v;
         skipWhitespace();
