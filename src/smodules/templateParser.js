@@ -780,36 +780,31 @@ smodules.templateParser = function() {
 
   var parseForBlock = (function() {
     var parseHeader = function() {
-      var s = eatForTag()
       var k, v, array;
 
+      eatForTag();
+
       v = eatTmpVar();
-      s += v;
 
       if (readRegex(/^\s*,\s*/)) {
         skipWhitespace();
-        s += next(',');
+        next(',');
         skipWhitespace();
         k = v;
         v = eatTmpVar();
-        s += v;
       }
 
       checkRegex(/^\s+in\s+/, 'invalid for expression');
       skipWhitespace();
-      s += ' ';
-      s += next('in');
-      s += ' ';
+      next('in');
       skipWhitespace();
 
       array = parseVar();
 
-      s += array.expr;
       skipWhitespace();
-      s += next('}');
+      next('}');
 
       return {
-        expr:  s,
         k:     k,
         v:     v,
         array: array.keys,
