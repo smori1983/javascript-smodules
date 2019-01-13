@@ -803,7 +803,6 @@ smodules.templateParser = function() {
 
       v = eatTmpVar();
       s += v;
-      skipWhitespace();
 
       if (ch === ',') {
         s += next(',');
@@ -812,8 +811,9 @@ smodules.templateParser = function() {
         k = v;
         v = eatTmpVar();
         s += v;
-        skipWhitespace();
       }
+
+      skipWhitespace();
 
       s += ' ';
       if (!readRegex(/^in\s/)) {
