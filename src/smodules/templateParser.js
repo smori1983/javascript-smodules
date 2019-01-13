@@ -700,7 +700,6 @@ smodules.templateParser = function() {
 
       var getFilterArgsSection = function() {
         var args = [];
-        var arg;
 
         skipWhitespace();
 
@@ -710,13 +709,11 @@ smodules.templateParser = function() {
           while (eatable()) {
             skipWhitespace();
 
-            if (readValue()) {
-              arg = parseValue();
-            } else {
+            if (readValue() === false) {
               exception('invalid filter args');
             }
 
-            args.push(arg.value);
+            args.push(parseValue().value);
 
             skipWhitespace();
 
