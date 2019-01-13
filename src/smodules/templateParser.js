@@ -335,7 +335,6 @@ smodules.templateParser = function() {
 
       return {
         type:  'value',
-        expr:  matched[0],
         value: value,
       };
     } else {
