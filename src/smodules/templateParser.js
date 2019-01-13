@@ -681,20 +681,20 @@ smodules.templateParser = function() {
   var parseHolderBlock = (function() {
     var getFilterSection = (function() {
       var getFilterNameSection = function() {
-        var s = '';
+        var name = '';
 
         skipWhitespace();
 
         while (/[\w-]/.test(ch)) {
-          s += next(ch);
+          name += next(ch);
         }
 
-        if (s === '') {
+        if (name === '') {
           exception('filter name not found');
         }
 
         return {
-          name: s,
+          name: name,
         };
       };
 
