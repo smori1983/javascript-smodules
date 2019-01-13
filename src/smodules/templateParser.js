@@ -259,7 +259,6 @@ smodules.templateParser = function() {
 
     return {
       type: 'var',
-      expr: s,
       keys: s.slice(1).split('.'),
     };
   };
