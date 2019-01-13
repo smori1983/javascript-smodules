@@ -69,8 +69,14 @@ smodules.templateParser = function() {
     }
   };
 
-  var regexMatched = function(regex) {
-    return text.slice(ptr).match(regex);
+  var regexMatched = function(regex, errorMessage) {
+    var result = text.slice(ptr).match(regex);
+
+    if (result === null & typeof errorMessage === 'string') {
+      exception(errorMessage);
+    }
+
+    return result;
   };
 
   var readLeftTag = function() {
