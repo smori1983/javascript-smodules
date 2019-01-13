@@ -693,9 +693,7 @@ smodules.templateParser = function() {
           exception('filter name not found');
         }
 
-        return {
-          name: name,
-        };
+        return name;
       };
 
       var getFilterArgsSection = function() {
@@ -745,7 +743,7 @@ smodules.templateParser = function() {
           next('|');
 
           filters.push({
-            name: getFilterNameSection().name,
+            name: getFilterNameSection(),
             args: getFilterArgsSection().args,
           });
 
