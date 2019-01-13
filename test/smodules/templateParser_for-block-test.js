@@ -43,6 +43,22 @@ QUnit.test('for block - use index in dummy variable', function(assert) {
   assert.strictEqual(block.blocks.length, 3);
 });
 
+QUnit.test('for block - use index in dummy variable - space before comma', function(assert) {
+  this.source =
+    '{ for $idx , $item in $items }' +
+    '<p>{ $item | h }</p>' +
+    '{ /for }';
+  this.parse();
+
+  var block  = this.result[0];
+
+  assert.strictEqual(block.type, 'for');
+  assert.strictEqual(block.header.k, 'idx');
+  assert.strictEqual(block.header.v, 'item');
+  assert.strictEqual(block.header.array.join('.'), 'items');
+  assert.strictEqual(block.blocks.length, 3);
+});
+
 QUnit.test('for block - variable chain in haystack', function(assert) {
   this.source =
     '{ for $item in $items.key1.key2 }' +
