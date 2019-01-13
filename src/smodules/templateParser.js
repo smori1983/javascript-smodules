@@ -315,7 +315,6 @@ smodules.templateParser = function() {
 
       return {
         type:  'value',
-        expr:  matched[0],
         value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
       };
     } else {
