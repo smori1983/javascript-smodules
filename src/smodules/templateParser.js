@@ -694,20 +694,18 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr: s,
           name: s,
         };
       };
 
       var getFilterArgsSection = function() {
-        var expr = '';
         var args = [];
         var arg;
 
         skipWhitespace();
 
         if (ch === ':') {
-          expr += next(':');
+          next(':');
 
           while (eatable()) {
             skipWhitespace();
@@ -718,13 +716,12 @@ smodules.templateParser = function() {
               exception('invalid filter args');
             }
 
-            expr += arg.expr;
             args.push(arg.value);
 
             skipWhitespace();
 
             if (ch === ',') {
-              expr += next(',');
+              next(',');
             } else if (ch === '|' || ch === '}') {
               break;
             } else {
@@ -734,13 +731,11 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr: expr,
           args: args,
         };
       }; // getFilterArgsSection()
 
       return function() {
-        var expr = '';
         var filters = [];
         var nameSection, argsSection;
 
@@ -751,13 +746,10 @@ smodules.templateParser = function() {
             break;
           }
 
-          expr += next('|');
+          next('|');
 
           nameSection = getFilterNameSection();
           argsSection = getFilterArgsSection();
-
-          expr += nameSection.expr;
-          expr += argsSection.expr;
 
           filters.push({
             name: nameSection.name,
@@ -772,30 +764,25 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr:    expr,
           filters: filters,
         };
       };
     })(); // getFilterSection()
 
     return function() {
-      var expr = '';
       var keySection, filterSection;
 
-      expr += next('{');
+      next('{');
 
       skipWhitespace();
 
       keySection = parseVar();
       filterSection = getFilterSection();
 
-      expr += keySection.expr;
-      expr += filterSection.expr;
-      expr += next('}');
+      next('}');
 
       return {
         type:    'holder',
-        expr:    expr,
         keys:    keySection.keys,
         filters: filterSection.filters,
       };
