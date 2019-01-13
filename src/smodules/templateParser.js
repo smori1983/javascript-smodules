@@ -69,8 +69,14 @@ smodules.templateParser = function() {
     }
   };
 
-  var regexMatched = function(regex) {
-    return text.slice(ptr).match(regex);
+  var regexMatched = function(regex, errorMessage) {
+    var result = text.slice(ptr).match(regex);
+
+    if (result === null & typeof errorMessage === 'string') {
+      exception(errorMessage);
+    }
+
+    return result;
   };
 
   var readLeftTag = function() {
@@ -251,9 +257,7 @@ smodules.templateParser = function() {
       s += next(ch);
     }
 
-    if (s === '$') {
-      exception('variable not found');
-    } else if (/^\$\.|\.$|\.\./.test(s)) {
+    if (s === '$' || /^\$\.|\.$|\.\./.test(s)) {
       exception('invalid variable expression');
     }
 
@@ -306,19 +310,16 @@ smodules.templateParser = function() {
   };
 
   var parseString = function() {
-    var matched = regexMatched(/^(["'])(?:\\\1|\s|\S)*?\1/);
+    var regex = /^(["'])(?:\\\1|\s|\S)*?\1/;
+    var matched = regexMatched(regex, 'string expression not closed');
 
-    if (matched) {
-      next(matched[0]);
+    next(matched[0]);
 
-      return {
-        type:  'value',
-        expr:  matched[0],
-        value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
-      };
-    } else {
-      exception('string expression not closed');
-    }
+    return {
+      type:  'value',
+      expr:  matched[0],
+      value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
+    };
   };
 
   var readNumber = function() {
@@ -391,11 +392,7 @@ smodules.templateParser = function() {
   };
 
   var parseComp = function() {
-    var matched = regexMatched(compRegex);
-
-    if (matched === null) {
-      exception('comparer should be written');
-    }
+    var matched = regexMatched(compRegex, 'comparer should be written');
 
     return {
       type: 'comp',
