@@ -408,9 +408,10 @@ smodules.templateParser = function() {
   };
 
   var parseRoundBracket = function() {
+    next('(');
+
     return {
       type: 'roundBracket',
-      expr: next('('),
     };
   };
 
