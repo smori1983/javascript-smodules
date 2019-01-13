@@ -310,19 +310,16 @@ smodules.templateParser = function() {
   };
 
   var parseString = function() {
-    var matched = regexMatched(/^(["'])(?:\\\1|\s|\S)*?\1/);
+    var regex = /^(["'])(?:\\\1|\s|\S)*?\1/;
+    var matched = regexMatched(regex, 'string expression not closed');
 
-    if (matched) {
-      next(matched[0]);
+    next(matched[0]);
 
-      return {
-        type:  'value',
-        expr:  matched[0],
-        value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
-      };
-    } else {
-      exception('string expression not closed');
-    }
+    return {
+      type:  'value',
+      expr:  matched[0],
+      value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
+    };
   };
 
   var readNumber = function() {
