@@ -419,9 +419,10 @@ smodules.templateParser = function() {
   };
 
   var parseEndRoundBracket = function() {
+    next(')');
+
     return {
       type: 'endRoundBracket',
-      expr: next(')'),
     };
   };
 
