@@ -294,9 +294,10 @@ smodules.templateParser = function() {
   };
 
   var parseFalse = function() {
+    next('false');
+
     return {
       type:  'value',
-      expr:  next('false'),
       value: false,
     };
   };
