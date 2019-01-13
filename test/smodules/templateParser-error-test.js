@@ -523,7 +523,6 @@ QUnit.test('for block - error - too many elements 1', function(assert) {
 });
 
 QUnit.test('for block - error - too many elements 2', function(assert) {
-
   this.source = '{for $idx , $item in $items1 , $items2}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
@@ -532,7 +531,6 @@ QUnit.test('for block - error - too many elements 2', function(assert) {
 });
 
 QUnit.test('for block - error - too many elements 3', function(assert) {
-
   this.source = '{for $idx , $item in $items1 $items2}<p>{$item}</p>{/for}';
 
   assert.throws(function() {
