@@ -397,11 +397,7 @@ smodules.templateParser = function() {
   };
 
   var parseComp = function() {
-    var matched = regexMatched(compRegex);
-
-    if (matched === null) {
-      exception('comparer should be written');
-    }
+    var matched = regexMatched(compRegex, 'comparer should be written');
 
     return {
       type: 'comp',
