@@ -29,7 +29,7 @@ smodules.templateParser = function() {
       }
     };
 
-    return function(expr, replace) {
+    return function(expr) {
       expr = expr || ch;
 
       if (text.indexOf(expr, ptr) !== ptr) {
@@ -41,7 +41,7 @@ smodules.templateParser = function() {
       ptr += expr.length;
       ch = text.charAt(ptr);
 
-      return replace || expr;
+      return expr;
     };
   })();
 
