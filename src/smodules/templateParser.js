@@ -179,8 +179,6 @@ smodules.templateParser = function() {
     next('if');
     skipWhitespace();
     next('}');
-
-    return '{/if}';
   };
 
   var readForTag = function() {
