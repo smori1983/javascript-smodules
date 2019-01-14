@@ -117,8 +117,6 @@ smodules.templateParser = function() {
     next('literal');
     skipWhitespace();
     next('}');
-
-    return '{literal}';
   };
 
   var readEndLiteralTag = function() {
