@@ -280,6 +280,23 @@ smodules.templateParser = function() {
     };
   };
 
+  var boolRegex = /^(true|false)[^\w]/;
+
+  var readBool = function() {
+    return readRegex(boolRegex);
+  };
+
+  var parseBool = function() {
+    var matched = regexMatched(boolRegex, 'bool should be written');
+
+    next(matched[1]);
+
+    return {
+      type:  'value',
+      value: matched[1] === 'true' ? true : false,
+    };
+  };
+
   var readTrue = function() {
     return readRegex(/^true[^\w]/);
   };
@@ -345,16 +362,14 @@ smodules.templateParser = function() {
   };
 
   var readValue = function() {
-    return readNull() || readTrue() || readFalse() || readString() || readNumber();
+    return readNull() || readBool() || readString() || readNumber();
   };
 
   var parseValue = function() {
     if (readNull()) {
       return parseNull();
-    } else if (readTrue()) {
-      return parseTrue();
-    } else if (readFalse()) {
-      return parseFalse();
+    } else if (readBool()) {
+      return parseBool();
     } else if (readString()) {
       return parseString();
     } else if (readNumber()) {
