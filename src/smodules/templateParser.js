@@ -32,7 +32,7 @@ smodules.templateParser = function() {
     return function(expr) {
       expr = expr || ch;
 
-      if (text.indexOf(expr, ptr) !== ptr) {
+      if (read(expr) === false) {
         exception('syntax error');
       }
 
@@ -55,7 +55,6 @@ smodules.templateParser = function() {
     return skipped;
   };
 
-  // eslint-disable-next-line no-unused-vars
   var read = function(expr) {
     return text.indexOf(expr, ptr) === ptr;
   };
