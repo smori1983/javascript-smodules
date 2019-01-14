@@ -142,8 +142,6 @@ smodules.templateParser = function() {
     skipWhitespace();
     next('if');
     skipWhitespace();
-
-    return '{if ';
   };
 
   var readElseifTag = function() {
