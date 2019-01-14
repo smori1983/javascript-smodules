@@ -165,8 +165,6 @@ smodules.templateParser = function() {
     next('else');
     skipWhitespace();
     next('}');
-
-    return '{else}';
   };
 
   var readEndIfTag = function() {
