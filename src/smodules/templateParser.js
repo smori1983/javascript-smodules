@@ -63,7 +63,7 @@ smodules.templateParser = function() {
     return regex.test(text.slice(ptr));
   };
 
-  var checkRegex = function(regex, errorMessage ) {
+  var checkRegex = function(regex, errorMessage) {
     if (readRegex(regex) === false) {
       exception(errorMessage);
     }
