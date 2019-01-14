@@ -55,6 +55,7 @@ smodules.templateParser = function() {
     return skipped;
   };
 
+  // eslint-disable-next-line no-unused-vars
   var read = function(expr) {
     return text.indexOf(expr, ptr) === ptr;
   };
@@ -353,25 +354,21 @@ smodules.templateParser = function() {
     }
   };
 
+  var andOrRegex = /^(and|or)[^\w]/;
+
   var readAndOr = function() {
-    return readRegex(/^(and|or)[^\w]/);
+    return readRegex(andOrRegex);
   };
 
   var parseAndOr = function() {
-    var expr;
+    // eslint-disable-next-line quotes
+    var matched = regexMatched(andOrRegex, "'and' or 'or' should be written");
 
-    if (read('and')) {
-      expr = next('and');
-    } else if (read('or')) {
-      expr = next('or');
-    } else {
-      // eslint-disable-next-line quotes
-      exception("'and' or 'or' should be written");
-    }
+    next(matched[1]);
 
     return {
       type: 'andor',
-      expr: expr,
+      expr: matched[1],
     };
   };
 
