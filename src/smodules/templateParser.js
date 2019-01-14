@@ -328,7 +328,8 @@ smodules.templateParser = function() {
   };
 
   var parseNumber = function() {
-    var matched = regexMatched(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
+    var regex = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
+    var matched = regexMatched(regex);
     var value;
 
     if (matched && !isNaN(value = +(matched[0]))) {
