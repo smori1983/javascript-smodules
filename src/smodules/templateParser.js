@@ -190,8 +190,6 @@ smodules.templateParser = function() {
     skipWhitespace();
     next('for');
     skipWhitespace();
-
-    return '{for ';
   };
 
   var readEndForTag = function() {
