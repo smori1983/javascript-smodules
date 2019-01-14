@@ -204,8 +204,6 @@ smodules.templateParser = function() {
     next('for');
     skipWhitespace();
     next('}');
-
-    return '{/for}';
   };
 
   var readHolderTag = function() {
