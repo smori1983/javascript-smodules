@@ -153,8 +153,6 @@ smodules.templateParser = function() {
     skipWhitespace();
     next('elseif');
     skipWhitespace();
-
-    return '{elseif ';
   };
 
   var readElseTag = function() {
