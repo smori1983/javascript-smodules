@@ -297,32 +297,6 @@ smodules.templateParser = function() {
     };
   };
 
-  var readTrue = function() {
-    return readRegex(/^true[^\w]/);
-  };
-
-  var parseTrue = function() {
-    next('true');
-
-    return {
-      type:  'value',
-      value: true,
-    };
-  };
-
-  var readFalse = function() {
-    return readRegex(/^false[^\w]/);
-  };
-
-  var parseFalse = function() {
-    next('false');
-
-    return {
-      type:  'value',
-      value: false,
-    };
-  };
-
   var readString = function() {
     // eslint-disable-next-line quotes
     return ch === "'" || ch === '"';
