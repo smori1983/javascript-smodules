@@ -251,19 +251,19 @@ smodules.templateParser = function() {
   };
 
   var parseVar = function() {
-    var s = next('$');
+    var parsed = next('$');
 
     while (/[\w.]/.test(ch)) {
-      s += next(ch);
+      parsed += next(ch);
     }
 
-    if (s === '$' || /^\$\.|\.$|\.\./.test(s)) {
+    if (parsed === '$' || /^\$\.|\.$|\.\./.test(parsed)) {
       exception('invalid variable expression');
     }
 
     return {
       type: 'var',
-      keys: s.slice(1).split('.'),
+      keys: parsed.slice(1).split('.'),
     };
   };
 
