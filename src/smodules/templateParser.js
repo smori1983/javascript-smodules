@@ -277,7 +277,7 @@ smodules.templateParser = function() {
 
     return {
       type:  'value',
-      value: matched[1] === 'true' ? true : false,
+      value: matched[1] === 'true',
     };
   };
 
