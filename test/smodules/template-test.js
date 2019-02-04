@@ -1,4 +1,4 @@
-QUnit.module('smodules.template', {
+QUnit.module('template', {
   before: function() {
     this.execBind = function(param) {
       this.template.bind(this.src, param).appendTo(this.target);
@@ -39,6 +39,15 @@ QUnit.test('holder block', function(assert) {
   assert.strictEqual(this.getHtml(), '<p>hoge</p>');
 });
 
+QUnit.test('holder block - property not chainable', function(assert) {
+  var param = { foo: { bar : 'hoge' } };
+
+  this.src = '<p>{ $foo.bar.baz }</p>';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p></p>');
+});
+
 QUnit.test('holder block - same holder in multiple places', function(assert) {
   var param = { user: { name: 'Tom' } };
 
@@ -67,10 +76,29 @@ QUnit.test('holder block - array index access', function(assert) {
     ],
   };
 
-  this.src = '<p>{ $items.2.name }</p>';
+  this.src =
+    '<p>{ $items.0.name }</p>' +
+    '<p>{ $items.1.name }</p>' +
+    '<p>{ $items.2.name }</p>';
   this.execBind(param);
 
-  assert.strictEqual(this.getHtml(), '<p>c</p>');
+  assert.strictEqual(this.getHtml(), '<p>a</p><p>b</p><p>c</p>');
+});
+
+QUnit.test('holder block - array index access - not chainable', function(assert) {
+  // under current specification, array is accessible by like this.
+  var param = {
+    items: [
+      { name: 'a' },
+      { name: 'b' },
+      { name: 'c' },
+    ],
+  };
+
+  this.src = '<p>{ $items.3.name }</p>';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p></p>');
 });
 
 QUnit.test('holder block - default filter - h', function(assert) {
@@ -145,7 +173,12 @@ QUnit.test('holder block - original filter', function(assert) {
 QUnit.test('if block - simple', function(assert) {
   var param = { foo: true };
 
-  this.src = '{ if $foo }<p>yes</p>{ else }<p>no</p>{ /if }';
+  this.src =
+    '{ if $foo }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>yes</p>');
@@ -154,16 +187,152 @@ QUnit.test('if block - simple', function(assert) {
 QUnit.test('if block - logical operator - and', function(assert) {
   var param = { foo: true, bar: false };
 
-  this.src = '{ if $foo and $bar }<p>yes</p>{ else }<p>no</p>{ /if }';
+  this.src =
+    '{ if $foo and $bar }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>no</p>');
 });
 
+QUnit.test('if block - logical operator - and chain 1', function(assert) {
+  var param = { foo: true, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - and chain 2', function(assert) {
+  var param = { foo: false, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>no</p>');
+});
+
+QUnit.test('if block - logical operator - and chain 3', function(assert) {
+  var param = { foo: true, bar: false, baz: true };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>no</p>');
+});
+
+QUnit.test('if block - logical operator - and chain 4', function(assert) {
+  var param = { foo: true, bar: true, baz: false };
+
+  this.src =
+    '{ if $foo and $bar and $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>no</p>');
+});
+
+QUnit.test('if block - logical operator - or', function(assert) {
+  var param = { foo: true, bar: false };
+
+  this.src =
+    '{ if $foo or $bar }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 1', function(assert) {
+  var param = { foo: true, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 2', function(assert) {
+  var param = { foo: false, bar: true, baz: true };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 3', function(assert) {
+  var param = { foo: true, bar: false, baz: true };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
+QUnit.test('if block - logical operator - or chain 4', function(assert) {
+  var param = { foo: true, bar: true, baz: false };
+
+  this.src =
+    '{ if $foo or $bar or $baz }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>yes</p>');
+});
+
 QUnit.test('if block - logical operator - combination', function(assert) {
   var param = { foo: true, bar: false, baz: true };
 
-  this.src = '{ if $foo and ( $bar or $baz ) }<p>yes</p>{ else }<p>no</p>{ /if }';
+  this.src =
+    '{ if $foo and ( $bar or $baz ) }' +
+    '<p>yes</p>' +
+    '{ else }' +
+    '<p>no</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>yes</p>');
@@ -188,16 +357,100 @@ QUnit.test('if block - comparative operator', function(assert) {
 QUnit.test('if block - comparative operator - "===" and "=="', function(assert) {
   var param = { foo: true };
 
-  this.src = '{ if $foo === 1 }<p>one</p>{ /if }{ if $foo == 1}<p>two</p>{ /if }';
+  this.src =
+    '{ if $foo === 1 }' +
+    '<p>one</p>' +
+    '{ /if }' +
+    '{ if $foo == 1}' +
+    '<p>two</p>' +
+    '{ /if }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>two</p>');
 });
 
+QUnit.test('if block - property chainable', function(assert) {
+  var param = {
+    data1: { key: true },
+    data2: { key: true },
+  };
+
+  this.src =
+    '{ if $data1.key and $data2.key }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>OK</p>');
+});
+
+QUnit.test('if block - property not chainable - and 1', function(assert) {
+  var param = {
+    data1: { key1: true },
+    data2: { key1: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 and $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '');
+});
+
+QUnit.test('if block - property not chainable - and 2', function(assert) {
+  var param = {
+    data1: { key2: true },
+    data2: { key2: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 and $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '');
+});
+
+QUnit.test('if block - property not chainable - or 1', function(assert) {
+  var param = {
+    data1: { key1: true },
+    data2: { key1: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 or $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>OK</p>');
+});
+
+QUnit.test('if block - property not chainable - or 2', function(assert) {
+  var param = {
+    data1: { key2: true },
+    data2: { key2: true },
+  };
+
+  this.src =
+    '{ if $data1.key1 or $data2.key2 }' +
+    '<p>OK</p>' +
+    '{ /if }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>OK</p>');
+});
+
 QUnit.test('for block', function(assert) {
   var param = { items: ['one', 'two', 'three'] };
 
-  this.src = '{ for $item in $items }<p>{ $item }</p>{ /for }';
+  this.src =
+    '{ for $item in $items }' +
+    '<p>{ $item }</p>' +
+    '{ /for }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>one</p><p>two</p><p>three</p>');
@@ -206,7 +459,10 @@ QUnit.test('for block', function(assert) {
 QUnit.test('for block - use index', function(assert) {
   var param = { items: ['one', 'two'] };
 
-  this.src = '{ for $idx,$item in $items }<p>{ $idx }-{ $item }</p>{ /for }';
+  this.src =
+    '{ for $idx,$item in $items }' +
+    '<p>{ $idx }-{ $item }</p>' +
+    '{ /for }';
   this.execBind(param);
 
   assert.strictEqual(this.getHtml(), '<p>0-one</p><p>1-two</p>');
@@ -297,79 +553,81 @@ QUnit.test('for block - nested - if with property access', function(assert) {
   assert.strictEqual(this.getHtml(), expected);
 });
 
-QUnit.test('preFetch and template cache', function(assert) {
-  var src1 = '<h1>{$value}</h1>';
-  var src2 = '<h2>{$value}</h2>';
-  var src3 = '<h3>{$value}</h3>';
-  var cacheList;
+QUnit.test('for block - not iterable', function(assert) {
+  var param = { items: 'hello, world!' };
 
-  // Initially no cache.
-  cacheList = this.template.getTemplateCacheList();
-  assert.strictEqual(cacheList.length, 0);
+  this.src =
+    '{ for $item in $items }' +
+    '<p>{ $item }</p>' +
+    '{ /for }';
+  this.execBind(param);
 
-  // Fetch single source.
-  this.template.preFetch(src1);
-  cacheList = this.template.getTemplateCacheList();
-  assert.strictEqual(cacheList.length, 1);
-  assert.strictEqual(cacheList[0], src1);
-
-  // Fetch multiple sources.
-  this.template.preFetch([src2, src3]);
-  cacheList = this.template.getTemplateCacheList();
-  assert.strictEqual(cacheList.length, 3);
-  assert.strictEqual(cacheList[0], src1);
-  assert.strictEqual(cacheList[1], src2);
-  assert.strictEqual(cacheList[2], src3);
-
-  // Clear individual cache.
-  this.template.clearTemplateCache(src1);
-  cacheList = this.template.getTemplateCacheList();
-  assert.strictEqual(cacheList.length, 2);
-
-  // Clear all cache.
-  this.template.clearTemplateCache();
-  cacheList = this.template.getTemplateCacheList();
-  assert.strictEqual(cacheList.length, 0);
+  assert.strictEqual(this.getHtml(), '');
 });
 
-QUnit.test('bind - get - embedded source - with callback', function(assert) {
-  var params = { value: 'hoge' };
+QUnit.test('for block - haystack property chainable', function(assert) {
+  var param = { items: {
+    data: [1, 2, 3],
+  }};
 
-  this.src = '#template-test-source',
-  this.template.bind(this.src, params).get(function(output) {
-    assert.strictEqual(output, '<p>hoge</p>');
-  });
+  this.src =
+    '{ for $value in $items.data }' +
+    '<p>{ $value | h }</p>' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<p>1</p><p>2</p><p>3</p>');
 });
 
-QUnit.test('bind - get - embedded source - without callback', function(assert) {
-  var params = { value: 'hoge' };
+QUnit.test('for block - haystack property not chainable 1', function(assert) {
+  var param = { items: [1, 2, 3] };
 
-  this.src = '#template-test-source',
+  this.src =
+    '{ for $item in $items.foo.bar }' +
+    '<p>{ $item }</p>' +
+    '{ /for }';
+  this.execBind(param);
 
-  assert.strictEqual(this.template.bind(this.src, params).get(), '<p>hoge</p>');
+  assert.strictEqual(this.getHtml(), '');
 });
 
-QUnit.test('bind - get - string source - with callback', function(assert) {
-  var params = { value: 'hoge' };
+QUnit.test('for block - haystack property not chainable 2', function(assert) {
+  var param = { items: [
+    { name: 'name1', data: 'data1'},
+    { name: 'name2', data: 'data2'},
+  ]};
 
-  this.src = '<p>{$value}</p>',
-  this.template.bind(this.src, params).get(function(output) {
-    assert.strictEqual(output, '<p>hoge</p>');
-  });
+  this.src =
+    '{ for $item in $items }' +
+    '<div>{ $item.name | h }</div>' +
+    '{ for $data in $item.data }' +
+    '<p>{ $data | h }</p>' +
+    '{ /for}' +
+    '{ /for }';
+  this.execBind(param);
+
+  assert.strictEqual(this.getHtml(), '<div>name1</div><div>name2</div>');
 });
 
-QUnit.test('bind - get - string source - without callback', function(assert) {
-  var params = { value: 'hoge' };
+QUnit.test('for block - dummy variable chainable', function(assert) {
+  var param = { items: [
+    { data: { key1: 'value1'} },
+    { data: { key1: 'value2'} },
+  ]};
 
-  this.src = '<p>{$value}</p>',
+  this.src =
+    '{ for $item in $items }' +
+    '<div>{ $item.data.key1 | h }</div>' +
+    '{ /for }';
+  this.execBind(param);
 
-  assert.strictEqual(this.template.bind(this.src, params).get(), '<p>hoge</p>');
+  assert.strictEqual(this.getHtml(), '<div>value1</div><div>value2</div>');
 });
 
 QUnit.test('error - filter not found', function(assert) {
   this.src = '<p>{ $value | hoge }</p>';
 
   assert.throws(function() {
-    this.template.bind(this.src, { value: 'test' }).get(function(output) {});
+    this.execBind({ value: 'test'});
   }, Error);
 });

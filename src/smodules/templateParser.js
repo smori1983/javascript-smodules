@@ -29,10 +29,10 @@ smodules.templateParser = function() {
       }
     };
 
-    return function(expr, replace) {
+    return function(expr) {
       expr = expr || ch;
 
-      if (text.indexOf(expr, ptr) !== ptr) {
+      if (read(expr) === false) {
         exception('syntax error');
       }
 
@@ -41,18 +41,18 @@ smodules.templateParser = function() {
       ptr += expr.length;
       ch = text.charAt(ptr);
 
-      return replace || expr;
+      return expr;
     };
   })();
 
   var skipWhitespace = function() {
-    var s = '';
+    var skipped = '';
 
     while (/\s/.test(ch)) {
-      s += next(ch);
+      skipped += next(ch);
     }
 
-    return s;
+    return skipped;
   };
 
   var read = function(expr) {
@@ -61,6 +61,22 @@ smodules.templateParser = function() {
 
   var readRegex = function(regex) {
     return regex.test(text.slice(ptr));
+  };
+
+  var checkRegex = function(regex, errorMessage) {
+    if (readRegex(regex) === false) {
+      exception(errorMessage);
+    }
+  };
+
+  var regexMatched = function(regex, errorMessage) {
+    var result = text.slice(ptr).match(regex);
+
+    if (result === null & typeof errorMessage === 'string') {
+      exception(errorMessage);
+    }
+
+    return result;
   };
 
   var readLeftTag = function() {
@@ -101,8 +117,6 @@ smodules.templateParser = function() {
     next('literal');
     skipWhitespace();
     next('}');
-
-    return '{literal}';
   };
 
   var readEndLiteralTag = function() {
@@ -117,8 +131,6 @@ smodules.templateParser = function() {
     next('literal');
     skipWhitespace();
     next('}');
-
-    return '{/literal}';
   };
 
   var readIfTag = function() {
@@ -130,8 +142,6 @@ smodules.templateParser = function() {
     skipWhitespace();
     next('if');
     skipWhitespace();
-
-    return '{if ';
   };
 
   var readElseifTag = function() {
@@ -143,8 +153,6 @@ smodules.templateParser = function() {
     skipWhitespace();
     next('elseif');
     skipWhitespace();
-
-    return '{elseif ';
   };
 
   var readElseTag = function() {
@@ -157,11 +165,8 @@ smodules.templateParser = function() {
     next('else');
     skipWhitespace();
     next('}');
-
-    return '{else}';
   };
 
-  // NOTE: currently not used.
   var readEndIfTag = function() {
     return readRegex(/^\{\s*\/\s*if\s*\}/);
   };
@@ -174,8 +179,6 @@ smodules.templateParser = function() {
     next('if');
     skipWhitespace();
     next('}');
-
-    return '{/if}';
   };
 
   var readForTag = function() {
@@ -187,8 +190,6 @@ smodules.templateParser = function() {
     skipWhitespace();
     next('for');
     skipWhitespace();
-
-    return '{for ';
   };
 
   var readEndForTag = function() {
@@ -203,8 +204,6 @@ smodules.templateParser = function() {
     next('for');
     skipWhitespace();
     next('}');
-
-    return '{/for}';
   };
 
   var readHolderTag = function() {
@@ -236,22 +235,19 @@ smodules.templateParser = function() {
   };
 
   var parseVar = function() {
-    var s = next('$');
+    var parsed = next('$');
 
     while (/[\w.]/.test(ch)) {
-      s += next(ch);
+      parsed += next(ch);
     }
 
-    if (s === '$') {
-      exception('variable not found');
-    } else if (/^\$\.|\.$|\.\./.test(s)) {
+    if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
       exception('invalid variable expression');
     }
 
     return {
       type: 'var',
-      expr: s,
-      keys: s.slice(1).split('.'),
+      keys: parsed.slice(1).split('.'),
     };
   };
 
@@ -260,34 +256,28 @@ smodules.templateParser = function() {
   };
 
   var parseNull = function() {
+    next('null');
+
     return {
       type:  'value',
-      expr:  next('null'),
       value: null,
     };
   };
 
-  var readTrue = function() {
-    return readRegex(/^true[^\w]/);
+  var boolRegex = /^(true|false)[^\w]/;
+
+  var readBool = function() {
+    return readRegex(boolRegex);
   };
 
-  var parseTrue = function() {
+  var parseBool = function() {
+    var matched = regexMatched(boolRegex, 'bool should be written');
+
+    next(matched[1]);
+
     return {
       type:  'value',
-      expr:  next('true'),
-      value: true,
-    };
-  };
-
-  var readFalse = function() {
-    return readRegex(/^false[^\w]/);
-  };
-
-  var parseFalse = function() {
-    return {
-      type:  'value',
-      expr:  next('false'),
-      value: false,
+      value: matched[1] === 'true',
     };
   };
 
@@ -297,19 +287,15 @@ smodules.templateParser = function() {
   };
 
   var parseString = function() {
-    var matched;
+    var regex = /^(["'])(?:\\\1|\s|\S)*?\1/;
+    var matched = regexMatched(regex, 'string expression not closed');
 
-    if ((matched = text.slice(ptr).match(/^(["'])(?:\\\1|\s|\S)*?\1/))) {
-      next(matched[0]);
+    next(matched[0]);
 
-      return {
-        type:  'value',
-        expr:  matched[0],
-        value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
-      };
-    } else {
-      exception('string expression not closed');
-    }
+    return {
+      type:  'value',
+      value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
+    };
   };
 
   var readNumber = function() {
@@ -317,14 +303,15 @@ smodules.templateParser = function() {
   };
 
   var parseNumber = function() {
-    var value, matched = text.slice(ptr).match(/^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
+    var regex = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
+    var matched = regexMatched(regex);
+    var value;
 
     if (matched && !isNaN(value = +(matched[0]))) {
       next(matched[0]);
 
       return {
         type:  'value',
-        expr:  matched[0],
         value: value,
       };
     } else {
@@ -333,16 +320,14 @@ smodules.templateParser = function() {
   };
 
   var readValue = function() {
-    return readNull() || readTrue() || readFalse() || readString() || readNumber();
+    return readNull() || readBool() || readString() || readNumber();
   };
 
   var parseValue = function() {
     if (readNull()) {
       return parseNull();
-    } else if (readTrue()) {
-      return parseTrue();
-    } else if (readFalse()) {
-      return parseFalse();
+    } else if (readBool()) {
+      return parseBool();
     } else if (readString()) {
       return parseString();
     } else if (readNumber()) {
@@ -352,25 +337,21 @@ smodules.templateParser = function() {
     }
   };
 
+  var andOrRegex = /^(and|or)[^\w]/;
+
   var readAndOr = function() {
-    return readRegex(/^(and|or)[^\w]/);
+    return readRegex(andOrRegex);
   };
 
   var parseAndOr = function() {
-    var expr;
+    // eslint-disable-next-line quotes
+    var matched = regexMatched(andOrRegex, "'and' or 'or' should be written");
 
-    if (read('and')) {
-      expr = next('and');
-    } else if (read('or')) {
-      expr = next('or');
-    } else {
-      // eslint-disable-next-line quotes
-      exception("'and' or 'or' should be written");
-    }
+    next(matched[1]);
 
     return {
       type: 'andor',
-      expr: expr,
+      expr: matched[1],
     };
   };
 
@@ -381,17 +362,11 @@ smodules.templateParser = function() {
   };
 
   var parseComp = function() {
-    var matched, expr;
-
-    if ((matched = text.slice(ptr).match(compRegex))) {
-      expr = next(matched[0]);
-    } else {
-      exception('comparer should be written');
-    }
+    var matched = regexMatched(compRegex, 'comparer should be written');
 
     return {
       type: 'comp',
-      expr: expr,
+      expr: next(matched[0]),
     };
   };
 
@@ -400,9 +375,10 @@ smodules.templateParser = function() {
   };
 
   var parseRoundBracket = function() {
+    next('(');
+
     return {
       type: 'roundBracket',
-      expr: next('('),
     };
   };
 
@@ -411,14 +387,16 @@ smodules.templateParser = function() {
   };
 
   var parseEndRoundBracket = function() {
+    next(')');
+
     return {
       type: 'endRoundBracket',
-      expr: next(')'),
     };
   };
 
   var parseCondition = (function() {
     var getReversePolish = (function() {
+      // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
       var state = {
         'start':           ['roundBracket',                    'value', 'var',                  'error'],
@@ -440,113 +418,126 @@ smodules.templateParser = function() {
         'andor':           { read: readAndOr,           parse: parseAndOr },
       };
 
-      var history = (function() {
-        var stack;
+      var order = {
+        'endRoundBracket': 1,
+        'or':              2,
+        'and':             3,
+        'comp':            4,
+        'value':           5,
+        'var':             5,
+        'roundBracket':    6,
+      };
 
-        return {
-          init: function() {
-            stack = ['start'];
-          },
-          add: function(type) {
-            stack.push(type);
-          },
-          get: function(idx) {
-            return stack[stack.length - idx] || null;
-          },
+      var getOrder = function(section) {
+        // parseAndor() returns section.type with 'andor'.
+        // Use section.expr instead.
+        return order[section.type] || order[section.expr];
+      };
+
+      var parse = function(sourceType) {
+        var transitableTypes = state[sourceType];
+        var i, size, type, result;
+
+        for (i = 0, size = transitableTypes.length; i < size; i++) {
+          type = transitableTypes[i];
+
+          if (type === 'error') {
+            exception('invalid condition expression');
+          }
+
+          if (method[type].read()) {
+            result = method[type].parse();
+            result.order = getOrder(result);
+
+            return result;
+          }
+        }
+      };
+
+      var typeHistory = (function() {
+        var history;
+
+        var get = function(index) {
+          return history[history.length - index] || null;
         };
-      })();
 
-      var sectionTypeStat = (function() {
-        var roundBracketBalance, operandOperatorBalance;
+        var calcRoundBracketBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'roundBracket') {
+              balance++;
+            } else if (type === 'endRoundBracket') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
+
+        var calcOperandOperatorBalance = function() {
+          var balance = 0;
+
+          history.forEach(function(type) {
+            if (type === 'var' || type === 'value') {
+              balance++;
+            } else if (type === 'comp' || type === 'andor') {
+              balance--;
+            }
+          });
+
+          return balance;
+        };
 
         return {
           init: function() {
-            roundBracketBalance    = 0;
-            operandOperatorBalance = 0;
+            history = ['start'];
           },
           add: function(type) {
-            if (type === 'var' || type === 'value') {
-              operandOperatorBalance++;
-            } else if (type === 'comp' || type === 'andor') {
-              operandOperatorBalance--;
-            } else if (type === 'roundBracket') {
-              roundBracketBalance++;
-            } else if (type === 'endRoundBracket') {
-              roundBracketBalance--;
+            if (type === 'comp' && get(2) === 'comp') {
+              exception('can not write comparer here');
             }
 
-            if (roundBracketBalance < 0) {
+            history.push(type);
+
+            if (calcRoundBracketBalance() < 0) {
               // eslint-disable-next-line quotes
               exception("can not use ')' here");
             }
           },
+          latest: function() {
+            return get(1);
+          },
           finish: function() {
-            if (roundBracketBalance !== 0) {
+            if (calcRoundBracketBalance() !== 0) {
               exception('invalid usage of round bracket');
             }
-            if (operandOperatorBalance !== 1) {
+            if (calcOperandOperatorBalance() !== 1) {
               exception('invalid usage of operand or operator');
             }
           },
         };
       })();
 
-      var getOrder = (function() {
-        var orders = {
-          'endRoundBracket': 1,
-          'or':              2,
-          'and':             3,
-          'comp':            4,
-          'value':           5,
-          'var':             5,
-          'roundBracket':    6,
-        };
-
-        return function(section) {
-          return orders[section.type] || orders[section.expr];
-        };
-      })();
-
-      var parse = function() {
-        var list = state[history.get(1)], i = 0, size = list.length, type, result;
-
-        for ( ; i < size; i++) {
-          type = list[i];
-
-          if (type === 'error') {
-            exception('invalid condition expression');
-          } else if (method[type].read()) {
-            if (type === 'comp' && history.get(2) === 'comp') {
-              exception('can not write comparer here');
-            }
-            result = method[type].parse();
-            break;
-          }
-        }
-        history.add(result.type);
-        sectionTypeStat.add(result.type);
-
-        return result;
-      };
-
       return function() {
-        var section, polish = [], stack = [], stackTop;
+        var parsed, polish = [], stack = [], stackTop;
 
-        history.init();
-        sectionTypeStat.init();
+        typeHistory.init();
 
         while (eatable()) {
           if (ch === '}') {
             break;
-          } else {
-            section = parse();
-            section.order = getOrder(section);
           }
+
+          // By typeHistory.init(), history has at least 'start' type.
+          parsed = parse(typeHistory.latest());
+
+          typeHistory.add(parsed.type);
 
           while (stack.length > 0) {
             stackTop = stack.pop();
 
-            if (section.order <= stackTop.order && stackTop.type !== 'roundBracket') {
+            if (parsed.order <= stackTop.order && stackTop.type !== 'roundBracket') {
               polish.push(stackTop);
             } else {
               stack.push(stackTop);
@@ -554,10 +545,10 @@ smodules.templateParser = function() {
             }
           }
 
-          if (section.type === 'endRoundBracket') {
+          if (parsed.type === 'endRoundBracket') {
             stack.pop();
           } else {
-            stack.push(section);
+            stack.push(parsed);
           }
 
           skipWhitespace();
@@ -566,7 +557,8 @@ smodules.templateParser = function() {
         while (stack.length > 0) {
           polish.push(stack.pop());
         }
-        sectionTypeStat.finish();
+
+        typeHistory.finish();
 
         return polish;
       };
@@ -601,145 +593,126 @@ smodules.templateParser = function() {
   })(); // parseCondition()
 
   var parseNormalBlock = function() {
-    var s = '';
+    var expr = '';
 
     while (eatable()) {
-      if (ch === '{') {
-        if (readLeftTag()) {
-          s += eatLeftTag();
-        } else if (readRightTag()) {
-          s += eatRightTag();
-        } else {
-          break;
-        }
+      if (readLeftTag()) {
+        expr += eatLeftTag();
+      } else if (readRightTag()) {
+        expr += eatRightTag();
+      } else if (ch === '{') {
+        break;
       } else if (ch === '}') {
         exception('syntax error');
       } else {
-        s += next(ch);
+        expr += next(ch);
       }
     }
 
     return {
       type: 'normal',
-      expr: s,
+      expr: expr,
     };
   };
 
   var parseLiteralBlock = function() {
-    var s = '', closed = false, startLine = line, startAt = at;
+    var expr = '';
+    var closed = false;
+    var startLine = line;
+    var startAt = at;
 
     eatLiteralTag();
 
     while (eatable()) {
-      if (ch === '{') {
-        if (readLeftTag()) {
-          s += eatLeftTag();
-        } else if (readRightTag()) {
-          s += eatRightTag();
-        } else if (readEndLiteralTag()) {
-          eatEndLiteralTag();
-          closed = true;
-          break;
-        } else {
-          s += next(ch);
-        }
+      if (readLeftTag()) {
+        expr += eatLeftTag();
+      } else if (readRightTag()) {
+        expr += eatRightTag();
+      } else if (readEndLiteralTag()) {
+        eatEndLiteralTag();
+        closed = true;
+        break;
       } else {
-        s += next(ch);
+        expr += next(ch);
       }
     }
 
-    if (!closed) {
+    if (closed === false) {
       exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by {/literal}');
     }
 
     return {
       type: 'literal',
-      expr: s,
+      expr: expr,
     };
   };
 
   var parseHolderBlock = (function() {
     var getFilterSection = (function() {
       var getFilterNameSection = function() {
-        var s = '';
+        var name = '';
 
         skipWhitespace();
 
         while (/[\w-]/.test(ch)) {
-          s += next(ch);
+          name += next(ch);
         }
 
-        if (s === '') {
+        if (name === '') {
           exception('filter name not found');
         }
 
-        return {
-          expr: s,
-          name: s,
-        };
+        return name;
       };
 
       var getFilterArgsSection = function() {
-        var s = '', args = [], arg;
+        var args = [];
 
         skipWhitespace();
 
         if (ch === ':') {
-          s += next(':');
+          next(':');
 
           while (eatable()) {
             skipWhitespace();
 
-            if (ch === 'n') {
-              arg = parseNull();
-            } else if (ch === 't') {
-              arg = parseTrue();
-            } else if (ch === 'f') {
-              arg = parseFalse();
-            } else if (ch === "'" || ch === '"') { // eslint-disable-line quotes
-              arg = parseString();
-            } else if (ch === '-' || ch === '+' || (ch >= '0' && ch <= '9')) {
-              arg = parseNumber();
-            } else {
+            if (readValue() === false) {
               exception('invalid filter args');
             }
 
-            s += arg.expr;
-            args.push(arg.value);
+            args.push(parseValue().value);
 
             skipWhitespace();
 
             if (ch === ',') {
-              s += next(',');
+              next(',');
             } else if (ch === '|' || ch === '}') {
               break;
+            } else {
+              exception('invalid filter args expression');
             }
           }
         }
 
-        return {
-          expr: s,
-          args: args,
-        };
-      }; // getFilterArgsSection()
+        return args;
+      };
 
-      var mainLoop = function() {
-        var s = '', filters = [], filter, nameSection, argsSection;
+      return function() {
+        var filters = [];
+
+        skipWhitespace();
 
         while (eatable()) {
-          filter = {};
+          if (ch !== '|') {
+            break;
+          }
 
-          s += next('|');
+          next('|');
 
-          nameSection = getFilterNameSection();
-          s += nameSection.expr;
-          filter.name = nameSection.name;
-
-          argsSection = getFilterArgsSection();
-          s += argsSection.expr;
-          filter.args = argsSection.args;
-
-          filters.push(filter);
+          filters.push({
+            name: getFilterNameSection(),
+            args: getFilterArgsSection(),
+          });
 
           if (ch === '}') {
             break;
@@ -749,48 +722,25 @@ smodules.templateParser = function() {
         }
 
         return {
-          expr:    s,
-          filters: filters,
-        };
-      };
-
-      return function() {
-        var s = '', filters = [], mainResult;
-
-        skipWhitespace();
-
-        if (ch === '|') {
-          mainResult = mainLoop();
-
-          s       = mainResult.expr;
-          filters = mainResult.filters;
-        }
-
-        return {
-          expr:    s,
           filters: filters,
         };
       };
     })(); // getFilterSection()
 
     return function() {
-      var s = '', keySection, filterSection;
+      var keySection, filterSection;
 
-      s += next('{');
+      next('{');
 
       skipWhitespace();
 
       keySection = parseVar();
-      s += keySection.expr;
-
       filterSection = getFilterSection();
-      s += filterSection.expr;
 
-      s += next('}');
+      next('}');
 
       return {
         type:    'holder',
-        expr:    s,
         keys:    keySection.keys,
         filters: filterSection.filters,
       };
@@ -799,38 +749,31 @@ smodules.templateParser = function() {
 
   var parseForBlock = (function() {
     var parseHeader = function() {
-      var s = eatForTag(), k, v, array;
+      var k, v, array;
+
+      eatForTag();
 
       v = eatTmpVar();
-      s += v;
-      skipWhitespace();
 
-      if (ch === ',') {
+      if (readRegex(/^\s*,\s*/)) {
+        skipWhitespace();
+        next(',');
+        skipWhitespace();
         k = v;
-        s += next(',');
-
-        skipWhitespace();
         v = eatTmpVar();
-        s += v;
-        skipWhitespace();
       }
 
-      s += ' ';
-      if (!readRegex(/^in\s/)) {
-        exception('invalid for expression');
-      }
-      s += next('in');
+      checkRegex(/^\s+in\s+/, 'invalid for expression');
       skipWhitespace();
-      s += ' ';
+      next('in');
+      skipWhitespace();
 
       array = parseVar();
-      s += array.expr;
-      skipWhitespace();
 
-      s += next('}');
+      skipWhitespace();
+      next('}');
 
       return {
-        expr:  s,
         k:     k,
         v:     v,
         array: array.keys,
@@ -838,7 +781,8 @@ smodules.templateParser = function() {
     }; // parseHeader()
 
     return function() {
-      var header = parseHeader(), blocks = loop([], true);
+      var header = parseHeader();
+      var blocks = loop([], true);
 
       eatEndForTag();
 

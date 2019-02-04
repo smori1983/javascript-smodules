@@ -27,8 +27,8 @@ smodules.template = function() {
     var check = function() {
       var finished = [];
 
-      smodules.a.forEach(jobList, function(job) {
-        job.sourceList = smodules.a.filter(job.sourceList, function(source) {
+      jobList.forEach(function(job) {
+        job.sourceList = job.sourceList.filter(function(source) {
           return !_templates.has(source);
         });
 
@@ -37,11 +37,11 @@ smodules.template = function() {
         }
       });
 
-      jobList = smodules.a.filter(jobList, function(job) {
+      jobList = jobList.filter(function(job) {
         return job.sourceList.length > 0;
       });
 
-      smodules.a.forEach(finished, function(job) {
+      finished.forEach(function(job) {
         if (typeof job.callback === 'function') {
           job.callback();
         }
@@ -144,11 +144,11 @@ smodules.template = function() {
     };
 
     var getValue = function(keys, params, asis) {
-      var pIdx = params.length - 1, i, len = keys.length, value;
+      var pIdx, i, len, value;
 
-      for ( ; pIdx >= 0; pIdx--) {
+      for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
         value = params[pIdx];
-        for (i = 0; i < len; i++) {
+        for (i = 0, len = keys.length; i < len; i++) {
           if (typeof value[keys[i]] === 'undefined') {
             value = null;
             break;
@@ -178,7 +178,7 @@ smodules.template = function() {
     };
 
     var applyFilters = function(value, filters) {
-      smodules.a.forEach(filters, function(filter) {
+      filters.forEach(function(filter) {
         value = getFilter(filter.name).apply(null, [value].concat(filter.args));
       });
 
@@ -186,7 +186,7 @@ smodules.template = function() {
     };
 
     var loop = function(blocks, params) {
-      return smodules.a.reduce(blocks, function(output, block) {
+      return blocks.reduce(function(output, block) {
         if (block.type === 'normal' || block.type === 'literal') {
           return output + block.expr;
         } else if (block.type === 'holder') {
@@ -234,9 +234,9 @@ smodules.template = function() {
     };
 
     var evaluate = function(conditions, params) {
-      var result = [], i = 0, len = conditions.length, section, lval, rval;
+      var result = [], i, len, section, lval, rval;
 
-      for ( ; i < len; i++) {
+      for (i = 0, len = conditions.length; i < len; i++) {
         section = conditions[i];
 
         if (section.type === 'value') {
@@ -262,9 +262,10 @@ smodules.template = function() {
     };
 
     var loopIf = function(block, params) {
-      var i = 0, len = block.sections.length, section, output = '';
+      var i, len, section;
+      var output = '';
 
-      for ( ; i < len; i++) {
+      for (i = 0, len = block.sections.length; i < len; i++) {
         section = block.sections[i];
 
         if (section.header.type === 'if' || section.header.type === 'elseif') {
@@ -281,11 +282,12 @@ smodules.template = function() {
     };
 
     var loopFor = function(block, params) {
-      var array = getValue(block.header.array, params, true), output = '', additional;
+      var array = getValue(block.header.array, params, true);
+      var output = '';
 
-      if ($.isArray(array)) {
-        smodules.a.forEach(array, function(value, idx) {
-          additional = {};
+      if (Array.isArray(array)) {
+        array.forEach(function(value, idx) {
+          var additional = {};
 
           if (block.header.k) {
             additional[block.header.k] = idx;
@@ -345,7 +347,7 @@ smodules.template = function() {
     var sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
     if ($.isArray(sourceList)) {
-      smodules.a.forEach(sourceList, function(source) {
+      sourceList.forEach(function(source) {
         if (_isRemoteFile(source)) {
           _registerFromRemote(source);
         } else if (_isEmbedded(source)) {
@@ -354,6 +356,7 @@ smodules.template = function() {
           _registerFromString(source);
         }
       });
+
       _preFetchJobList.add(sourceList, callback);
     }
     return that;

@@ -1,16 +1,15 @@
 module.exports = function(grunt) {
 
 grunt.initConfig({
-  pkg: '<json:package.json>',
+  pkg: grunt.file.readJSON('package.json'),
   meta: {
-    banner: '/*!\n' +
-            ' * <%= pkg.name %> v<%= pkg.version %>\n' +
-            ' *\n' +
-            ' * Copyright (c) <%= grunt.template.today(\'yyyy\') %> smori <shinichiro.mori.19833@gmail.com>\n' +
-            ' * Dual licensed under the MIT or GPL-2.0 licenses.\n' +
-            ' *\n' +
-            ' * Date <%= grunt.template.today(\'yyyy-mm-dd HH:MM:ss\') %>\n' +
-            ' */',
+    banner:
+      '/*!\n' +
+      ' * <%= pkg.name %> v<%= pkg.version %>\n' +
+      ' *\n' +
+      ' * Copyright (c) <%= grunt.template.today(\'yyyy\') %> <%= pkg.author.name %> <<%= pkg.author.email%>>\n' +
+      ' * Dual licensed under the MIT or GPL-2.0 licenses.\n' +
+      ' */\n',
   },
   eslint: {
     target: ['src/smodules/*.js', 'test/smodules/*.js'],
@@ -41,16 +40,15 @@ grunt.initConfig({
   },
   concat: {
     all: {
+      options: {
+        banner: '<%= meta.banner %>',
+      },
       src: [
-        '<banner:meta.banner>',
         'src/smodules/HEAD.js',
-        'src/smodules/a.js',
         'src/smodules/data.HEAD.js',
         'src/smodules/data.*.js',
         'src/smodules/mod.HEAD.js',
         'src/smodules/mod.*.js',
-        'src/smodules/ui.HEAD.js',
-        'src/smodules/ui.*.js',
         'src/smodules/util.HEAD.js',
         'src/smodules/util.*.js',
         'src/smodules/*.js',
@@ -60,7 +58,11 @@ grunt.initConfig({
   },
   watch: {
     scripts: {
-      files: ['src/smodules/*.js', 'test/smodules/*.js'],
+      files: [
+        'src/smodules/*.js',
+        'test/smodules/*.js',
+        'test/test.html',
+      ],
       tasks: ['eslint', 'connect:qunit', 'qunit'],
       options: {
         event: ['all'],

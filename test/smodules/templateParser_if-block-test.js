@@ -1,4 +1,4 @@
-QUnit.module('smodules.templateParser', {
+QUnit.module('templateParser', {
   before: function() {
     this.parse = function() {
       this.result = this.parser.parse(this.source);
@@ -9,92 +9,6 @@ QUnit.module('smodules.templateParser', {
     this.source = '';
     this.result = null;
   },
-});
-
-QUnit.test('normal block', function(assert) {
-  this.source = '<div>foo {left}bar{right}</div>';
-  this.parse();
-
-  assert.strictEqual(this.result.length, 1);
-  assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, '<div>foo {bar}</div>');
-});
-
-QUnit.test('literal block', function(assert) {
-  this.source ='<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>',
-  this.parse();
-
-  assert.strictEqual(this.result.length, 3);
-  assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, '<div>');
-  assert.strictEqual(this.result[1].type, 'literal');
-  assert.strictEqual(this.result[1].expr, '{foo} {bar} {/literal} function() {};');
-  assert.strictEqual(this.result[2].type, 'normal');
-  assert.strictEqual(this.result[2].expr, '</div>');
-});
-
-QUnit.test('holder block - no filters', function(assert) {
-  this.source = '{ $foo.bar }',
-  this.parse();
-
-  assert.strictEqual(this.result.length, 1);
-  assert.strictEqual(this.result[0].type, 'holder');
-  assert.strictEqual(this.result[0].keys.length, 2);
-  assert.strictEqual(this.result[0].keys[0], 'foo');
-  assert.strictEqual(this.result[0].keys[1], 'bar');
-  assert.strictEqual(this.result[0].filters.length, 0);
-});
-
-
-QUnit.test('holder block - filters with no args', function(assert) {
-  this.source  = '{ $foo | filter1 | filter2 }';
-  this.parse();
-
-  var filter1 = this.result[0].filters[0];
-  var filter2 = this.result[0].filters[1];
-
-  assert.strictEqual(filter1.name, 'filter1');
-  assert.strictEqual(filter1.args.length, 0);
-  assert.strictEqual(filter2.name, 'filter2');
-  assert.strictEqual(filter2.args.length, 0);
-});
-
-QUnit.test('holder block - filter with args - null, true and false', function(assert) {
-  this.source = '{ $foo | filter : null, true, false }';
-  this.parse();
-
-  var filter = this.result[0].filters[0];
-
-  assert.strictEqual(filter.args[0], null);
-  assert.strictEqual(filter.args[1], true);
-  assert.strictEqual(filter.args[2], false);
-});
-
-QUnit.test('holder block - filter with args - string', function(assert) {
-  this.source = '{ $foo | filter : "test", "{delimiter}", "it\'s string" }';
-  this.parse();
-
-  var filter = this.result[0].filters[0];
-
-  assert.strictEqual(filter.args[0], 'test');
-  assert.strictEqual(filter.args[1], '{delimiter}');
-  assert.strictEqual(filter.args[2], 'it\'s string');
-});
-
-QUnit.test('holder block - filter with args - number', function(assert) {
-  this.source = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }',
-  this.parse();
-
-  var filter = this.result[0].filters[0];
-
-  assert.strictEqual(filter.args[0], 0);
-  assert.strictEqual(filter.args[1], 10);
-  assert.strictEqual(filter.args[2], -99);
-  assert.strictEqual(filter.args[3], 12.3);
-  assert.strictEqual(filter.args[4], -0.123);
-  assert.strictEqual(filter.args[5], 10);
-  assert.strictEqual(filter.args[6], 10);
-  assert.strictEqual(filter.args[7], 1);
 });
 
 QUnit.test('if block - if elseif else', function(assert) {
@@ -141,7 +55,10 @@ QUnit.test('if block - if elseif else', function(assert) {
 });
 
 QUnit.test('if block - condition - simple', function(assert) {
-  this.source = '{ if $foo === "hoge" }<p>hoge</p>{ /if }';
+  this.source =
+    '{ if $foo === "hoge" }' +
+    '<p>hoge</p>' + 
+    '{ /if }';
   this.parse();
 
   var stack = this.result[0].sections[0].header.stack;
@@ -156,7 +73,10 @@ QUnit.test('if block - condition - simple', function(assert) {
 });
 
 QUnit.test('if block - condition - redundant round brackets', function(assert) {
-  this.source = '{ if ( ( ( $foo === "hoge" ) ) ) }<p>hoge</p>{ /if }';
+  this.source =
+    '{ if ( ( ( $foo === "hoge" ) ) ) }' +
+    '<p>hoge</p>' +
+    '{ /if }';
   this.parse();
 
   var stack = this.result[0].sections[0].header.stack;
@@ -171,7 +91,10 @@ QUnit.test('if block - condition - redundant round brackets', function(assert) {
 });
 
 QUnit.test('if block - condition - complicated', function(assert) {
-  this.source = '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }<p>ok</p>{ /if }';
+  this.source =
+    '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
   var stack  = this.result[0].sections[0].header.stack;
@@ -210,7 +133,10 @@ QUnit.test('if block - condition - complicated', function(assert) {
 });
 
 QUnit.test('if block - condition - inversion of lval and rval', function(assert) {
-  this.source = '{ if 10 !== $price }<p>ok</p>{ /if }';
+  this.source =
+    '{ if 10 !== $price }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
   var stack  = this.result[0].sections[0].header.stack;
@@ -225,7 +151,10 @@ QUnit.test('if block - condition - inversion of lval and rval', function(assert)
 });
 
 QUnit.test('if block - condition - priority of and/or', function(assert) {
-  this.source = '{ if ( $var1 or $var2 ) and $var3 }<p>ok</p>{ /if }';
+  this.source =
+    '{ if ( $var1 or $var2 ) and $var3 }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
   var stack  = this.result[0].sections[0].header.stack;
@@ -243,25 +172,46 @@ QUnit.test('if block - condition - priority of and/or', function(assert) {
   assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('for block', function(assert) {
-  this.source = '{ for $item in $items }<p>{ $item | h }</p>{ /for }';
+QUnit.test('if block - and chain', function(assert) {
+  this.source =
+    '{ if $var1 and $var2 and $var3 }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
-  var block  = this.result[0];
+  var stack  = this.result[0].sections[0].header.stack;
 
-  assert.strictEqual(block.type, 'for');
-  assert.strictEqual(block.header.array.join('.'), 'items');
-  assert.strictEqual(typeof block.header.k, 'undefined');
-  assert.strictEqual(block.header.v, 'item');
-  assert.strictEqual(block.blocks.length, 3);
+  assert.strictEqual(stack.length, 5);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'var1');
+  assert.strictEqual(stack[1].type, 'var');
+  assert.strictEqual(stack[1].keys.join('.'), 'var2');
+  assert.strictEqual(stack[2].type, 'andor');
+  assert.strictEqual(stack[2].expr, 'and');
+  assert.strictEqual(stack[3].type, 'var');
+  assert.strictEqual(stack[3].keys.join('.'), 'var3');
+  assert.strictEqual(stack[4].type, 'andor');
+  assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('for block - use index', function(assert) {
-  this.source = '{ for $idx, $item in $items }<p>{ $item | h }</p>{ /for }';
+QUnit.test('if block - or chain', function(assert) {
+  this.source =
+    '{ if $var1 or $var2 or $var3 }' +
+    '<p>ok</p>' +
+    '{ /if }';
   this.parse();
 
-  var block  = this.result[0];
+  var stack  = this.result[0].sections[0].header.stack;
 
-  assert.strictEqual(block.header.k, 'idx');
-  assert.strictEqual(block.header.v, 'item');
+  assert.strictEqual(stack.length, 5);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'var1');
+  assert.strictEqual(stack[1].type, 'var');
+  assert.strictEqual(stack[1].keys.join('.'), 'var2');
+  assert.strictEqual(stack[2].type, 'andor');
+  assert.strictEqual(stack[2].expr, 'or');
+  assert.strictEqual(stack[3].type, 'var');
+  assert.strictEqual(stack[3].keys.join('.'), 'var3');
+  assert.strictEqual(stack[4].type, 'andor');
+  assert.strictEqual(stack[4].expr, 'or');
 });
