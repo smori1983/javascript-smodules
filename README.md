@@ -12,4 +12,4 @@ JavaScript のいろいろなモジュールをまとめたプロジェクトで
 
 ## LICENSE
 
-MIT or GPL-2.0
+MIT
