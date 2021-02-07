@@ -72,7 +72,7 @@ smodules.templateParser = function() {
   var regexMatched = function(regex, errorMessage) {
     var result = text.slice(ptr).match(regex);
 
-    if (result === null & typeof errorMessage === 'string') {
+    if (result === null && typeof errorMessage === 'string') {
       exception(errorMessage);
     }
 
