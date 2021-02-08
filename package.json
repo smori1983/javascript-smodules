@@ -13,7 +13,8 @@
         "grunt-contrib-connect": "^2.0.0",
         "grunt-contrib-qunit": "^3.0.1",
         "grunt-contrib-watch": "^1.1.0",
-        "grunt-eslint": "^21.0.0"
+        "grunt-eslint": "^21.0.0",
+        "qunit": "^2.14.0"
     },
     "dependencies": {},
     "license": "MIT"
