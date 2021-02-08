@@ -1,6 +1,8 @@
+const template = require('../../src/smodules/template');
+
 QUnit.module('template', {
   beforeEach: function() {
-    this.template = smodules.template();
+    this.template = template.init();
   },
 });
 

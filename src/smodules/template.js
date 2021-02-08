@@ -1,13 +1,17 @@
-smodules.template = function() {
+const hash = require('./data.hash');
+const queueHash = require('./data.queueHash');
+const templateParser = require('./templateParser');
+
+const template = function() {
   var that = {};
 
-  var _filters = smodules.data.hash();
+  var _filters = hash.init();
 
-  var _templates = smodules.data.hash();
+  var _templates = hash.init();
 
-  var _parser = smodules.templateParser();
+  var _parser = templateParser.init();
 
-  var _remoteQueue = smodules.data.queueHash();
+  var _remoteQueue = queueHash.init();
 
   var _testRemoteFile = function(file) {
     return (/\.html$/).test(file);
@@ -64,7 +68,7 @@ smodules.template = function() {
   };
 
   var _registerFromRemote = (function() {
-    var _fetching = smodules.data.hash();
+    var _fetching = hash.init();
 
     return function(source) {
       if (!_fetching.has(source)) {
@@ -323,16 +327,16 @@ smodules.template = function() {
           return _execute(source, bindParams);
         }
       },
-      appendTo: function(target) {
-        _execute(source, bindParams, function(output) {
-          $(output).appendTo(target);
-        });
-      },
-      insertBefore: function(target) {
-        _execute(source, bindParams, function(output) {
-          $(output).insertBefore(target);
-        });
-      },
+      //appendTo: function(target) {
+      //  _execute(source, bindParams, function(output) {
+      //    $(output).appendTo(target);
+      //  });
+      //},
+      //insertBefore: function(target) {
+      //  _execute(source, bindParams, function(output) {
+      //    $(output).insertBefore(target);
+      //  });
+      //},
     };
   };
 
@@ -346,7 +350,7 @@ smodules.template = function() {
   that.preFetch = function(source, callback) {
     var sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
-    if ($.isArray(sourceList)) {
+    if (Array.isArray(sourceList)) {
       sourceList.forEach(function(source) {
         if (_isRemoteFile(source)) {
           _registerFromRemote(source);
@@ -426,4 +430,8 @@ smodules.template = function() {
   });
 
   return that;
+};
+
+module.exports.init = function () {
+  return template();
 };

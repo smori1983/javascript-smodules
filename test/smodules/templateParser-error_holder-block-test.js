@@ -1,3 +1,5 @@
+const templateParser = require('../../src/smodules/templateParser');
+
 QUnit.module('templateParser - error', {
   before: function() {
     this.parse = function() {
@@ -5,7 +7,7 @@ QUnit.module('templateParser - error', {
     };
   },
   beforeEach: function() {
-    this.parser = smodules.templateParser();
+    this.parser = templateParser.init();
     this.source = '';
     this.result = null;
   },

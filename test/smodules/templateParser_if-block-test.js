@@ -1,3 +1,5 @@
+const templateParser = require('../../src/smodules/templateParser');
+
 QUnit.module('templateParser', {
   before: function() {
     this.parse = function() {
@@ -5,7 +7,7 @@ QUnit.module('templateParser', {
     };
   },
   beforeEach: function() {
-    this.parser = smodules.templateParser();
+    this.parser = templateParser.init();
     this.source = '';
     this.result = null;
   },
@@ -57,7 +59,7 @@ QUnit.test('if block - if elseif else', function(assert) {
 QUnit.test('if block - condition - simple', function(assert) {
   this.source =
     '{ if $foo === "hoge" }' +
-    '<p>hoge</p>' + 
+    '<p>hoge</p>' +
     '{ /if }';
   this.parse();
 

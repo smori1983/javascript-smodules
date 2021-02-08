@@ -1,6 +1,8 @@
+const hash = require('../../src/smodules/data.hash');
+
 QUnit.module('data.hash', {
   beforeEach: function() {
-    this.hash = smodules.data.hash();
+    this.hash = hash.init();
   },
 });
 
