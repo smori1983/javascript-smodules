@@ -9,12 +9,6 @@
     "@types/jquery": "^3.5.5",
     "@types/node": "^14.14.25",
     "eslint": "^5.9.0",
-    "grunt": "^1.0.3",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-connect": "^2.0.0",
-    "grunt-contrib-qunit": "^3.0.1",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-eslint": "^21.0.0",
     "qunit": "^2.14.0"
   },
   "dependencies": {},
