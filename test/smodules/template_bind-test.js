@@ -3,10 +3,7 @@ const template = require('../../src/smodules/template');
 QUnit.module('template', {
   beforeEach: function() {
     this.template = template.init();
-    this.target = '#template-test';
     this.src = '';
-
-    //$(this.target).empty();
   },
 });
 

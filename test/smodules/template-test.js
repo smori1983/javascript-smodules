@@ -5,13 +5,9 @@ QUnit.module('template', {
     this.execBind = function(param) {
       return this.template.bind(this.src, param);
     };
-    this.getHtml = function() {
-      return $(this.target).html();
-    };
   },
   beforeEach: function() {
     this.template = template.init();
-    this.target = '#template-test';
     this.src = '';
   },
 });
