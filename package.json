@@ -10,7 +10,8 @@
     "@types/jquery": "^3.5.5",
     "@types/node": "^14.14.25",
     "eslint": "^5.9.0",
-    "qunit": "^2.14.0"
+    "qunit": "^2.14.0",
+    "watch": "^1.0.2"
   },
   "author": "Shinichiro MORI",
   "license": "MIT"
