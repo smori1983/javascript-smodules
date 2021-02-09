@@ -80,7 +80,7 @@ const templateParser = function() {
   };
 
   const readLeftTag = function () {
-    return readRegex(/^\{\s*left\s*\}/);
+    return readRegex(/^{\s*left\s*}/);
   };
 
   const eatLeftTag = function () {
@@ -94,7 +94,7 @@ const templateParser = function() {
   };
 
   const readRightTag = function () {
-    return readRegex(/^\{\s*right\s*\}/);
+    return readRegex(/^{\s*right\s*}/);
   };
 
   const eatRightTag = function () {
@@ -108,7 +108,7 @@ const templateParser = function() {
   };
 
   const readLiteralTag = function () {
-    return readRegex(/^\{\s*literal\s*\}/);
+    return readRegex(/^{\s*literal\s*}/);
   };
 
   const eatLiteralTag = function () {
@@ -120,7 +120,7 @@ const templateParser = function() {
   };
 
   const readEndLiteralTag = function () {
-    return readRegex(/^\{\s*\/\s*literal\s*\}/);
+    return readRegex(/^{\s*\/\s*literal\s*}/);
   };
 
   const eatEndLiteralTag = function () {
@@ -134,7 +134,7 @@ const templateParser = function() {
   };
 
   const readIfTag = function () {
-    return readRegex(/^\{\s*if\s/);
+    return readRegex(/^{\s*if\s/);
   };
 
   const eatIfTag = function () {
@@ -145,7 +145,7 @@ const templateParser = function() {
   };
 
   const readElseifTag = function () {
-    return readRegex(/^\{\s*elseif\s/);
+    return readRegex(/^{\s*elseif\s/);
   };
 
   const eatElseifTag = function () {
@@ -156,7 +156,7 @@ const templateParser = function() {
   };
 
   const readElseTag = function () {
-    return readRegex(/^\{\s*else\s*\}/);
+    return readRegex(/^{\s*else\s*}/);
   };
 
   const eatElseTag = function () {
@@ -168,7 +168,7 @@ const templateParser = function() {
   };
 
   const readEndIfTag = function () {
-    return readRegex(/^\{\s*\/\s*if\s*\}/);
+    return readRegex(/^{\s*\/\s*if\s*}/);
   };
 
   const eatEndIfTag = function () {
@@ -182,7 +182,7 @@ const templateParser = function() {
   };
 
   const readForTag = function () {
-    return readRegex(/^\{\s*for\s/);
+    return readRegex(/^{\s*for\s/);
   };
 
   const eatForTag = function () {
@@ -193,7 +193,7 @@ const templateParser = function() {
   };
 
   const readEndForTag = function () {
-    return readRegex(/^\{\s*\/\s*for\s*\}/);
+    return readRegex(/^{\s*\/\s*for\s*}/);
   };
 
   const eatEndForTag = function () {
@@ -207,7 +207,7 @@ const templateParser = function() {
   };
 
   const readHolderTag = function () {
-    return readRegex(/^\{\s*\$/);
+    return readRegex(/^{\s*\$/);
   };
 
   // NOTE: currently not used.
