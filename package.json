@@ -3,7 +3,8 @@
   "description": "",
   "version": "0.3.0",
   "scripts": {
-    "test": "qunit test"
+    "test": "qunit test",
+    "watch:test": "watch 'npm run test' src/ test/ --interval=1 --ignoreDotFiles"
   },
   "dependencies": {},
   "devDependencies": {
