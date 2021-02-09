@@ -25,7 +25,7 @@ QUnit.test('literal block', function(assert) {
 });
 
 QUnit.test('holder block', function(assert) {
-  var param = { foo: { bar : 'hoge' } };
+  const param = {foo: {bar: 'hoge'}};
 
   this.src = '<p>{ $foo.bar }</p>';
 
@@ -33,7 +33,7 @@ QUnit.test('holder block', function(assert) {
 });
 
 QUnit.test('holder block - property not chainable', function(assert) {
-  var param = { foo: { bar : 'hoge' } };
+  const param = {foo: {bar: 'hoge'}};
 
   this.src = '<p>{ $foo.bar.baz }</p>';
 
@@ -41,7 +41,7 @@ QUnit.test('holder block - property not chainable', function(assert) {
 });
 
 QUnit.test('holder block - same holder in multiple places', function(assert) {
-  var param = { user: { name: 'Tom' } };
+  const param = {user: {name: 'Tom'}};
 
   this.src = '<p>{ $user.name }</p><p>{ $user.name }</p>';
 
@@ -49,7 +49,7 @@ QUnit.test('holder block - same holder in multiple places', function(assert) {
 });
 
 QUnit.test('holder block - bind within tag', function(assert) {
-  var param = { className: 'hoge' };
+  const param = {className: 'hoge'};
 
   this.src = '<p class="{ $className }">sample</p>';
 
@@ -58,11 +58,11 @@ QUnit.test('holder block - bind within tag', function(assert) {
 
 QUnit.test('holder block - array index access', function(assert) {
   // under current specification, array is accessible by like this.
-  var param = {
+  const param = {
     items: [
-      { name: 'a' },
-      { name: 'b' },
-      { name: 'c' },
+      {name: 'a'},
+      {name: 'b'},
+      {name: 'c'},
     ],
   };
 
@@ -76,11 +76,11 @@ QUnit.test('holder block - array index access', function(assert) {
 
 QUnit.test('holder block - array index access - not chainable', function(assert) {
   // under current specification, array is accessible by like this.
-  var param = {
+  const param = {
     items: [
-      { name: 'a' },
-      { name: 'b' },
-      { name: 'c' },
+      {name: 'a'},
+      {name: 'b'},
+      {name: 'c'},
     ],
   };
 
@@ -90,7 +90,7 @@ QUnit.test('holder block - array index access - not chainable', function(assert)
 });
 
 QUnit.test('holder block - default filter - h', function(assert) {
-  var param = { foo: '<p>"it\'s mine & that\'s yours"</p>' };
+  const param = { foo: '<p>"it\'s mine & that\'s yours"</p>' };
 
   this.src = '<p>{ $foo | h }</p>';
 
@@ -98,7 +98,7 @@ QUnit.test('holder block - default filter - h', function(assert) {
 });
 
 QUnit.test('holder block - default filter - default - template value is undefined', function(assert) {
-  var param = { foo: 'foo' };
+  const param = {foo: 'foo'};
 
   this.src = '<p>{ $foo.bar | default:"piyo" }</p>';
 
@@ -106,7 +106,7 @@ QUnit.test('holder block - default filter - default - template value is undefine
 });
 
 QUnit.test('holder block - default filter - default - toString() will be called at end of binding', function(assert) {
-  var param = { foo: false };
+  const param = {foo: false};
 
   this.src = '<p>{ $foo | default:"a" }</p>';
 
@@ -114,7 +114,7 @@ QUnit.test('holder block - default filter - default - toString() will be called 
 });
 
 QUnit.test('holder block - default filter - upper', function(assert) {
-  var param = { foo: 'abc' };
+  const param = {foo: 'abc'};
 
   this.src = '<p>{ $foo | upper }</p>';
 
@@ -122,7 +122,7 @@ QUnit.test('holder block - default filter - upper', function(assert) {
 });
 
 QUnit.test('holder block - default filter - lower', function(assert) {
-  var param = { foo: 'XYZ' };
+  const param = {foo: 'XYZ'};
 
   this.src = '<p>{ $foo | lower }</p>';
 
@@ -130,7 +130,7 @@ QUnit.test('holder block - default filter - lower', function(assert) {
 });
 
 QUnit.test('holder block - default filter - plus', function(assert) {
-  var param = { foo: 1, bar: 1.23, baz: 10 };
+  const param = {foo: 1, bar: 1.23, baz: 10};
 
   this.src = '<p>{ $foo | plus:1 }</p><p>{ $bar | plus:2 }</p><p>{ $baz | plus:-1 }</p>';
 
@@ -143,7 +143,7 @@ QUnit.test('holder block - original filter', function(assert) {
     return value.slice(0, size) + (tail ? tail : '');
   });
 
-  var param = { foo: 'abcdefghi' };
+  const param = {foo: 'abcdefghi'};
 
   this.src = '<p>{ $foo | originalFilter:1 }</p><p>{ $foo | originalFilter:3,"..." }</p>';
 
@@ -151,7 +151,7 @@ QUnit.test('holder block - original filter', function(assert) {
 });
 
 QUnit.test('if block - simple', function(assert) {
-  var param = { foo: true };
+  const param = {foo: true};
 
   this.src =
     '{ if $foo }' +
@@ -164,7 +164,7 @@ QUnit.test('if block - simple', function(assert) {
 });
 
 QUnit.test('if block - logical operator - and', function(assert) {
-  var param = { foo: true, bar: false };
+  const param = {foo: true, bar: false};
 
   this.src =
     '{ if $foo and $bar }' +
@@ -177,7 +177,7 @@ QUnit.test('if block - logical operator - and', function(assert) {
 });
 
 QUnit.test('if block - logical operator - and chain 1', function(assert) {
-  var param = { foo: true, bar: true, baz: true };
+  const param = {foo: true, bar: true, baz: true};
 
   this.src =
     '{ if $foo and $bar and $baz }' +
@@ -190,7 +190,7 @@ QUnit.test('if block - logical operator - and chain 1', function(assert) {
 });
 
 QUnit.test('if block - logical operator - and chain 2', function(assert) {
-  var param = { foo: false, bar: true, baz: true };
+  const param = {foo: false, bar: true, baz: true};
 
   this.src =
     '{ if $foo and $bar and $baz }' +
@@ -203,7 +203,7 @@ QUnit.test('if block - logical operator - and chain 2', function(assert) {
 });
 
 QUnit.test('if block - logical operator - and chain 3', function(assert) {
-  var param = { foo: true, bar: false, baz: true };
+  const param = {foo: true, bar: false, baz: true};
 
   this.src =
     '{ if $foo and $bar and $baz }' +
@@ -216,7 +216,7 @@ QUnit.test('if block - logical operator - and chain 3', function(assert) {
 });
 
 QUnit.test('if block - logical operator - and chain 4', function(assert) {
-  var param = { foo: true, bar: true, baz: false };
+  const param = {foo: true, bar: true, baz: false};
 
   this.src =
     '{ if $foo and $bar and $baz }' +
@@ -229,7 +229,7 @@ QUnit.test('if block - logical operator - and chain 4', function(assert) {
 });
 
 QUnit.test('if block - logical operator - or', function(assert) {
-  var param = { foo: true, bar: false };
+  const param = {foo: true, bar: false};
 
   this.src =
     '{ if $foo or $bar }' +
@@ -242,7 +242,7 @@ QUnit.test('if block - logical operator - or', function(assert) {
 });
 
 QUnit.test('if block - logical operator - or chain 1', function(assert) {
-  var param = { foo: true, bar: true, baz: true };
+  const param = {foo: true, bar: true, baz: true};
 
   this.src =
     '{ if $foo or $bar or $baz }' +
@@ -255,7 +255,7 @@ QUnit.test('if block - logical operator - or chain 1', function(assert) {
 });
 
 QUnit.test('if block - logical operator - or chain 2', function(assert) {
-  var param = { foo: false, bar: true, baz: true };
+  const param = {foo: false, bar: true, baz: true};
 
   this.src =
     '{ if $foo or $bar or $baz }' +
@@ -268,7 +268,7 @@ QUnit.test('if block - logical operator - or chain 2', function(assert) {
 });
 
 QUnit.test('if block - logical operator - or chain 3', function(assert) {
-  var param = { foo: true, bar: false, baz: true };
+  const param = {foo: true, bar: false, baz: true};
 
   this.src =
     '{ if $foo or $bar or $baz }' +
@@ -281,7 +281,7 @@ QUnit.test('if block - logical operator - or chain 3', function(assert) {
 });
 
 QUnit.test('if block - logical operator - or chain 4', function(assert) {
-  var param = { foo: true, bar: true, baz: false };
+  const param = {foo: true, bar: true, baz: false};
 
   this.src =
     '{ if $foo or $bar or $baz }' +
@@ -294,7 +294,7 @@ QUnit.test('if block - logical operator - or chain 4', function(assert) {
 });
 
 QUnit.test('if block - logical operator - combination', function(assert) {
-  var param = { foo: true, bar: false, baz: true };
+  const param = {foo: true, bar: false, baz: true};
 
   this.src =
     '{ if $foo and ( $bar or $baz ) }' +
@@ -307,7 +307,7 @@ QUnit.test('if block - logical operator - combination', function(assert) {
 });
 
 QUnit.test('if block - comparative operator', function(assert) {
-  var param = { price: 50 };
+  const param = {price: 50};
 
   this.src =
     '{ if $price gte 100 }' +
@@ -322,7 +322,7 @@ QUnit.test('if block - comparative operator', function(assert) {
 });
 
 QUnit.test('if block - comparative operator - "===" and "=="', function(assert) {
-  var param = { foo: true };
+  const param = {foo: true};
 
   this.src =
     '{ if $foo === 1 }' +
@@ -336,9 +336,9 @@ QUnit.test('if block - comparative operator - "===" and "=="', function(assert) 
 });
 
 QUnit.test('if block - property chainable', function(assert) {
-  var param = {
-    data1: { key: true },
-    data2: { key: true },
+  const param = {
+    data1: {key: true},
+    data2: {key: true},
   };
 
   this.src =
@@ -350,9 +350,9 @@ QUnit.test('if block - property chainable', function(assert) {
 });
 
 QUnit.test('if block - property not chainable - and 1', function(assert) {
-  var param = {
-    data1: { key1: true },
-    data2: { key1: true },
+  const param = {
+    data1: {key1: true},
+    data2: {key1: true},
   };
 
   this.src =
@@ -364,9 +364,9 @@ QUnit.test('if block - property not chainable - and 1', function(assert) {
 });
 
 QUnit.test('if block - property not chainable - and 2', function(assert) {
-  var param = {
-    data1: { key2: true },
-    data2: { key2: true },
+  const param = {
+    data1: {key2: true},
+    data2: {key2: true},
   };
 
   this.src =
@@ -378,9 +378,9 @@ QUnit.test('if block - property not chainable - and 2', function(assert) {
 });
 
 QUnit.test('if block - property not chainable - or 1', function(assert) {
-  var param = {
-    data1: { key1: true },
-    data2: { key1: true },
+  const param = {
+    data1: {key1: true},
+    data2: {key1: true},
   };
 
   this.src =
@@ -392,9 +392,9 @@ QUnit.test('if block - property not chainable - or 1', function(assert) {
 });
 
 QUnit.test('if block - property not chainable - or 2', function(assert) {
-  var param = {
-    data1: { key2: true },
-    data2: { key2: true },
+  const param = {
+    data1: {key2: true},
+    data2: {key2: true},
   };
 
   this.src =
@@ -406,7 +406,7 @@ QUnit.test('if block - property not chainable - or 2', function(assert) {
 });
 
 QUnit.test('for block', function(assert) {
-  var param = { items: ['one', 'two', 'three'] };
+  const param = {items: ['one', 'two', 'three']};
 
   this.src =
     '{ for $item in $items }' +
@@ -417,7 +417,7 @@ QUnit.test('for block', function(assert) {
 });
 
 QUnit.test('for block - use index', function(assert) {
-  var param = { items: ['one', 'two'] };
+  const param = {items: ['one', 'two']};
 
   this.src =
     '{ for $idx,$item in $items }' +
@@ -428,11 +428,13 @@ QUnit.test('for block - use index', function(assert) {
 });
 
 QUnit.test('for block - nested', function(assert) {
-  var param = { items: [
-    { ids: [1, 2]},
-    { ids: [3, 4]},
-    { ids: [5, 6]},
-  ]};
+  const param = {
+    items: [
+      {ids: [1, 2]},
+      {ids: [3, 4]},
+      {ids: [5, 6]},
+    ],
+  };
 
   this.src =
     '{ for $item in $items }' +
@@ -443,7 +445,7 @@ QUnit.test('for block - nested', function(assert) {
     '</ul>' +
     '{ /for }';
 
-  var expected =
+  const expected =
     '<ul><li>1</li><li>2</li></ul>' +
     '<ul><li>3</li><li>4</li></ul>' +
     '<ul><li>5</li><li>6</li></ul>';
@@ -452,11 +454,13 @@ QUnit.test('for block - nested', function(assert) {
 });
 
 QUnit.test('for block - nested - if', function(assert) {
-  var param = { items: [
-    { ids: [1, 2]},
-    { ids: [3, 4]},
-    { ids: [5, 6]},
-  ]};
+  const param = {
+    items: [
+      {ids: [1, 2]},
+      {ids: [3, 4]},
+      {ids: [5, 6]},
+    ],
+  };
 
   this.src =
     '{ for $item in $items }' +
@@ -471,7 +475,7 @@ QUnit.test('for block - nested - if', function(assert) {
     '</ul>' +
     '{ /for }';
 
-  var expected =
+  const expected =
     '<ul><li>odd: 1</li><li>even: 2</li></ul>' +
     '<ul><li>odd: 3</li><li>even: 4</li></ul>' +
     '<ul><li>odd: 5</li><li>even: 6</li></ul>';
@@ -480,16 +484,22 @@ QUnit.test('for block - nested - if', function(assert) {
 });
 
 QUnit.test('for block - nested - if with property access', function(assert) {
-  var param = { items: [
-    { products: [
-      { id: 1, name: 'A' },
-      { id: 2, name: 'B' },
-    ]},
-    { products: [
-      { id: 1, name: 'C' },
-      { id: 2, name: 'D' },
-    ]},
-  ]};
+  const param = {
+    items: [
+      {
+        products: [
+          {id: 1, name: 'A'},
+          {id: 2, name: 'B'},
+        ],
+      },
+      {
+        products: [
+          {id: 1, name: 'C'},
+          {id: 2, name: 'D'},
+        ],
+      },
+    ],
+  };
 
   this.src =
     '{ for $item in $items }' +
@@ -502,7 +512,7 @@ QUnit.test('for block - nested - if with property access', function(assert) {
     '</ul>' +
     '{ /for }';
 
-  var expected =
+  const expected =
     '<ul><li>A</li></ul>' +
     '<ul><li>C</li></ul>';
 
@@ -510,7 +520,7 @@ QUnit.test('for block - nested - if with property access', function(assert) {
 });
 
 QUnit.test('for block - not iterable', function(assert) {
-  var param = { items: 'hello, world!' };
+  const param = {items: 'hello, world!'};
 
   this.src =
     '{ for $item in $items }' +
@@ -521,9 +531,11 @@ QUnit.test('for block - not iterable', function(assert) {
 });
 
 QUnit.test('for block - haystack property chainable', function(assert) {
-  var param = { items: {
-    data: [1, 2, 3],
-  }};
+  const param = {
+    items: {
+      data: [1, 2, 3],
+    },
+  };
 
   this.src =
     '{ for $value in $items.data }' +
@@ -534,7 +546,7 @@ QUnit.test('for block - haystack property chainable', function(assert) {
 });
 
 QUnit.test('for block - haystack property not chainable 1', function(assert) {
-  var param = { items: [1, 2, 3] };
+  const param = {items: [1, 2, 3]};
 
   this.src =
     '{ for $item in $items.foo.bar }' +
@@ -545,10 +557,12 @@ QUnit.test('for block - haystack property not chainable 1', function(assert) {
 });
 
 QUnit.test('for block - haystack property not chainable 2', function(assert) {
-  var param = { items: [
-    { name: 'name1', data: 'data1'},
-    { name: 'name2', data: 'data2'},
-  ]};
+  const param = {
+    items: [
+      {name: 'name1', data: 'data1'},
+      {name: 'name2', data: 'data2'},
+    ],
+  };
 
   this.src =
     '{ for $item in $items }' +
@@ -562,10 +576,12 @@ QUnit.test('for block - haystack property not chainable 2', function(assert) {
 });
 
 QUnit.test('for block - dummy variable chainable', function(assert) {
-  var param = { items: [
-    { data: { key1: 'value1'} },
-    { data: { key1: 'value2'} },
-  ]};
+  const param = {
+    items: [
+      {data: {key1: 'value1'}},
+      {data: {key1: 'value2'}},
+    ],
+  };
 
   this.src =
     '{ for $item in $items }' +

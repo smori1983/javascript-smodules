@@ -25,18 +25,18 @@ QUnit.module('template', {
 //});
 
 QUnit.test('bind - get - string source - with callback', function(assert) {
-  var params = { value: 'hoge' };
+  const params = {value: 'hoge'};
 
-  this.src = '<p>{$value}</p>',
+  this.src = '<p>{$value}</p>';
   this.template.bind(this.src, params).get(function(output) {
     assert.strictEqual(output, '<p>hoge</p>');
   });
 });
 
 QUnit.test('bind - get - string source - without callback', function(assert) {
-  var params = { value: 'hoge' };
+  const params = {value: 'hoge'};
 
-  this.src = '<p>{$value}</p>',
+  this.src = '<p>{$value}</p>';
 
   assert.strictEqual(this.template.bind(this.src, params).get(), '<p>hoge</p>');
 });

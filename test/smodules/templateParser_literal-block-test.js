@@ -14,7 +14,7 @@ QUnit.module('templateParser', {
 });
 
 QUnit.test('literal block', function(assert) {
-  this.source ='<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>',
+  this.source ='<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>';
   this.parse();
 
   assert.strictEqual(this.result.length, 3);

@@ -20,7 +20,7 @@ QUnit.test('for block - only value part in dummy variable', function(assert) {
     '{ /for }';
   this.parse();
 
-  var block  = this.result[0];
+  const block = this.result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(typeof block.header.k, 'undefined');
@@ -36,7 +36,7 @@ QUnit.test('for block - use index in dummy variable', function(assert) {
     '{ /for }';
   this.parse();
 
-  var block  = this.result[0];
+  const block = this.result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(block.header.k, 'idx');
@@ -52,7 +52,7 @@ QUnit.test('for block - use index in dummy variable - space before comma', funct
     '{ /for }';
   this.parse();
 
-  var block  = this.result[0];
+  const block = this.result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(block.header.k, 'idx');
@@ -68,7 +68,7 @@ QUnit.test('for block - variable chain in haystack', function(assert) {
     '{ /for }';
   this.parse();
 
-  var block  = this.result[0];
+  const block = this.result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(block.header.array.join('.'), 'items.key1.key2');

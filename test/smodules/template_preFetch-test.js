@@ -7,10 +7,10 @@ QUnit.module('template', {
 });
 
 QUnit.test('preFetch and template cache', function(assert) {
-  var src1 = '<h1>{$value}</h1>';
-  var src2 = '<h2>{$value}</h2>';
-  var src3 = '<h3>{$value}</h3>';
-  var cacheList;
+  const src1 = '<h1>{$value}</h1>';
+  const src2 = '<h2>{$value}</h2>';
+  const src3 = '<h3>{$value}</h3>';
+  let cacheList;
 
   // Initially no cache.
   cacheList = this.template.getTemplateCacheList();

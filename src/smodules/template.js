@@ -3,36 +3,36 @@ const queueHash = require('./data.queueHash');
 const templateParser = require('./templateParser');
 
 const template = function() {
-  var that = {};
+  const that = {};
 
-  var _filters = hash.init();
+  const _filters = hash.init();
 
-  var _templates = hash.init();
+  const _templates = hash.init();
 
-  var _parser = templateParser.init();
+  const _parser = templateParser.init();
 
-  var _remoteQueue = queueHash.init();
+  const _remoteQueue = queueHash.init();
 
-  var _testRemoteFile = function(file) {
+  let _testRemoteFile = function (file) {
     return (/\.html$/).test(file);
   };
 
-  var _isRemoteFile = function(source) {
+  const _isRemoteFile = function (source) {
     return _testRemoteFile(source);
   };
 
-  var _isEmbedded = function(source) {
+  const _isEmbedded = function (source) {
     return source.indexOf('#') === 0;
   };
 
-  var _preFetchJobList = (function() {
-    var jobList = [];
+  const _preFetchJobList = (function () {
+    let jobList = [];
 
-    var check = function() {
-      var finished = [];
+    const check = function () {
+      const finished = [];
 
-      jobList.forEach(function(job) {
-        job.sourceList = job.sourceList.filter(function(source) {
+      jobList.forEach(function (job) {
+        job.sourceList = job.sourceList.filter(function (source) {
           return !_templates.has(source);
         });
 
@@ -41,11 +41,11 @@ const template = function() {
         }
       });
 
-      jobList = jobList.filter(function(job) {
+      jobList = jobList.filter(function (job) {
         return job.sourceList.length > 0;
       });
 
-      finished.forEach(function(job) {
+      finished.forEach(function (job) {
         if (typeof job.callback === 'function') {
           job.callback();
         }
@@ -53,31 +53,31 @@ const template = function() {
     };
 
     return {
-      add: function(sourceList, callback) {
-        jobList.push({ sourceList: sourceList, callback: callback });
+      add: function (sourceList, callback) {
+        jobList.push({sourceList: sourceList, callback: callback});
         check();
       },
-      notifyFetched: function() {
+      notifyFetched: function () {
         check();
       },
     };
   })();
 
-  var _register = function(source, content) {
+  const _register = function (source, content) {
     _templates.add(source, _parser.parse(content, source));
   };
 
-  var _registerFromRemote = (function() {
-    var _fetching = hash.init();
+  const _registerFromRemote = (function () {
+    const _fetching = hash.init();
 
-    return function(source) {
+    return function (source) {
       if (!_fetching.has(source)) {
         _fetching.add(source, true);
 
         $.ajax({
           url: source,
-          success: function(response) {
-            var queue;
+          success: function (response) {
+            let queue;
 
             _register(source, response);
             _fetching.remove(source);
@@ -93,7 +93,7 @@ const template = function() {
     };
   })();
 
-  var _registerFromHTML = function(source, callback) {
+  const _registerFromHTML = function (source, callback) {
     if ($(source)[0].tagName.toLowerCase() === 'textarea') {
       _register(source, $(source).val());
     } else {
@@ -104,14 +104,14 @@ const template = function() {
     }
   };
 
-  var _registerFromString = function(source, callback) {
+  const _registerFromString = function (source, callback) {
     _register(source, source);
     if (typeof callback === 'function') {
       callback();
     }
   };
 
-  var _execute = function(source, bindParams, callback) {
+  const _execute = function(source, bindParams, callback) {
     if (_templates.has(source)) {
       if (typeof callback === 'function') {
         callback(_bind(source, bindParams));
@@ -140,15 +140,15 @@ const template = function() {
     }
   };
 
-  var _bind = (function() {
-    var src;
+  const _bind = (function() {
+    let src;
 
-    var exception = function(message) {
+    const exception = function (message) {
       throw new Error('smodules.template - ' + message + ' in source ' + src);
     };
 
-    var getValue = function(keys, params, asis) {
-      var pIdx, i, len, value;
+    const getValue = function (keys, params, asis) {
+      let pIdx, i, len, value;
 
       for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
         value = params[pIdx];
@@ -172,25 +172,25 @@ const template = function() {
       }
     };
 
-    var getFilter = function(name) {
+    const getFilter = function (name) {
       if (_filters.has(name)) {
         return _filters.get(name);
       } else {
         // eslint-disable-next-line quotes
-        exception("filter '" + name + "' not found");
+        exception('filter \'' + name + '\' not found');
       }
     };
 
-    var applyFilters = function(value, filters) {
-      filters.forEach(function(filter) {
+    const applyFilters = function (value, filters) {
+      filters.forEach(function (filter) {
         value = getFilter(filter.name).apply(null, [value].concat(filter.args));
       });
 
       return value;
     };
 
-    var loop = function(blocks, params) {
-      return blocks.reduce(function(output, block) {
+    const loop = function (blocks, params) {
+      return blocks.reduce(function (output, block) {
         if (block.type === 'normal' || block.type === 'literal') {
           return output + block.expr;
         } else if (block.type === 'holder') {
@@ -205,7 +205,7 @@ const template = function() {
       }, '');
     };
 
-    var evaluateComp = function(lval, rval, comp) {
+    const evaluateComp = function (lval, rval, comp) {
       if (comp === '===') {
         return lval === rval;
       } else if (comp === '==') {
@@ -227,7 +227,7 @@ const template = function() {
       }
     };
 
-    var evaluateAndOr = function(lval, rval, type) {
+    const evaluateAndOr = function (lval, rval, type) {
       if (type === 'and') {
         return lval && rval;
       } else if (type === 'or') {
@@ -237,8 +237,8 @@ const template = function() {
       }
     };
 
-    var evaluate = function(conditions, params) {
-      var result = [], i, len, section, lval, rval;
+    const evaluate = function (conditions, params) {
+      let result = [], i, len, section, lval, rval;
 
       for (i = 0, len = conditions.length; i < len; i++) {
         section = conditions[i];
@@ -265,9 +265,9 @@ const template = function() {
       return result[0];
     };
 
-    var loopIf = function(block, params) {
-      var i, len, section;
-      var output = '';
+    const loopIf = function(block, params) {
+      let i, len, section;
+      let output = '';
 
       for (i = 0, len = block.sections.length; i < len; i++) {
         section = block.sections[i];
@@ -285,13 +285,13 @@ const template = function() {
       return output;
     };
 
-    var loopFor = function(block, params) {
-      var array = getValue(block.header.array, params, true);
-      var output = '';
+    const loopFor = function(block, params) {
+      const array = getValue(block.header.array, params, true);
+      let output = '';
 
       if (Array.isArray(array)) {
         array.forEach(function(value, idx) {
-          var additional = {};
+          const additional = {};
 
           if (block.header.k) {
             additional[block.header.k] = idx;
@@ -348,7 +348,7 @@ const template = function() {
   };
 
   that.preFetch = function(source, callback) {
-    var sourceList = (typeof source === 'string') ? [].concat(source) : source;
+    const sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
     if (Array.isArray(sourceList)) {
       sourceList.forEach(function(source) {
@@ -366,13 +366,13 @@ const template = function() {
     return that;
   };
 
-  that.setRemoteFilePattern = function(arg) {
+  that.setRemoteFilePattern = function (arg) {
     if (typeof arg === 'string') {
-      _testRemoteFile = function(file) {
+      _testRemoteFile = function (file) {
         return file.indexOf(arg) === 0;
       };
     } else if (typeof arg === 'object' && typeof arg.test === 'function' && (/^\/.+\/$/).test(arg.toString())) {
-      _testRemoteFile = function(file) {
+      _testRemoteFile = function (file) {
         return arg.test(file);
       };
     }
@@ -394,7 +394,7 @@ const template = function() {
 
   // default filters
   that.addFilter('h', (function() {
-    var list = {
+    const list = {
       '<': '&lt;',
       '>': '&gt;',
       '&': '&amp;',

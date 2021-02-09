@@ -1,23 +1,23 @@
 const templateParser = function() {
-  var that = {};
-  var src;
-  var text;
-  var ptr;
-  var ch;
-  var len;
-  var line;
-  var at;
+  const that = {};
+  let src;
+  let text;
+  let ptr;
+  let ch;
+  let len;
+  let line;
+  let at;
 
-  var exception = function(message) {
+  const exception = function (message) {
     throw new Error('smodules.templateParser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
   };
 
-  var eatable = function() {
+  const eatable = function () {
     return ptr < len;
   };
 
-  var next = (function() {
-    var position = function(expr) {
+  const next = (function () {
+    const position = function (expr) {
       while (expr.length > 0) {
         if (expr.slice(0, 1) === '\n') {
           line++;
@@ -29,7 +29,7 @@ const templateParser = function() {
       }
     };
 
-    return function(expr) {
+    return function (expr) {
       expr = expr || ch;
 
       if (read(expr) === false) {
@@ -45,8 +45,8 @@ const templateParser = function() {
     };
   })();
 
-  var skipWhitespace = function() {
-    var skipped = '';
+  const skipWhitespace = function () {
+    let skipped = '';
 
     while (/\s/.test(ch)) {
       skipped += next(ch);
@@ -55,22 +55,22 @@ const templateParser = function() {
     return skipped;
   };
 
-  var read = function(expr) {
+  const read = function(expr) {
     return text.indexOf(expr, ptr) === ptr;
   };
 
-  var readRegex = function(regex) {
+  const readRegex = function (regex) {
     return regex.test(text.slice(ptr));
   };
 
-  var checkRegex = function(regex, errorMessage) {
+  const checkRegex = function (regex, errorMessage) {
     if (readRegex(regex) === false) {
       exception(errorMessage);
     }
   };
 
-  var regexMatched = function(regex, errorMessage) {
-    var result = text.slice(ptr).match(regex);
+  const regexMatched = function (regex, errorMessage) {
+    const result = text.slice(ptr).match(regex);
 
     if (result === null && typeof errorMessage === 'string') {
       exception(errorMessage);
@@ -79,11 +79,11 @@ const templateParser = function() {
     return result;
   };
 
-  var readLeftTag = function() {
-    return readRegex(/^\{\s*left\s*\}/);
+  const readLeftTag = function () {
+    return readRegex(/^{\s*left\s*}/);
   };
 
-  var eatLeftTag = function() {
+  const eatLeftTag = function () {
     next('{');
     skipWhitespace();
     next('left');
@@ -93,11 +93,11 @@ const templateParser = function() {
     return '{';
   };
 
-  var readRightTag = function() {
-    return readRegex(/^\{\s*right\s*\}/);
+  const readRightTag = function () {
+    return readRegex(/^{\s*right\s*}/);
   };
 
-  var eatRightTag = function() {
+  const eatRightTag = function () {
     next('{');
     skipWhitespace();
     next('right');
@@ -107,11 +107,11 @@ const templateParser = function() {
     return '}';
   };
 
-  var readLiteralTag = function() {
-    return readRegex(/^\{\s*literal\s*\}/);
+  const readLiteralTag = function () {
+    return readRegex(/^{\s*literal\s*}/);
   };
 
-  var eatLiteralTag = function() {
+  const eatLiteralTag = function () {
     next('{');
     skipWhitespace();
     next('literal');
@@ -119,11 +119,11 @@ const templateParser = function() {
     next('}');
   };
 
-  var readEndLiteralTag = function() {
-    return readRegex(/^\{\s*\/\s*literal\s*\}/);
+  const readEndLiteralTag = function () {
+    return readRegex(/^{\s*\/\s*literal\s*}/);
   };
 
-  var eatEndLiteralTag = function() {
+  const eatEndLiteralTag = function () {
     next('{');
     skipWhitespace();
     next('/');
@@ -133,33 +133,33 @@ const templateParser = function() {
     next('}');
   };
 
-  var readIfTag = function() {
-    return readRegex(/^\{\s*if\s/);
+  const readIfTag = function () {
+    return readRegex(/^{\s*if\s/);
   };
 
-  var eatIfTag = function() {
+  const eatIfTag = function () {
     next('{');
     skipWhitespace();
     next('if');
     skipWhitespace();
   };
 
-  var readElseifTag = function() {
-    return readRegex(/^\{\s*elseif\s/);
+  const readElseifTag = function () {
+    return readRegex(/^{\s*elseif\s/);
   };
 
-  var eatElseifTag = function() {
+  const eatElseifTag = function () {
     next('{');
     skipWhitespace();
     next('elseif');
     skipWhitespace();
   };
 
-  var readElseTag = function() {
-    return readRegex(/^\{\s*else\s*\}/);
+  const readElseTag = function () {
+    return readRegex(/^{\s*else\s*}/);
   };
 
-  var eatElseTag = function() {
+  const eatElseTag = function () {
     next('{');
     skipWhitespace();
     next('else');
@@ -167,11 +167,11 @@ const templateParser = function() {
     next('}');
   };
 
-  var readEndIfTag = function() {
-    return readRegex(/^\{\s*\/\s*if\s*\}/);
+  const readEndIfTag = function () {
+    return readRegex(/^{\s*\/\s*if\s*}/);
   };
 
-  var eatEndIfTag = function() {
+  const eatEndIfTag = function () {
     next('{');
     skipWhitespace();
     next('/');
@@ -181,22 +181,22 @@ const templateParser = function() {
     next('}');
   };
 
-  var readForTag = function() {
-    return readRegex(/^\{\s*for\s/);
+  const readForTag = function () {
+    return readRegex(/^{\s*for\s/);
   };
 
-  var eatForTag = function() {
+  const eatForTag = function () {
     next('{');
     skipWhitespace();
     next('for');
     skipWhitespace();
   };
 
-  var readEndForTag = function() {
-    return readRegex(/^\{\s*\/\s*for\s*\}/);
+  const readEndForTag = function () {
+    return readRegex(/^{\s*\/\s*for\s*}/);
   };
 
-  var eatEndForTag = function() {
+  const eatEndForTag = function () {
     next('{');
     skipWhitespace();
     next('/');
@@ -206,18 +206,18 @@ const templateParser = function() {
     next('}');
   };
 
-  var readHolderTag = function() {
-    return readRegex(/^\{\s*\$/);
+  const readHolderTag = function () {
+    return readRegex(/^{\s*\$/);
   };
 
   // NOTE: currently not used.
   // eslint-disable-next-line no-unused-vars
-  var readTmpVar = function() {
+  const readTmpVar = function () {
     return readRegex(/^\$\w+[^\w]/);
   };
 
-  var eatTmpVar = function() {
-    var s = next('$');
+  const eatTmpVar = function () {
+    let s = next('$');
 
     while (/\w/.test(ch)) {
       s += next(ch);
@@ -230,12 +230,12 @@ const templateParser = function() {
     return s.slice(1);
   };
 
-  var readVar = function() {
+  const readVar = function () {
     return readRegex(/^\$\w+(?:\.\w+)*(?:[^\w]|$)/);
   };
 
-  var parseVar = function() {
-    var parsed = next('$');
+  const parseVar = function () {
+    let parsed = next('$');
 
     while (/[\w.]/.test(ch)) {
       parsed += next(ch);
@@ -251,67 +251,67 @@ const templateParser = function() {
     };
   };
 
-  var readNull = function() {
+  const readNull = function () {
     return readRegex(/^null[^\w]/);
   };
 
-  var parseNull = function() {
+  const parseNull = function () {
     next('null');
 
     return {
-      type:  'value',
+      type: 'value',
       value: null,
     };
   };
 
-  var boolRegex = /^(true|false)[^\w]/;
+  const boolRegex = /^(true|false)[^\w]/;
 
-  var readBool = function() {
+  const readBool = function () {
     return readRegex(boolRegex);
   };
 
-  var parseBool = function() {
-    var matched = regexMatched(boolRegex, 'bool should be written');
+  const parseBool = function () {
+    const matched = regexMatched(boolRegex, 'bool should be written');
 
     next(matched[1]);
 
     return {
-      type:  'value',
+      type: 'value',
       value: matched[1] === 'true',
     };
   };
 
-  var readString = function() {
+  const readString = function () {
     // eslint-disable-next-line quotes
     return ch === "'" || ch === '"';
   };
 
-  var parseString = function() {
-    var regex = /^(["'])(?:\\\1|\s|\S)*?\1/;
-    var matched = regexMatched(regex, 'string expression not closed');
+  const parseString = function () {
+    const regex = /^(["'])(?:\\\1|\s|\S)*?\1/;
+    const matched = regexMatched(regex, 'string expression not closed');
 
     next(matched[0]);
 
     return {
-      type:  'value',
+      type: 'value',
       value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
     };
   };
 
-  var readNumber = function() {
+  const readNumber = function () {
     return ch === '+' || ch === '-' || (ch >= '0' && ch <= '9');
   };
 
-  var parseNumber = function() {
-    var regex = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
-    var matched = regexMatched(regex);
-    var value;
+  const parseNumber = function () {
+    const regex = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
+    const matched = regexMatched(regex);
+    let value;
 
     if (matched && !isNaN(value = +(matched[0]))) {
       next(matched[0]);
 
       return {
-        type:  'value',
+        type: 'value',
         value: value,
       };
     } else {
@@ -319,11 +319,11 @@ const templateParser = function() {
     }
   };
 
-  var readValue = function() {
+  const readValue = function () {
     return readNull() || readBool() || readString() || readNumber();
   };
 
-  var parseValue = function() {
+  const parseValue = function () {
     if (readNull()) {
       return parseNull();
     } else if (readBool()) {
@@ -337,15 +337,15 @@ const templateParser = function() {
     }
   };
 
-  var andOrRegex = /^(and|or)[^\w]/;
+  const andOrRegex = /^(and|or)[^\w]/;
 
-  var readAndOr = function() {
+  const readAndOr = function () {
     return readRegex(andOrRegex);
   };
 
-  var parseAndOr = function() {
+  const parseAndOr = function () {
     // eslint-disable-next-line quotes
-    var matched = regexMatched(andOrRegex, "'and' or 'or' should be written");
+    const matched = regexMatched(andOrRegex, "'and' or 'or' should be written");
 
     next(matched[1]);
 
@@ -355,14 +355,14 @@ const templateParser = function() {
     };
   };
 
-  var compRegex = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
+  const compRegex = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
 
-  var readComp = function() {
+  const readComp = function () {
     return readRegex(compRegex);
   };
 
-  var parseComp = function() {
-    var matched = regexMatched(compRegex, 'comparer should be written');
+  const parseComp = function () {
+    const matched = regexMatched(compRegex, 'comparer should be written');
 
     return {
       type: 'comp',
@@ -370,11 +370,11 @@ const templateParser = function() {
     };
   };
 
-  var readRoundBracket = function() {
+  const readRoundBracket = function () {
     return ch === '(';
   };
 
-  var parseRoundBracket = function() {
+  const parseRoundBracket = function () {
     next('(');
 
     return {
@@ -382,11 +382,11 @@ const templateParser = function() {
     };
   };
 
-  var readEndRoundBracket = function() {
+  const readEndRoundBracket = function () {
     return ch === ')';
   };
 
-  var parseEndRoundBracket = function() {
+  const parseEndRoundBracket = function () {
     next(')');
 
     return {
@@ -394,11 +394,11 @@ const templateParser = function() {
     };
   };
 
-  var parseCondition = (function() {
-    var getReversePolish = (function() {
+  const parseCondition = (function() {
+    const getReversePolish = (function() {
       // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
-      var state = {
+      const state = {
         'start':           ['roundBracket',                    'value', 'var',                  'error'],
         'roundBracket':    ['roundBracket',                    'value', 'var',                  'error'],
         'endRoundBracket': [                'endRoundBracket',                         'andor', 'error'],
@@ -409,7 +409,7 @@ const templateParser = function() {
       };
       /* eslint-enable */
 
-      var method = {
+      const method = {
         'roundBracket':    { read: readRoundBracket,    parse: parseRoundBracket },
         'endRoundBracket': { read: readEndRoundBracket, parse: parseEndRoundBracket },
         'value':           { read: readValue,           parse: parseValue },
@@ -418,7 +418,7 @@ const templateParser = function() {
         'andor':           { read: readAndOr,           parse: parseAndOr },
       };
 
-      var order = {
+      const order = {
         'endRoundBracket': 1,
         'or':              2,
         'and':             3,
@@ -428,15 +428,15 @@ const templateParser = function() {
         'roundBracket':    6,
       };
 
-      var getOrder = function(section) {
+      const getOrder = function (section) {
         // parseAndor() returns section.type with 'andor'.
         // Use section.expr instead.
         return order[section.type] || order[section.expr];
       };
 
-      var parse = function(sourceType) {
-        var transitableTypes = state[sourceType];
-        var i, size, type, result;
+      const parse = function (sourceType) {
+        const transitableTypes = state[sourceType];
+        let i, size, type, result;
 
         for (i = 0, size = transitableTypes.length; i < size; i++) {
           type = transitableTypes[i];
@@ -454,17 +454,17 @@ const templateParser = function() {
         }
       };
 
-      var typeHistory = (function() {
-        var history;
+      const typeHistory = (function () {
+        let history;
 
-        var get = function(index) {
+        const get = function (index) {
           return history[history.length - index] || null;
         };
 
-        var calcRoundBracketBalance = function() {
-          var balance = 0;
+        const calcRoundBracketBalance = function () {
+          let balance = 0;
 
-          history.forEach(function(type) {
+          history.forEach(function (type) {
             if (type === 'roundBracket') {
               balance++;
             } else if (type === 'endRoundBracket') {
@@ -475,10 +475,10 @@ const templateParser = function() {
           return balance;
         };
 
-        var calcOperandOperatorBalance = function() {
-          var balance = 0;
+        const calcOperandOperatorBalance = function () {
+          let balance = 0;
 
-          history.forEach(function(type) {
+          history.forEach(function (type) {
             if (type === 'var' || type === 'value') {
               balance++;
             } else if (type === 'comp' || type === 'andor') {
@@ -490,10 +490,10 @@ const templateParser = function() {
         };
 
         return {
-          init: function() {
+          init: function () {
             history = ['start'];
           },
-          add: function(type) {
+          add: function (type) {
             if (type === 'comp' && get(2) === 'comp') {
               exception('can not write comparer here');
             }
@@ -505,10 +505,10 @@ const templateParser = function() {
               exception("can not use ')' here");
             }
           },
-          latest: function() {
+          latest: function () {
             return get(1);
           },
-          finish: function() {
+          finish: function () {
             if (calcRoundBracketBalance() !== 0) {
               exception('invalid usage of round bracket');
             }
@@ -520,7 +520,7 @@ const templateParser = function() {
       })();
 
       return function() {
-        var parsed, polish = [], stack = [], stackTop;
+        let parsed, polish = [], stack = [], stackTop;
 
         typeHistory.init();
 
@@ -565,7 +565,7 @@ const templateParser = function() {
     })(); // getReversePolish()
 
     return function() {
-      var type, stack = null;
+      let type, stack = null;
 
       if (readIfTag()) {
         eatIfTag();
@@ -592,8 +592,8 @@ const templateParser = function() {
     };
   })(); // parseCondition()
 
-  var parseNormalBlock = function() {
-    var expr = '';
+  const parseNormalBlock = function () {
+    let expr = '';
 
     while (eatable()) {
       if (readLeftTag()) {
@@ -615,11 +615,11 @@ const templateParser = function() {
     };
   };
 
-  var parseLiteralBlock = function() {
-    var expr = '';
-    var closed = false;
-    var startLine = line;
-    var startAt = at;
+  const parseLiteralBlock = function () {
+    let expr = '';
+    let closed = false;
+    const startLine = line;
+    const startAt = at;
 
     eatLiteralTag();
 
@@ -647,10 +647,10 @@ const templateParser = function() {
     };
   };
 
-  var parseHolderBlock = (function() {
-    var getFilterSection = (function() {
-      var getFilterNameSection = function() {
-        var name = '';
+  const parseHolderBlock = (function () {
+    const getFilterSection = (function () {
+      const getFilterNameSection = function () {
+        let name = '';
 
         skipWhitespace();
 
@@ -665,8 +665,8 @@ const templateParser = function() {
         return name;
       };
 
-      var getFilterArgsSection = function() {
-        var args = [];
+      const getFilterArgsSection = function () {
+        const args = [];
 
         skipWhitespace();
 
@@ -697,8 +697,8 @@ const templateParser = function() {
         return args;
       };
 
-      return function() {
-        var filters = [];
+      return function () {
+        const filters = [];
 
         skipWhitespace();
 
@@ -727,8 +727,8 @@ const templateParser = function() {
       };
     })(); // getFilterSection()
 
-    return function() {
-      var keySection, filterSection;
+    return function () {
+      let keySection, filterSection;
 
       next('{');
 
@@ -740,16 +740,16 @@ const templateParser = function() {
       next('}');
 
       return {
-        type:    'holder',
-        keys:    keySection.keys,
+        type: 'holder',
+        keys: keySection.keys,
         filters: filterSection.filters,
       };
     };
   })(); // parseHolderBlock()
 
-  var parseForBlock = (function() {
-    var parseHeader = function() {
-      var k, v, array;
+  const parseForBlock = (function () {
+    const parseHeader = function () {
+      let k, v, array;
 
       eatForTag();
 
@@ -774,28 +774,28 @@ const templateParser = function() {
       next('}');
 
       return {
-        k:     k,
-        v:     v,
+        k: k,
+        v: v,
         array: array.keys,
       };
     }; // parseHeader()
 
-    return function() {
-      var header = parseHeader();
-      var blocks = loop([], true);
+    return function () {
+      const header = parseHeader();
+      const blocks = loop([], true);
 
       eatEndForTag();
 
       return {
-        type:   'for',
+        type: 'for',
         header: header,
         blocks: blocks,
       };
     };
   })(); // parseForBlock()
 
-  var parseIfBlock = function() {
-    var sections = [];
+  const parseIfBlock = function () {
+    const sections = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
       sections.push({
@@ -811,7 +811,7 @@ const templateParser = function() {
     };
   }; // parseIfBlock()
 
-  var loop = function(result, inBlock) {
+  const loop = function(result, inBlock) {
     while (eatable()) {
       if (ch === '{') {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {

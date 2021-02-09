@@ -1,7 +1,8 @@
 const hash = function() {
-  var that = {}, store = {};
+  let that = {};
+  let store = {};
 
-  var has = function(key) {
+  const has = function (key) {
     return store.hasOwnProperty(key);
   };
 
@@ -31,7 +32,8 @@ const hash = function() {
   };
 
   that.getKeys = function() {
-    var key, keys = [];
+    let key;
+    let keys = [];
 
     for (key in store) {
       if (has(key)) {
