@@ -1,13 +1,7 @@
-# smodules.js
-
 ## ABOUT
 
-JavaScript のいろいろなモジュールをまとめたプロジェクトです。
+Includes minimal template engine.
 
-## MODULES LIST
-
-- `smodules.template` : 小さなテンプレートエンジン
-- `smodules.ui`
 
 ## LICENSE
 
