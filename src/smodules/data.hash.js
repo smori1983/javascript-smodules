@@ -1,4 +1,4 @@
-smodules.data.hash = function() {
+const hash = function() {
   var that = {}, store = {};
 
   var has = function(key) {
@@ -44,4 +44,8 @@ smodules.data.hash = function() {
   };
 
   return that;
+};
+
+module.exports.init = function () {
+  return hash();
 };

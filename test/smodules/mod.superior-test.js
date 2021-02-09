@@ -1,3 +1,5 @@
+const superior = require('../../src/smodules/mod.superior');
+
 QUnit.module('mod.superior');
 
 QUnit.test('simple test', function(assert) {
@@ -14,7 +16,7 @@ QUnit.test('simple test', function(assert) {
   var sub = function() {
     var that = base();
     var parent = {
-      say: smodules.mod.superior(that, 'say'),
+      say: superior.init(that, 'say'),
     };
 
     that.say = function() {

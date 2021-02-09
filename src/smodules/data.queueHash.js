@@ -1,8 +1,11 @@
-smodules.data.queueHash = function() {
-  var that = smodules.data.hash();
+const hash = require('./data.hash');
+const superior = require('./mod.superior');
+
+const queueHash = function() {
+  var that = hash.init();
   var parent = {
-    add: smodules.mod.superior(that, 'add'),
-    get: smodules.mod.superior(that, 'get'),
+    add: superior.init(that, 'add'),
+    get: superior.init(that, 'get'),
   };
 
   delete that.add;
@@ -31,4 +34,8 @@ smodules.data.queueHash = function() {
   };
 
   return that;
+};
+
+module.exports.init = function () {
+  return queueHash();
 };

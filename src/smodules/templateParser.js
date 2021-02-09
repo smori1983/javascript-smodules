@@ -1,4 +1,4 @@
-smodules.templateParser = function() {
+const templateParser = function() {
   var that = {};
   var src;
   var text;
@@ -849,4 +849,8 @@ smodules.templateParser = function() {
   };
 
   return that;
+};
+
+module.exports.init = function () {
+  return templateParser();
 };
