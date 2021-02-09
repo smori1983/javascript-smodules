@@ -14,7 +14,7 @@ QUnit.module('templateParser', {
 });
 
 QUnit.test('holder block - no filters', function(assert) {
-  this.source = '{ $foo.bar }',
+  this.source = '{ $foo.bar }';
   this.parse();
 
   assert.strictEqual(this.result.length, 1);
@@ -30,8 +30,8 @@ QUnit.test('holder block - filters with no args', function(assert) {
   this.source  = '{ $foo | filter1 | filter2 }';
   this.parse();
 
-  var filter1 = this.result[0].filters[0];
-  var filter2 = this.result[0].filters[1];
+  const filter1 = this.result[0].filters[0];
+  const filter2 = this.result[0].filters[1];
 
   assert.strictEqual(filter1.name, 'filter1');
   assert.strictEqual(filter1.args.length, 0);
@@ -43,7 +43,7 @@ QUnit.test('holder block - filter with args - null, true and false', function(as
   this.source = '{ $foo | filter : null, true, false }';
   this.parse();
 
-  var filter = this.result[0].filters[0];
+  const filter = this.result[0].filters[0];
 
   assert.strictEqual(filter.args[0], null);
   assert.strictEqual(filter.args[1], true);
@@ -54,7 +54,7 @@ QUnit.test('holder block - filter with args - string', function(assert) {
   this.source = '{ $foo | filter : "test", "{delimiter}", "it\'s string" }';
   this.parse();
 
-  var filter = this.result[0].filters[0];
+  const filter = this.result[0].filters[0];
 
   assert.strictEqual(filter.args[0], 'test');
   assert.strictEqual(filter.args[1], '{delimiter}');
@@ -62,10 +62,10 @@ QUnit.test('holder block - filter with args - string', function(assert) {
 });
 
 QUnit.test('holder block - filter with args - number', function(assert) {
-  this.source = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }',
+  this.source = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }';
   this.parse();
 
-  var filter = this.result[0].filters[0];
+  const filter = this.result[0].filters[0];
 
   assert.strictEqual(filter.args[0], 0);
   assert.strictEqual(filter.args[1], 10);

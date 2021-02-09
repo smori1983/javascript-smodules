@@ -14,7 +14,7 @@ QUnit.module('templateParser', {
 });
 
 QUnit.test('if block - if elseif else', function(assert) {
-  var section;
+  let section;
 
   this.source =
     '{ if $value1 }' +
@@ -25,7 +25,7 @@ QUnit.test('if block - if elseif else', function(assert) {
     '<div>value3</div>' +
     '{ else }' +
     '<div>value4</div>' +
-    '{ /if }',
+    '{ /if }';
   this.parse();
 
   assert.strictEqual(this.result[0].type, 'if');
@@ -63,7 +63,7 @@ QUnit.test('if block - condition - simple', function(assert) {
     '{ /if }';
   this.parse();
 
-  var stack = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 3);
   assert.strictEqual(stack[0].type, 'var');
@@ -81,7 +81,7 @@ QUnit.test('if block - condition - redundant round brackets', function(assert) {
     '{ /if }';
   this.parse();
 
-  var stack = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 3);
   assert.strictEqual(stack[0].type, 'var');
@@ -99,7 +99,7 @@ QUnit.test('if block - condition - complicated', function(assert) {
     '{ /if }';
   this.parse();
 
-  var stack  = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 15);
   assert.strictEqual(stack[0].type, 'var');
@@ -141,7 +141,7 @@ QUnit.test('if block - condition - inversion of lval and rval', function(assert)
     '{ /if }';
   this.parse();
 
-  var stack  = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 3);
   assert.strictEqual(stack[0].type, 'value');
@@ -159,7 +159,7 @@ QUnit.test('if block - condition - priority of and/or', function(assert) {
     '{ /if }';
   this.parse();
 
-  var stack  = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 5);
   assert.strictEqual(stack[0].type, 'var');
@@ -181,7 +181,7 @@ QUnit.test('if block - and chain', function(assert) {
     '{ /if }';
   this.parse();
 
-  var stack  = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 5);
   assert.strictEqual(stack[0].type, 'var');
@@ -203,7 +203,7 @@ QUnit.test('if block - or chain', function(assert) {
     '{ /if }';
   this.parse();
 
-  var stack  = this.result[0].sections[0].header.stack;
+  const stack = this.result[0].sections[0].header.stack;
 
   assert.strictEqual(stack.length, 5);
   assert.strictEqual(stack[0].type, 'var');

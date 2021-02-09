@@ -2,8 +2,8 @@ const hash = require('./data.hash');
 const superior = require('./mod.superior');
 
 const queueHash = function() {
-  var that = hash.init();
-  var parent = {
+  const that = hash.init();
+  const parent = {
     add: superior.init(that, 'add'),
     get: superior.init(that, 'get'),
   };
@@ -12,7 +12,7 @@ const queueHash = function() {
   delete that.get;
 
   that.addTo = function(key, value) {
-    var queue = that.has(key) ? parent.get(key) : [];
+    const queue = that.has(key) ? parent.get(key) : [];
 
     queue.push(value);
     parent.add(key, queue);
