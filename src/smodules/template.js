@@ -1,3 +1,4 @@
+const FilterManager = require('./filter-manager');
 const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
 const templateParser = require('./templateParser');
@@ -5,7 +6,7 @@ const templateParser = require('./templateParser');
 const template = function() {
   const that = {};
 
-  const _filters = new Hash();
+  const _filterManager = new FilterManager();
 
   const _templates = new Hash();
 
@@ -173,11 +174,10 @@ const template = function() {
     };
 
     const getFilter = function (name) {
-      if (_filters.has(name)) {
-        return _filters.get(name);
-      } else {
-        // eslint-disable-next-line quotes
-        exception('filter \'' + name + '\' not found');
+      try {
+        return _filterManager.get(name);
+      } catch (e) {
+        exception(e.message);
       }
     };
 
@@ -341,10 +341,7 @@ const template = function() {
   };
 
   that.addFilter = function(name, func) {
-    if (typeof func === 'function') {
-      _filters.add(name, func);
-    }
-    return that;
+    _filterManager.register(name, func);
   };
 
   that.preFetch = function(source, callback) {
@@ -393,7 +390,7 @@ const template = function() {
   };
 
   // default filters
-  that.addFilter('h', (function() {
+  _filterManager.register('h', (function () {
     const list = {
       '<': '&lt;',
       '>': '&gt;',
@@ -403,25 +400,25 @@ const template = function() {
     };
 
     return function(value) {
-      return value.replace(/[<>&"']/g, function(matched) {
+      return value.replace(/[<>&"']/g, function (matched) {
         return list[matched];
       });
     };
   })());
 
-  that.addFilter('default', function(value, defaultValue) {
+  _filterManager.register('default', function (value, defaultValue) {
     return value.length === 0 ? defaultValue : value;
   });
 
-  that.addFilter('upper', function(value) {
+  _filterManager.register('upper', function (value) {
     return value.toLocaleUpperCase();
   });
 
-  that.addFilter('lower', function(value) {
+  _filterManager.register('lower', function (value) {
     return value.toLocaleLowerCase();
   });
 
-  that.addFilter('plus', function(value, plus) {
+  _filterManager.register('plus', function (value, plus) {
     if (isFinite(value) && typeof plus === 'number' && isFinite(plus)) {
       return (+(value) + plus).toString();
     } else {
