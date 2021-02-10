@@ -1,17 +1,17 @@
-const hash = require('./data.hash');
-const queueHash = require('./data.queueHash');
+const Hash = require('./data.hash');
+const QueueHash = require('./data.queueHash');
 const templateParser = require('./templateParser');
 
 const template = function() {
   const that = {};
 
-  const _filters = hash.init();
+  const _filters = new Hash();
 
-  const _templates = hash.init();
+  const _templates = new Hash();
 
   const _parser = templateParser.init();
 
-  const _remoteQueue = queueHash.init();
+  const _remoteQueue = new QueueHash();
 
   let _testRemoteFile = function (file) {
     return (/\.html$/).test(file);
@@ -68,7 +68,7 @@ const template = function() {
   };
 
   const _registerFromRemote = (function () {
-    const _fetching = hash.init();
+    const _fetching = new Hash();
 
     return function (source) {
       if (!_fetching.has(source)) {
