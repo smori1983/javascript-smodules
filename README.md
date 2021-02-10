@@ -49,6 +49,79 @@ Includes minimal template engine.
 - `{literal}` .. `{/literal}`
 
 
+## AST
+
+### `var`
+
+- `type` - `string` (= `'var'`)
+- `keys` - `string[]`
+
+### `value`
+
+- `type` - `string` (= `'value'`)
+- `value` - `null`, `boolean`, `string`, `number`
+
+### `andor`
+
+- `type` - `string` (= `'andor'`)
+- `expr` - `string` (= `'and'` | `'or'`)
+
+### `comp`
+
+- `type` - `string` (= `'comp'`)
+- `expr` - `string` (= `'lte'` | `'lt'` | `'gte'` | `'gt'` | `'==='` | `'=='` | `'!=='` | `'!='`)
+
+### `roundBracket`
+
+- `type` - `string` (= `'roundBracket'`)
+
+### `endRoundBracket`
+
+- `type` - `string` (= `'endRoundBracket'`)
+
+### `if`
+
+- `type` - `string` (= `'if'`)
+- `stack`
+
+### `elseif`
+
+- `type` - `string` (= `'elseif'`)
+- `stack`
+
+### `else`
+
+- `type` - `string` (= `'else'`)
+- `stack`
+
+### `normal`
+
+- `type` - `string` (= `'normal'`)
+- `expr` - `string`
+
+### `literal`
+
+- `type` - `string` (= `'literal'`)
+- `expr` - `string`
+
+### `holder`
+
+- `type` - `string` (= `'holder'`)
+- `keys`
+- `filters`
+
+### `for`
+
+- `type` - `string` (= `'for'`)
+- `header`
+- `blocks`
+
+### `if` (?)
+
+- `type` - `string` (= `'if'`)
+- `sections`
+
+
 ## LICENSE
 
 MIT
