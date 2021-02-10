@@ -1,8 +1,8 @@
-const hash = require('../../src/smodules/data.hash');
+const Hash = require('../../src/smodules/data.hash');
 
 QUnit.module('data.hash', {
   beforeEach: function() {
-    this.hash = hash.init();
+    this.hash = new Hash();
   },
 });
 
@@ -30,4 +30,11 @@ QUnit.test('clear', function(assert) {
   this.hash.clear();
   assert.strictEqual(this.hash.has('name'), false);
   assert.strictEqual(this.hash.has('mail'), false);
+});
+
+QUnit.test('getKeys', function (assert) {
+  this.hash.add('key1', 'value1');
+  this.hash.add('key3', 'value1');
+  this.hash.add('key2', 'value1');
+  assert.deepEqual(this.hash.getKeys(), ['key1', 'key2', 'key3']);
 });

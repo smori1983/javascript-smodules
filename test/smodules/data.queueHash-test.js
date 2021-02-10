@@ -1,8 +1,8 @@
-const queueHash = require('../../src/smodules/data.queueHash');
+const QueueHash = require('../../src/smodules/data.queueHash');
 
 QUnit.module('data.queueHash', {
   beforeEach: function() {
-    this.qh = queueHash.init();
+    this.qh = new QueueHash();
   },
 });
 

@@ -1,53 +1,55 @@
-const hash = function() {
-  let that = {};
-  let store = {};
+class Hash {
+  constructor() {
+    this.store = {};
+  }
 
-  const has = function (key) {
-    return store.hasOwnProperty(key);
-  };
+  /**
+   * @param {string} key
+   * @return {boolean}
+   */
+  has(key) {
+    return this.store.hasOwnProperty(key);
+  }
 
-  that.add = function(key, value) {
-    store[key] = value;
-    return that;
-  };
+  /**
+   * @param {string} key
+   * @param {*} value
+   */
+  add(key, value) {
+    this.store[key] = value;
+  }
 
-  that.remove = function(key) {
-    if (has(key)) {
-      delete store[key];
+  /**
+   * @param {string} key
+   */
+  remove(key) {
+    if (this.has(key)) {
+      delete this.store[key];
     }
-    return that;
-  };
+  }
 
-  that.clear = function() {
-    store = {};
-    return that;
-  };
+  clear() {
+    this.store = {};
+  }
 
-  that.has = function(key) {
-    return has(key);
-  };
+  /**
+   * @param {string} key
+   * @return {*}
+   */
+  get(key) {
+    return this.store[key];
+  }
 
-  that.get = function(key) {
-    return store[key];
-  };
+  /**
+   * @return {string[]}
+   */
+  getKeys() {
+    let keys = Object.keys(this.store);
 
-  that.getKeys = function() {
-    let key;
-    let keys = [];
-
-    for (key in store) {
-      if (has(key)) {
-        keys.push(key);
-      }
-    }
     keys.sort();
 
     return keys;
-  };
+  }
+}
 
-  return that;
-};
-
-module.exports.init = function () {
-  return hash();
-};
+module.exports = Hash;

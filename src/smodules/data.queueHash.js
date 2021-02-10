@@ -1,41 +1,69 @@
-const hash = require('./data.hash');
-const superior = require('./mod.superior');
+const Hash = require('./data.hash');
 
-const queueHash = function() {
-  const that = hash.init();
-  const parent = {
-    add: superior.init(that, 'add'),
-    get: superior.init(that, 'get'),
-  };
+class QueueHash {
+  constructor() {
+    this.hash = new Hash();
+  }
 
-  delete that.add;
-  delete that.get;
+  /**
+   * @param {string} key
+   * @return {boolean}
+   */
+  has(key) {
+    return this.hash.has(key);
+  }
 
-  that.addTo = function(key, value) {
-    const queue = that.has(key) ? parent.get(key) : [];
+  /**
+   * @param {string} key
+   * @param {*} value
+   */
+  addTo(key, value) {
+    const queue = this.hash.has(key) ? this.hash.get(key) : [];
 
     queue.push(value);
-    parent.add(key, queue);
-    return that;
-  };
 
-  that.getFrom = function(key) {
-    if (that.has(key)) {
-      return parent.get(key).shift();
-    }
-  };
+    this.hash.add(key, queue);
+  }
 
-  that.sizeOf = function(key) {
-    if (that.has(key)) {
-      return parent.get(key).length;
+  /**
+   * @param {string} key
+   */
+  remove(key) {
+    this.hash.remove(key);
+  }
+
+  clear() {
+    this.hash.clear();
+  }
+
+  /**
+   * @param {string} key
+   * @return {number}
+   */
+  sizeOf(key) {
+    if (this.hash.has(key)) {
+      return this.hash.get(key).length;
     } else {
       return 0;
     }
-  };
+  }
 
-  return that;
-};
+  /**
+   * @param {string} key
+   * @return {*}
+   */
+  getFrom(key) {
+    if (this.hash.has(key)) {
+      return this.hash.get(key).shift();
+    }
+  }
 
-module.exports.init = function () {
-  return queueHash();
-};
+  /**
+   * @return {string[]}
+   */
+  getKeys() {
+    return this.hash.getKeys();
+  }
+}
+
+module.exports = QueueHash;
