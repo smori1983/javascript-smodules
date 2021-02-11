@@ -13,12 +13,19 @@ const parser = function() {
   /**
    * @return {number}
    */
+  const getLine = function () {
+    return line;
+  };
+
+  /**
+   * @return {number}
+   */
   const getAt = function () {
     return at;
   };
 
   const exception = function (message) {
-    throw new Error('parser - ' + message + ' in source ' + src + ' [' + line + ',' + getAt() + ']');
+    throw new Error('parser - ' + message + ' in source ' + src + ' [' + getLine() + ',' + getAt() + ']');
   };
 
   const eatable = function () {
@@ -542,7 +549,7 @@ const parser = function() {
   const parseLiteralBlock = function () {
     let value = '';
     let closed = false;
-    const startLine = line;
+    const startLine = getLine();
     const startAt = getAt();
 
     eatLiteralTag();
