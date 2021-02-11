@@ -82,12 +82,14 @@ Includes minimal template engine.
 ### `if`
 
 - `type` - `string` (= `'if'`)
-- `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
+- `ctrl`
+  - `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
 
 ### `elseif`
 
 - `type` - `string` (= `'elseif'`)
-- `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
+- `ctrl`
+  - `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
 
 ### `else`
 
@@ -117,11 +119,11 @@ Includes minimal template engine.
 ### `for`
 
 - `type` - `string` (= `'for'`)
-- `header`
+- `ctrl`
   - [`k`] - `string`
   - `v` - `string`
   - `array` - `string[]`
-- `blocks` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<if>`)
+- `children` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<if>`)
 
 ### `if` (?)
 
