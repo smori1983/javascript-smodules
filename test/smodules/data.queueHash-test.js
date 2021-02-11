@@ -1,12 +1,12 @@
 const QueueHash = require('../../src/smodules/data.queueHash');
 
 QUnit.module('data.queueHash', {
-  beforeEach: function() {
+  beforeEach: function () {
     this.qh = new QueueHash();
   },
 });
 
-QUnit.test('addTo and getFrom', function(assert) {
+QUnit.test('addTo and getFrom', function (assert) {
   this.qh.addTo('list', 'a');
   this.qh.addTo('list', 'b');
 
@@ -22,7 +22,7 @@ QUnit.test('addTo and getFrom', function(assert) {
   assert.strictEqual(this.qh.has('list'), false);
 });
 
-QUnit.test('check keys', function(assert) {
+QUnit.test('check keys', function (assert) {
   this.qh.addTo('queue1', 'a');
 
   assert.strictEqual(this.qh.getKeys().length, 1);
@@ -39,7 +39,7 @@ QUnit.test('check keys', function(assert) {
   assert.strictEqual(this.qh.getKeys().length, 0);
 });
 
-QUnit.test('using not existing key', function(assert) {
+QUnit.test('using non-existent key', function (assert) {
   assert.strictEqual(this.qh.has('hoge'), false);
   assert.strictEqual(this.qh.sizeOf('hoge'), 0);
   assert.strictEqual(typeof this.qh.getFrom('hoge'), 'undefined');

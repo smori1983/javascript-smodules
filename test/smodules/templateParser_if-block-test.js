@@ -1,19 +1,19 @@
 const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser', {
-  before: function() {
-    this.parse = function() {
+  before: function () {
+    this.parse = function () {
       this.result = this.parser.parse(this.source);
     };
   },
-  beforeEach: function() {
+  beforeEach: function () {
     this.parser = templateParser.init();
     this.source = '';
     this.result = null;
   },
 });
 
-QUnit.test('if block - if elseif else', function(assert) {
+QUnit.test('if block - if elseif else', function (assert) {
   let section;
 
   this.source =
@@ -56,7 +56,7 @@ QUnit.test('if block - if elseif else', function(assert) {
   assert.strictEqual(section.blocks[0].value, '<div>value4</div>');
 });
 
-QUnit.test('if block - condition - simple', function(assert) {
+QUnit.test('if block - condition - simple', function (assert) {
   this.source =
     '{ if $foo === "hoge" }' +
     '<p>hoge</p>' +
@@ -74,7 +74,7 @@ QUnit.test('if block - condition - simple', function(assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - condition - redundant round brackets', function(assert) {
+QUnit.test('if block - condition - redundant round brackets', function (assert) {
   this.source =
     '{ if ( ( ( $foo === "hoge" ) ) ) }' +
     '<p>hoge</p>' +
@@ -92,7 +92,7 @@ QUnit.test('if block - condition - redundant round brackets', function(assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - condition - complicated', function(assert) {
+QUnit.test('if block - condition - complicated', function (assert) {
   this.source =
     '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }' +
     '<p>ok</p>' +
@@ -134,7 +134,7 @@ QUnit.test('if block - condition - complicated', function(assert) {
   assert.strictEqual(stack[14].expr, 'or');
 });
 
-QUnit.test('if block - condition - inversion of lval and rval', function(assert) {
+QUnit.test('if block - condition - inversion of lval and rval', function (assert) {
   this.source =
     '{ if 10 !== $price }' +
     '<p>ok</p>' +
@@ -152,7 +152,7 @@ QUnit.test('if block - condition - inversion of lval and rval', function(assert)
   assert.strictEqual(stack[2].expr, '!==');
 });
 
-QUnit.test('if block - condition - priority of and/or', function(assert) {
+QUnit.test('if block - condition - priority of and/or', function (assert) {
   this.source =
     '{ if ( $var1 or $var2 ) and $var3 }' +
     '<p>ok</p>' +
@@ -174,7 +174,7 @@ QUnit.test('if block - condition - priority of and/or', function(assert) {
   assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('if block - and chain', function(assert) {
+QUnit.test('if block - and chain', function (assert) {
   this.source =
     '{ if $var1 and $var2 and $var3 }' +
     '<p>ok</p>' +
@@ -196,7 +196,7 @@ QUnit.test('if block - and chain', function(assert) {
   assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('if block - or chain', function(assert) {
+QUnit.test('if block - or chain', function (assert) {
   this.source =
     '{ if $var1 or $var2 or $var3 }' +
     '<p>ok</p>' +

@@ -1,19 +1,19 @@
 const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser', {
-  before: function() {
-    this.parse = function() {
+  before: function () {
+    this.parse = function () {
       this.result = this.parser.parse(this.source);
     };
   },
-  beforeEach: function() {
+  beforeEach: function () {
     this.parser = templateParser.init();
     this.source = '';
     this.result = null;
   },
 });
 
-QUnit.test('normal block - plain text', function(assert) {
+QUnit.test('normal block - plain text', function (assert) {
   this.source = 'Hello, world!';
   this.parse();
 
@@ -22,7 +22,7 @@ QUnit.test('normal block - plain text', function(assert) {
   assert.strictEqual(this.result[0].value, 'Hello, world!');
 });
 
-QUnit.test('normal block - plain html', function(assert) {
+QUnit.test('normal block - plain html', function (assert) {
   this.source =
     '<ul>' +
     '<li>one</li>' +
@@ -35,7 +35,7 @@ QUnit.test('normal block - plain html', function(assert) {
   assert.strictEqual(this.result[0].value, '<ul><li>one</li><li>two</li></ul>');
 });
 
-QUnit.test('normal block - plain html broken', function(assert) {
+QUnit.test('normal block - plain html broken', function (assert) {
   this.source =
     '<ul>' +
     '<li>one' +
@@ -48,7 +48,7 @@ QUnit.test('normal block - plain html broken', function(assert) {
   assert.strictEqual(this.result[0].value, '<ul><li>one<li>two</div>');
 });
 
-QUnit.test('normal block - literal tag', function(assert) {
+QUnit.test('normal block - literal tag', function (assert) {
   this.source = '<div>{left}Hello, world!{right}</div>';
   this.parse();
 

@@ -1,20 +1,20 @@
 const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser', {
-  before: function() {
-    this.parse = function() {
+  before: function () {
+    this.parse = function () {
       this.result = this.parser.parse(this.source);
     };
   },
-  beforeEach: function() {
+  beforeEach: function () {
     this.parser = templateParser.init();
     this.source = '';
     this.result = null;
   },
 });
 
-QUnit.test('literal block', function(assert) {
-  this.source ='<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>';
+QUnit.test('literal block', function (assert) {
+  this.source = '<div>{literal}{foo} {left}bar{right} {left}/literal{right} function() {};{/literal}</div>';
   this.parse();
 
   assert.strictEqual(this.result.length, 3);
