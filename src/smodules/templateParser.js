@@ -748,7 +748,7 @@ const templateParser = function() {
   })(); // parseHolderBlock()
 
   const parseForBlock = (function () {
-    const parseHeader = function () {
+    const parseControlData = function () {
       let k, v, array;
 
       eatForTag();
@@ -781,14 +781,14 @@ const templateParser = function() {
     }; // parseHeader()
 
     return function () {
-      const header = parseHeader();
+      const ctrl = parseControlData();
       const blocks = loop([], true);
 
       eatEndForTag();
 
       return {
         type: 'for',
-        header: header,
+        ctrl: ctrl,
         children: blocks,
       };
     };

@@ -286,17 +286,17 @@ const template = function() {
     };
 
     const loopFor = function(block, params) {
-      const array = getValue(block.header.keys, params, true);
+      const array = getValue(block.ctrl.keys, params, true);
       let output = '';
 
       if (Array.isArray(array)) {
         array.forEach(function(value, idx) {
           const additional = {};
 
-          if (block.header.tmp_k) {
-            additional[block.header.tmp_k] = idx;
+          if (block.ctrl.tmp_k) {
+            additional[block.ctrl.tmp_k] = idx;
           }
-          additional[block.header.tmp_v] = value;
+          additional[block.ctrl.tmp_v] = value;
 
           params.push(additional);
           output += loop(block.children, params);
