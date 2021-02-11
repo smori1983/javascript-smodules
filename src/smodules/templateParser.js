@@ -565,7 +565,7 @@ const templateParser = function() {
     })(); // getReversePolish()
 
     return function() {
-      let type, stack = null;
+      let type, stack = [];
 
       if (readIfTag()) {
         eatIfTag();
@@ -587,7 +587,9 @@ const templateParser = function() {
 
       return {
         type:  type,
-        stack: stack,
+        ctrl: {
+          stack: stack,
+        },
       };
     };
   })(); // parseCondition()

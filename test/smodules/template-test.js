@@ -405,6 +405,24 @@ QUnit.test('if block - property not chainable - or 2', function(assert) {
   assert.strictEqual(this.execBind(param).get(), '<p>OK</p>');
 });
 
+QUnit.test('if block - nested - for', function (assert) {
+  const param = {
+    data1: {
+      status: true,
+      items: ['a', 'b', 'c'],
+    },
+  };
+
+  this.src =
+    '{ if $data1.status }' +
+    '{ for $item in $data1.items }' +
+    '<p>{ $item }</p>' +
+    '{ /for }' +
+    '{ /if }';
+
+  assert.strictEqual(this.execBind(param).get(), '<p>a</p><p>b</p><p>c</p>');
+});
+
 QUnit.test('for block', function(assert) {
   const param = {items: ['one', 'two', 'three']};
 
