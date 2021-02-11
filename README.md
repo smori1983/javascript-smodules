@@ -97,12 +97,12 @@ Includes minimal template engine.
 ### `normal`
 
 - `type` - `string` (= `'normal'`)
-- `expr` - `string`
+- `value` - `string`
 
 ### `literal`
 
 - `type` - `string` (= `'literal'`)
-- `expr` - `string`
+- `value` - `string`
 
 ### `holder`
 
