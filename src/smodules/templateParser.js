@@ -748,7 +748,7 @@ const templateParser = function() {
   })(); // parseHolderBlock()
 
   const parseForBlock = (function () {
-    const parseHeader = function () {
+    const parseControlData = function () {
       let k, v, array;
 
       eatForTag();
@@ -774,22 +774,22 @@ const templateParser = function() {
       next('}');
 
       return {
-        k: k,
-        v: v,
-        array: array.keys,
+        tmp_k: k,
+        tmp_v: v,
+        keys: array.keys,
       };
     }; // parseHeader()
 
     return function () {
-      const header = parseHeader();
+      const ctrl = parseControlData();
       const blocks = loop([], true);
 
       eatEndForTag();
 
       return {
         type: 'for',
-        header: header,
-        blocks: blocks,
+        ctrl: ctrl,
+        children: blocks,
       };
     };
   })(); // parseForBlock()
