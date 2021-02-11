@@ -11,6 +11,24 @@ const parser = function() {
   let at;
 
   /**
+   * @return {string}
+   */
+  const getChar = function () {
+    return ch;
+  };
+
+  const charIs = function (value) {
+    return getChar() === value;
+  }
+
+  /**
+   * @param {RegExp} regexp
+   */
+  const charMatch = function (regexp) {
+    return regexp.test(getChar());
+  }
+
+  /**
    * @return {number}
    */
   const getLine = function () {
@@ -64,8 +82,8 @@ const parser = function() {
   const skipWhitespace = function () {
     let skipped = '';
 
-    while (/\s/.test(ch)) {
-      skipped += next(ch);
+    while (charMatch(/\s/)) {
+      skipped += next(getChar());
     }
 
     return skipped;
@@ -229,8 +247,8 @@ const parser = function() {
   const eatTmpVar = function () {
     let s = next('$');
 
-    while (/\w/.test(ch)) {
-      s += next(ch);
+    while (charMatch(/\w/)) {
+      s += next(getChar());
     }
 
     if (s === '$') {
@@ -247,8 +265,8 @@ const parser = function() {
   const parseVar = function () {
     let parsed = next('$');
 
-    while (/[\w.]/.test(ch)) {
-      parsed += next(ch);
+    while (charMatch(/[\w.]/)) {
+      parsed += next(getChar());
     }
 
     if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
@@ -293,7 +311,7 @@ const parser = function() {
 
   const readString = function () {
     // eslint-disable-next-line quotes
-    return ch === "'" || ch === '"';
+    return charIs("'") || charIs('"');
   };
 
   const parseString = function () {
@@ -309,7 +327,7 @@ const parser = function() {
   };
 
   const readNumber = function () {
-    return ch === '+' || ch === '-' || (ch >= '0' && ch <= '9');
+    return charIs('+') || charIs('-') || charMatch(/[0-9]/);
   };
 
   const parseNumber = function () {
@@ -381,7 +399,7 @@ const parser = function() {
   };
 
   const readRoundBracket = function () {
-    return ch === '(';
+    return charIs('(');
   };
 
   const parseRoundBracket = function () {
@@ -393,7 +411,7 @@ const parser = function() {
   };
 
   const readEndRoundBracket = function () {
-    return ch === ')';
+    return charIs(')');
   };
 
   const parseEndRoundBracket = function () {
@@ -469,7 +487,7 @@ const parser = function() {
         let parsed, polish = [], stack = [], stackTop;
 
         while (eatable()) {
-          if (ch === '}') {
+          if (charIs('}')) {
             break;
           }
 
@@ -531,12 +549,12 @@ const parser = function() {
         value += eatLeftTag();
       } else if (readRightTag()) {
         value += eatRightTag();
-      } else if (ch === '{') {
+      } else if (charIs('{')) {
         break;
-      } else if (ch === '}') {
+      } else if (charIs('}')) {
         exception('syntax error');
       } else {
-        value += next(ch);
+        value += next(getChar());
       }
     }
 
@@ -564,7 +582,7 @@ const parser = function() {
         closed = true;
         break;
       } else {
-        value += next(ch);
+        value += next(getChar());
       }
     }
 
@@ -585,8 +603,8 @@ const parser = function() {
 
         skipWhitespace();
 
-        while (/[\w-]/.test(ch)) {
-          name += next(ch);
+        while (charMatch(/[\w-]/)) {
+          name += next(getChar());
         }
 
         if (name === '') {
@@ -601,7 +619,7 @@ const parser = function() {
 
         skipWhitespace();
 
-        if (ch === ':') {
+        if (charIs(':')) {
           next(':');
 
           while (eatable()) {
@@ -615,9 +633,9 @@ const parser = function() {
 
             skipWhitespace();
 
-            if (ch === ',') {
+            if (charIs(',')) {
               next(',');
-            } else if (ch === '|' || ch === '}') {
+            } else if (charIs('|') || charIs('}')) {
               break;
             } else {
               exception('invalid filter args expression');
@@ -634,7 +652,7 @@ const parser = function() {
         skipWhitespace();
 
         while (eatable()) {
-          if (ch !== '|') {
+          if (!charIs('|')) {
             break;
           }
 
@@ -645,9 +663,9 @@ const parser = function() {
             args: getFilterArgsSection(),
           });
 
-          if (ch === '}') {
+          if (charIs('}')) {
             break;
-          } else if (ch !== '|') {
+          } else if (!charIs('|')) {
             exception('syntax error');
           }
         }
@@ -766,7 +784,7 @@ const parser = function() {
 
   const loop = function(result, inBlock) {
     while (eatable()) {
-      if (ch === '{') {
+      if (charIs('{')) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
         } else if (readLiteralTag()) {
