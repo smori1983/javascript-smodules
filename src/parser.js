@@ -11,6 +11,13 @@ const parser = function() {
   let at;
 
   /**
+   * @return {number}
+   */
+  const getPtr = function () {
+    return ptr;
+  };
+
+  /**
    * @return {string}
    */
   const getChar = function () {
@@ -47,7 +54,7 @@ const parser = function() {
   };
 
   const eatable = function () {
-    return ptr < len;
+    return getPtr() < len;
   };
 
   const next = (function () {
@@ -90,11 +97,11 @@ const parser = function() {
   };
 
   const read = function(expr) {
-    return text.indexOf(expr, ptr) === ptr;
+    return text.indexOf(expr, getPtr()) === getPtr();
   };
 
   const readRegex = function (regex) {
-    return regex.test(text.slice(ptr));
+    return regex.test(text.slice(getPtr()));
   };
 
   const checkRegex = function (regex, errorMessage) {
@@ -104,7 +111,7 @@ const parser = function() {
   };
 
   const regexMatched = function (regex, errorMessage) {
-    const result = text.slice(ptr).match(regex);
+    const result = text.slice(getPtr()).match(regex);
 
     if (result === null && typeof errorMessage === 'string') {
       exception(errorMessage);
