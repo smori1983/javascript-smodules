@@ -192,7 +192,7 @@ const template = function() {
     const loop = function (blocks, params) {
       return blocks.reduce(function (output, block) {
         if (block.type === 'normal' || block.type === 'literal') {
-          return output + block.expr;
+          return output + block.value;
         } else if (block.type === 'holder') {
           return output + applyFilters(getValue(block.keys, params), block.filters);
         } else if (block.type === 'if') {

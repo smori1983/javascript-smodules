@@ -19,7 +19,7 @@ QUnit.test('normal block - plain text', function(assert) {
 
   assert.strictEqual(this.result.length, 1);
   assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, 'Hello, world!');
+  assert.strictEqual(this.result[0].value, 'Hello, world!');
 });
 
 QUnit.test('normal block - plain html', function(assert) {
@@ -32,7 +32,7 @@ QUnit.test('normal block - plain html', function(assert) {
 
   assert.strictEqual(this.result.length, 1);
   assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, '<ul><li>one</li><li>two</li></ul>');
+  assert.strictEqual(this.result[0].value, '<ul><li>one</li><li>two</li></ul>');
 });
 
 QUnit.test('normal block - plain html broken', function(assert) {
@@ -45,7 +45,7 @@ QUnit.test('normal block - plain html broken', function(assert) {
 
   assert.strictEqual(this.result.length, 1);
   assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, '<ul><li>one<li>two</div>');
+  assert.strictEqual(this.result[0].value, '<ul><li>one<li>two</div>');
 });
 
 QUnit.test('normal block - literal tag', function(assert) {
@@ -54,5 +54,5 @@ QUnit.test('normal block - literal tag', function(assert) {
 
   assert.strictEqual(this.result.length, 1);
   assert.strictEqual(this.result[0].type, 'normal');
-  assert.strictEqual(this.result[0].expr, '<div>{Hello, world!}</div>');
+  assert.strictEqual(this.result[0].value, '<div>{Hello, world!}</div>');
 });
