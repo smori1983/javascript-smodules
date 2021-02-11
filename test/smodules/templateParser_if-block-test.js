@@ -1,22 +1,15 @@
 const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser', {
-  before: function () {
-    this.parse = function () {
-      this.result = this.parser.parse(this.source);
-    };
-  },
   beforeEach: function () {
     this.parser = templateParser.init();
-    this.source = '';
-    this.result = null;
   },
 });
 
 QUnit.test('if block - if elseif else', function (assert) {
   let section;
 
-  this.source =
+  const src =
     '{ if $value1 }' +
     '<div>value1</div>' +
     '{ elseif $value2 }' +
@@ -26,30 +19,30 @@ QUnit.test('if block - if elseif else', function (assert) {
     '{ else }' +
     '<div>value4</div>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  assert.strictEqual(this.result[0].type, 'if');
-  assert.strictEqual(this.result[0].sections.length, 4);
+  assert.strictEqual(result[0].type, 'if');
+  assert.strictEqual(result[0].sections.length, 4);
 
-  section = this.result[0].sections[0];
+  section = result[0].sections[0];
   assert.strictEqual(section.header.type, 'if');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
   assert.strictEqual(section.blocks[0].value, '<div>value1</div>');
 
-  section = this.result[0].sections[1];
+  section = result[0].sections[1];
   assert.strictEqual(section.header.type, 'elseif');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
   assert.strictEqual(section.blocks[0].value, '<div>value2</div>');
 
-  section = this.result[0].sections[2];
+  section = result[0].sections[2];
   assert.strictEqual(section.header.type, 'elseif');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
   assert.strictEqual(section.blocks[0].value, '<div>value3</div>');
 
-  section = this.result[0].sections[3];
+  section = result[0].sections[3];
   assert.strictEqual(section.header.type, 'else');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
@@ -57,13 +50,13 @@ QUnit.test('if block - if elseif else', function (assert) {
 });
 
 QUnit.test('if block - condition - simple', function (assert) {
-  this.source =
+  const src =
     '{ if $foo === "hoge" }' +
     '<p>hoge</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 3);
   assert.strictEqual(stack[0].type, 'var');
@@ -75,13 +68,13 @@ QUnit.test('if block - condition - simple', function (assert) {
 });
 
 QUnit.test('if block - condition - redundant round brackets', function (assert) {
-  this.source =
+  const src =
     '{ if ( ( ( $foo === "hoge" ) ) ) }' +
     '<p>hoge</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 3);
   assert.strictEqual(stack[0].type, 'var');
@@ -93,13 +86,13 @@ QUnit.test('if block - condition - redundant round brackets', function (assert) 
 });
 
 QUnit.test('if block - condition - complicated', function (assert) {
-  this.source =
+  const src =
     '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }' +
     '<p>ok</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 15);
   assert.strictEqual(stack[0].type, 'var');
@@ -135,13 +128,13 @@ QUnit.test('if block - condition - complicated', function (assert) {
 });
 
 QUnit.test('if block - condition - inversion of lval and rval', function (assert) {
-  this.source =
+  const src =
     '{ if 10 !== $price }' +
     '<p>ok</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 3);
   assert.strictEqual(stack[0].type, 'value');
@@ -153,13 +146,13 @@ QUnit.test('if block - condition - inversion of lval and rval', function (assert
 });
 
 QUnit.test('if block - condition - priority of and/or', function (assert) {
-  this.source =
+  const src =
     '{ if ( $var1 or $var2 ) and $var3 }' +
     '<p>ok</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 5);
   assert.strictEqual(stack[0].type, 'var');
@@ -175,13 +168,13 @@ QUnit.test('if block - condition - priority of and/or', function (assert) {
 });
 
 QUnit.test('if block - and chain', function (assert) {
-  this.source =
+  const src =
     '{ if $var1 and $var2 and $var3 }' +
     '<p>ok</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 5);
   assert.strictEqual(stack[0].type, 'var');
@@ -197,13 +190,13 @@ QUnit.test('if block - and chain', function (assert) {
 });
 
 QUnit.test('if block - or chain', function (assert) {
-  this.source =
+  const src =
     '{ if $var1 or $var2 or $var3 }' +
     '<p>ok</p>' +
     '{ /if }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const stack = this.result[0].sections[0].header.ctrl.stack;
+  const stack = result[0].sections[0].header.ctrl.stack;
 
   assert.strictEqual(stack.length, 5);
   assert.strictEqual(stack[0].type, 'var');

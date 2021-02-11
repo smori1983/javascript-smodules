@@ -3,7 +3,6 @@ const template = require('../../src/smodules/template');
 QUnit.module('template', {
   beforeEach: function () {
     this.template = template.init();
-    this.src = '';
   },
 });
 
@@ -25,18 +24,17 @@ QUnit.module('template', {
 //});
 
 QUnit.test('bind - get - string source - with callback', function (assert) {
+  const src = '<p>{$value}</p>';
   const params = {value: 'hoge'};
 
-  this.src = '<p>{$value}</p>';
-  this.template.bind(this.src, params).get(function (output) {
+  this.template.bind(src, params).get(function (output) {
     assert.strictEqual(output, '<p>hoge</p>');
   });
 });
 
 QUnit.test('bind - get - string source - without callback', function (assert) {
+  const src = '<p>{$value}</p>';
   const params = {value: 'hoge'};
 
-  this.src = '<p>{$value}</p>';
-
-  assert.strictEqual(this.template.bind(this.src, params).get(), '<p>hoge</p>');
+  assert.strictEqual(this.template.bind(src, params).get(), '<p>hoge</p>');
 });

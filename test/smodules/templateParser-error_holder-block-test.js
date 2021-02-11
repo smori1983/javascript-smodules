@@ -2,181 +2,179 @@ const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser - error', {
   before: function () {
-    this.parse = function () {
-      this.result = this.parser.parse(this.source);
+    this.parse = function (src) {
+      this.parser.parse(src);
     };
   },
   beforeEach: function () {
     this.parser = templateParser.init();
-    this.source = '';
-    this.result = null;
   },
 });
 
 QUnit.test('holder block - no filters - error - tag not closed', function (assert) {
-  this.source = '{ $foo';
+  const src = '{ $foo';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /syntax error/);
 });
 
 QUnit.test('holder block - no filters - error - space between $ and property name', function (assert) {
-  this.source = '{ $ foo } has space between $ and property name.';
+  const src = '{ $ foo } has space between $ and property name.';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid variable expression/);
 });
 
 QUnit.test('holder block - no filters - error - dot between $ and property name', function (assert) {
-  this.source = '{ $.foo }';
+  const src = '{ $.foo }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid variable expression/);
 });
 
 QUnit.test('holder block - no filters - error - dot after property name', function (assert) {
-  this.source = '{ $foo. }';
+  const src = '{ $foo. }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid variable expression/);
 });
 
 QUnit.test('holder block - no filters - error - continuous dots', function (assert) {
-  this.source = '{ $foo..bar }';
+  const src = '{ $foo..bar }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid variable expression/);
 });
 
 QUnit.test('holder block - filter - error - tag not closed', function (assert) {
-  this.source = '{ $foo | filter';
+  const src = '{ $foo | filter';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /syntax error/);
 });
 
 QUnit.test('holder block - filter - error - filter name has space', function (assert) {
-  this.source = '{ $foo | invalid filter name }';
+  const src = '{ $foo | invalid filter name }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /syntax error/);
 });
 
 QUnit.test('holder block - filter - error - filter name has symbol', function (assert) {
-  this.source = '{ $foo | filter! }';
+  const src = '{ $foo | filter! }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /syntax error/);
 });
 
 QUnit.test('holder block - filter - error - no pipe', function (assert) {
-  this.source = '{ $foo pipeNotFound }';
+  const src = '{ $foo pipeNotFound }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /syntax error/);
 });
 
 QUnit.test('holder block - filter - error - no filter name before colon', function (assert) {
-  this.source = '{ $foo | : 1 }';
+  const src = '{ $foo | : 1 }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /filter name not found/);
 });
 
 QUnit.test('holder block - filter - error - no filter args after colon', function (assert) {
-  this.source = '{ $foo | filter : }';
+  const src = '{ $foo | filter : }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter - error - colon only', function (assert) {
-  this.source = '{ $foo | : }';
+  const src = '{ $foo | : }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /filter name not found/);
 });
 
 QUnit.test('holder block - filter with args - error - tag not closed', function (assert) {
-  this.source = '{ $foo | filter : 1';
+  const src = '{ $foo | filter : 1';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args expression/);
 });
 
 QUnit.test('holder block - filter with args - error - args not separated', function (assert) {
-  this.source = '{ $foo | filter : 1 2 }';
+  const src = '{ $foo | filter : 1 2 }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args expression/);
 });
 
 QUnit.test('holder block - filter with args - error - NULL', function (assert) {
-  this.source = '{ $foo | filter : NULL }';
+  const src = '{ $foo | filter : NULL }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter with args - error - TRUE', function (assert) {
-  this.source = '{ $foo | filter : TRUE }';
+  const src = '{ $foo | filter : TRUE }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter with args - error - FALSE', function (assert) {
-  this.source = '{ $foo | filter : FALSE }';
+  const src = '{ $foo | filter : FALSE }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote 1', function (assert) {
-  this.source = '{ $foo | filter : \'test }';
+  const src = '{ $foo | filter : \'test }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /string expression not closed/);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote 2', function (assert) {
-  this.source = '{ $foo | filter : test\' }';
+  const src = '{ $foo | filter : test\' }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote char 1', function (assert) {
-  this.source = '{ $foo | filter : "test\' }';
+  const src = '{ $foo | filter : "test\' }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /string expression not closed/);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote char 2', function (assert) {
-  this.source = '{ $foo | filter : \'test" }';
+  const src = '{ $foo | filter : \'test" }';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, /string expression not closed/);
 });

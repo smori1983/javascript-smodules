@@ -1,26 +1,19 @@
 const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser', {
-  before: function () {
-    this.parse = function () {
-      this.result = this.parser.parse(this.source);
-    };
-  },
   beforeEach: function () {
     this.parser = templateParser.init();
-    this.source = '';
-    this.result = null;
   },
 });
 
 QUnit.test('for block - only value part in dummy variable', function (assert) {
-  this.source =
+  const src =
     '{ for $item in $items }' +
     '<p>{ $item | h }</p>' +
     '{ /for }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const block = this.result[0];
+  const block = result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(typeof block.ctrl.tmp_k, 'undefined');
@@ -30,13 +23,13 @@ QUnit.test('for block - only value part in dummy variable', function (assert) {
 });
 
 QUnit.test('for block - use index in dummy variable', function (assert) {
-  this.source =
+  const src =
     '{ for $idx, $item in $items }' +
     '<p>{ $item | h }</p>' +
     '{ /for }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const block = this.result[0];
+  const block = result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(block.ctrl.tmp_k, 'idx');
@@ -46,13 +39,13 @@ QUnit.test('for block - use index in dummy variable', function (assert) {
 });
 
 QUnit.test('for block - use index in dummy variable - space before comma', function (assert) {
-  this.source =
+  const src =
     '{ for $idx , $item in $items }' +
     '<p>{ $item | h }</p>' +
     '{ /for }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const block = this.result[0];
+  const block = result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(block.ctrl.tmp_k, 'idx');
@@ -62,13 +55,13 @@ QUnit.test('for block - use index in dummy variable - space before comma', funct
 });
 
 QUnit.test('for block - variable chain in haystack', function (assert) {
-  this.source =
+  const src =
     '{ for $item in $items.key1.key2 }' +
     '<p>{ $item | h }</p>' +
     '{ /for }';
-  this.parse();
+  const result = this.parser.parse(src);
 
-  const block = this.result[0];
+  const block = result[0];
 
   assert.strictEqual(block.type, 'for');
   assert.strictEqual(block.ctrl.keys.join('.'), 'items.key1.key2');

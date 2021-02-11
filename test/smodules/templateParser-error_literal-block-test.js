@@ -2,29 +2,27 @@ const templateParser = require('../../src/smodules/templateParser');
 
 QUnit.module('templateParser - error', {
   before: function () {
-    this.parse = function () {
-      this.result = this.parser.parse(this.source);
+    this.parse = function (src) {
+      this.parser.parse(src);
     };
   },
   beforeEach: function () {
     this.parser = templateParser.init();
-    this.source = '';
-    this.result = null;
   },
 });
 
 QUnit.test('literal block - error - only open tag', function (assert) {
-  this.source = '<div>{literal}</div>';
+  const src = '<div>{literal}</div>';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, Error);
 });
 
 QUnit.test('literal block - error - only close tag', function (assert) {
-  this.source = '<div>{/literal}</div>';
+  const src = '<div>{/literal}</div>';
 
   assert.throws(function () {
-    this.parse();
+    this.parse(src);
   }, Error);
 });
