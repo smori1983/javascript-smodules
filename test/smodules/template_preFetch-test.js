@@ -1,12 +1,12 @@
 const template = require('../../src/smodules/template');
 
 QUnit.module('template', {
-  beforeEach: function() {
+  beforeEach: function () {
     this.template = template.init();
   },
 });
 
-QUnit.test('preFetch and template cache', function(assert) {
+QUnit.test('preFetch and template cache', function (assert) {
   const src1 = '<h1>{$value}</h1>';
   const src2 = '<h2>{$value}</h2>';
   const src3 = '<h3>{$value}</h3>';
