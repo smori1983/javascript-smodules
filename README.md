@@ -106,14 +106,22 @@ Includes minimal template engine.
 ### `holder`
 
 - `type` - `string` (= `'holder'`)
-- `keys`
-- `filters`
+- `keys` - `string[]`
+- `filters` - `AST_NODE[]` (= `<holder_filter>`)
+
+### `holder_filter`
+
+- `name` - `string`
+- `args` - `*[]`
 
 ### `for`
 
 - `type` - `string` (= `'for'`)
 - `header`
-- `blocks`
+  - [`k`] - `string`
+  - `v` - `string`
+  - `array` - `string[]`
+- `blocks` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<if>`)
 
 ### `if` (?)
 
