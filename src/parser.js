@@ -38,6 +38,13 @@ const parser = function() {
   /**
    * @return {number}
    */
+  const getLen = function () {
+    return len;
+  };
+
+  /**
+   * @return {number}
+   */
   const getLine = function () {
     return line;
   };
@@ -54,7 +61,7 @@ const parser = function() {
   };
 
   const eatable = function () {
-    return getPtr() < len;
+    return getPtr() < getLen();
   };
 
   const next = (function () {
