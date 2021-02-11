@@ -299,7 +299,7 @@ const template = function() {
           additional[block.header.tmp_v] = value;
 
           params.push(additional);
-          output += loop(block.blocks, params);
+          output += loop(block.children, params);
           params.pop();
         });
       }

@@ -789,7 +789,7 @@ const templateParser = function() {
       return {
         type: 'for',
         header: header,
-        blocks: blocks,
+        children: blocks,
       };
     };
   })(); // parseForBlock()
