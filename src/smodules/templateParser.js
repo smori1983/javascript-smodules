@@ -774,9 +774,9 @@ const templateParser = function() {
       next('}');
 
       return {
-        k: k,
-        v: v,
-        array: array.keys,
+        tmp_k: k,
+        tmp_v: v,
+        keys: array.keys,
       };
     }; // parseHeader()
 
