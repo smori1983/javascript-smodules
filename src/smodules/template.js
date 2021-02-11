@@ -273,7 +273,7 @@ const template = function() {
         section = block.sections[i];
 
         if (section.header.type === 'if' || section.header.type === 'elseif') {
-          if (evaluate(section.header.stack, params)) {
+          if (evaluate(section.header.ctrl.stack, params)) {
             output = loop(section.blocks, params);
             break;
           }

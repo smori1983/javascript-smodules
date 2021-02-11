@@ -587,7 +587,9 @@ const templateParser = function() {
 
       return {
         type:  type,
-        stack: stack,
+        ctrl: {
+          stack: stack,
+        },
       };
     };
   })(); // parseCondition()
