@@ -82,17 +82,16 @@ Includes minimal template engine.
 ### `if`
 
 - `type` - `string` (= `'if'`)
-- `stack`
+- `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
 
 ### `elseif`
 
 - `type` - `string` (= `'elseif'`)
-- `stack`
+- `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
 
 ### `else`
 
 - `type` - `string` (= `'else'`)
-- `stack`
 
 ### `normal`
 
