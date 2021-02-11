@@ -10,8 +10,15 @@ const parser = function() {
   let line;
   let at;
 
+  /**
+   * @return {number}
+   */
+  const getAt = function () {
+    return at;
+  };
+
   const exception = function (message) {
-    throw new Error('parser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
+    throw new Error('parser - ' + message + ' in source ' + src + ' [' + line + ',' + getAt() + ']');
   };
 
   const eatable = function () {
@@ -536,7 +543,7 @@ const parser = function() {
     let value = '';
     let closed = false;
     const startLine = line;
-    const startAt = at;
+    const startAt = getAt();
 
     eatLiteralTag();
 
