@@ -35,25 +35,25 @@ QUnit.test('if block - if elseif else', function(assert) {
   assert.strictEqual(section.header.type, 'if');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
-  assert.strictEqual(section.blocks[0].expr, '<div>value1</div>');
+  assert.strictEqual(section.blocks[0].value, '<div>value1</div>');
 
   section = this.result[0].sections[1];
   assert.strictEqual(section.header.type, 'elseif');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
-  assert.strictEqual(section.blocks[0].expr, '<div>value2</div>');
+  assert.strictEqual(section.blocks[0].value, '<div>value2</div>');
 
   section = this.result[0].sections[2];
   assert.strictEqual(section.header.type, 'elseif');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
-  assert.strictEqual(section.blocks[0].expr, '<div>value3</div>');
+  assert.strictEqual(section.blocks[0].value, '<div>value3</div>');
 
   section = this.result[0].sections[3];
   assert.strictEqual(section.header.type, 'else');
   assert.strictEqual(section.blocks.length, 1);
   assert.strictEqual(section.blocks[0].type, 'normal');
-  assert.strictEqual(section.blocks[0].expr, '<div>value4</div>');
+  assert.strictEqual(section.blocks[0].value, '<div>value4</div>');
 });
 
 QUnit.test('if block - condition - simple', function(assert) {

@@ -611,7 +611,7 @@ const templateParser = function() {
 
     return {
       type: 'normal',
-      expr: expr,
+      value: expr,
     };
   };
 
@@ -643,7 +643,7 @@ const templateParser = function() {
 
     return {
       type: 'literal',
-      expr: expr,
+      value: expr,
     };
   };
 
