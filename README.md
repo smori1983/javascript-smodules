@@ -24,6 +24,8 @@ Includes minimal template engine.
 ```
 {if ($value1 gt 1000) or ($value2 !== 999)}
 ...
+{elseif $item1.name === $item2.name}
+...
 {else}
 ...
 {/if}
@@ -32,6 +34,12 @@ Includes minimal template engine.
 ### Iteration
 
 - `{for}` .. `{/for}`
+
+```
+{for $value in $items}
+{$value}
+{/for}
+```
 
 ```
 {for $index, $value in $items}
@@ -122,7 +130,7 @@ Includes minimal template engine.
 - `ctrl`
   - [`k`] - `string`
   - `v` - `string`
-  - `array` - `string[]`
+  - `keys` - `string[]`
 - `children` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<if>`)
 
 ### `if` (?)
