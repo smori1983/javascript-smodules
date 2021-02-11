@@ -593,30 +593,30 @@ const templateParser = function() {
   })(); // parseCondition()
 
   const parseNormalBlock = function () {
-    let expr = '';
+    let value = '';
 
     while (eatable()) {
       if (readLeftTag()) {
-        expr += eatLeftTag();
+        value += eatLeftTag();
       } else if (readRightTag()) {
-        expr += eatRightTag();
+        value += eatRightTag();
       } else if (ch === '{') {
         break;
       } else if (ch === '}') {
         exception('syntax error');
       } else {
-        expr += next(ch);
+        value += next(ch);
       }
     }
 
     return {
       type: 'normal',
-      value: expr,
+      value: value,
     };
   };
 
   const parseLiteralBlock = function () {
-    let expr = '';
+    let value = '';
     let closed = false;
     const startLine = line;
     const startAt = at;
@@ -625,15 +625,15 @@ const templateParser = function() {
 
     while (eatable()) {
       if (readLeftTag()) {
-        expr += eatLeftTag();
+        value += eatLeftTag();
       } else if (readRightTag()) {
-        expr += eatRightTag();
+        value += eatRightTag();
       } else if (readEndLiteralTag()) {
         eatEndLiteralTag();
         closed = true;
         break;
       } else {
-        expr += next(ch);
+        value += next(ch);
       }
     }
 
@@ -643,7 +643,7 @@ const templateParser = function() {
 
     return {
       type: 'literal',
-      value: expr,
+      value: value,
     };
   };
 
