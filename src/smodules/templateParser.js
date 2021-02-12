@@ -457,7 +457,7 @@ const templateParser = function() {
       };
 
       const main = function () {
-        const typeHistory = new ReversePolishNodeHistory();
+        const history = new ReversePolishNodeHistory();
         let parsed, polish = [], stack = [], stackTop;
 
         while (eatable()) {
@@ -466,9 +466,9 @@ const templateParser = function() {
           }
 
           // By typeHistory.init(), history has at least 'start' type.
-          parsed = parse(typeHistory.latest());
+          parsed = parse(history.latest());
 
-          typeHistory.add(parsed.type);
+          history.add(parsed.type);
 
           while (stack.length > 0) {
             stackTop = stack.pop();
@@ -494,7 +494,7 @@ const templateParser = function() {
           polish.push(stack.pop());
         }
 
-        typeHistory.finish();
+        history.finish();
 
         return polish;
       };
