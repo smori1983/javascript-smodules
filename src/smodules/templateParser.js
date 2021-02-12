@@ -1,3 +1,5 @@
+const ReversePolishNodeHistory = require('./reverse-polish-node-history');
+
 const templateParser = function() {
   const that = {};
   let src;
@@ -454,75 +456,9 @@ const templateParser = function() {
         }
       };
 
-      const typeHistory = (function () {
-        let history;
-
-        const get = function (index) {
-          return history[history.length - index] || null;
-        };
-
-        const calcRoundBracketBalance = function () {
-          let balance = 0;
-
-          history.forEach(function (type) {
-            if (type === 'roundBracket') {
-              balance++;
-            } else if (type === 'endRoundBracket') {
-              balance--;
-            }
-          });
-
-          return balance;
-        };
-
-        const calcOperandOperatorBalance = function () {
-          let balance = 0;
-
-          history.forEach(function (type) {
-            if (type === 'var' || type === 'value') {
-              balance++;
-            } else if (type === 'comp' || type === 'andor') {
-              balance--;
-            }
-          });
-
-          return balance;
-        };
-
-        return {
-          init: function () {
-            history = ['start'];
-          },
-          add: function (type) {
-            if (type === 'comp' && get(2) === 'comp') {
-              exception('can not write comparer here');
-            }
-
-            history.push(type);
-
-            if (calcRoundBracketBalance() < 0) {
-              // eslint-disable-next-line quotes
-              exception("can not use ')' here");
-            }
-          },
-          latest: function () {
-            return get(1);
-          },
-          finish: function () {
-            if (calcRoundBracketBalance() !== 0) {
-              exception('invalid usage of round bracket');
-            }
-            if (calcOperandOperatorBalance() !== 1) {
-              exception('invalid usage of operand or operator');
-            }
-          },
-        };
-      })();
-
       const main = function () {
+        const typeHistory = new ReversePolishNodeHistory();
         let parsed, polish = [], stack = [], stackTop;
-
-        typeHistory.init();
 
         while (eatable()) {
           if (ch === '}') {
@@ -564,7 +500,11 @@ const templateParser = function() {
       };
 
       return function () {
-        return main();
+        try {
+          return main();
+        } catch (e) {
+          exception(e.message);
+        }
       };
     })(); // getReversePolish()
 
