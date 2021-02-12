@@ -1,59 +1,60 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
+const SourceTextManager = require('./source-text-manager');
 
 const parser = function() {
   const that = {};
+
   let src;
-  let text;
-  let ptr;
-  let ch;
-  let len;
-  let line;
-  let at;
+
+  /**
+   * @type {SourceTextManager}
+   */
+  let sourceTextManager;
 
   /**
    * @return {number}
    */
   const getPtr = function () {
-    return ptr;
+    return sourceTextManager.getPtr();
   };
 
   /**
    * @return {string}
    */
   const getChar = function () {
-    return ch;
+    return sourceTextManager.getChar();
   };
 
   const charIs = function (value) {
-    return getChar() === value;
+    return sourceTextManager.charIs(value);
   }
 
   /**
    * @param {RegExp} regexp
    */
   const charMatch = function (regexp) {
-    return regexp.test(getChar());
+    return sourceTextManager.charMatch(regexp);
   }
 
   /**
    * @return {number}
    */
   const getLen = function () {
-    return len;
+    return sourceTextManager.getLen();
   };
 
   /**
    * @return {number}
    */
   const getLine = function () {
-    return line;
+    return sourceTextManager.getLine();
   };
 
   /**
    * @return {number}
    */
   const getAt = function () {
-    return at;
+    return sourceTextManager.getAt();
   };
 
   const exception = function (message) {
@@ -64,34 +65,9 @@ const parser = function() {
     return getPtr() < getLen();
   };
 
-  const next = (function () {
-    const position = function (expr) {
-      while (expr.length > 0) {
-        if (expr.slice(0, 1) === '\n') {
-          line++;
-          at = 1;
-        } else {
-          at++;
-        }
-        expr = expr.slice(1);
-      }
-    };
-
-    return function (expr) {
-      expr = expr || ch;
-
-      if (read(expr) === false) {
-        exception('syntax error');
-      }
-
-      position(expr);
-
-      ptr += expr.length;
-      ch = text.charAt(ptr);
-
-      return expr;
-    };
-  })();
+  const next = function (expr) {
+    return sourceTextManager.next(expr);
+  };
 
   const skipWhitespace = function () {
     let skipped = '';
@@ -103,12 +79,13 @@ const parser = function() {
     return skipped;
   };
 
+  // eslint-disable-next-line no-unused-vars
   const read = function(expr) {
-    return text.indexOf(expr, getPtr()) === getPtr();
+    return sourceTextManager.read(expr);
   };
 
   const readRegex = function (regex) {
-    return regex.test(text.slice(getPtr()));
+    return sourceTextManager.readRegexp(regex);
   };
 
   const checkRegex = function (regex, errorMessage) {
@@ -118,13 +95,7 @@ const parser = function() {
   };
 
   const regexMatched = function (regex, errorMessage) {
-    const result = text.slice(getPtr()).match(regex);
-
-    if (result === null && typeof errorMessage === 'string') {
-      exception(errorMessage);
-    }
-
-    return result;
+    return sourceTextManager.regexpMatched(regex, errorMessage);
   };
 
   const readLeftTag = function () {
@@ -822,13 +793,9 @@ const parser = function() {
 
 
   that.parse = function(content, source) {
+    sourceTextManager = new SourceTextManager(content);
+
     src  = source || '';
-    text = content;
-    ptr  = 0;
-    ch   = content.charAt(0);
-    len  = content.length;
-    line = 1;
-    at   = 1;
 
     return loop([]);
   };
