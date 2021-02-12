@@ -519,7 +519,7 @@ const templateParser = function() {
         };
       })();
 
-      return function() {
+      const main = function () {
         let parsed, polish = [], stack = [], stackTop;
 
         typeHistory.init();
@@ -561,6 +561,10 @@ const templateParser = function() {
         typeHistory.finish();
 
         return polish;
+      };
+
+      return function () {
+        return main();
       };
     })(); // getReversePolish()
 
