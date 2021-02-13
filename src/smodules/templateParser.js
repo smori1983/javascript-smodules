@@ -170,15 +170,13 @@ const templateParser = function() {
   };
 
   const readEndIfTag = function () {
-    return readRegex(/^{\s*\/\s*if\s*}/);
+    return readRegex(/^{\s*endif\s*}/);
   };
 
   const eatEndIfTag = function () {
     next('{');
     skipWhitespace();
-    next('/');
-    skipWhitespace();
-    next('if');
+    next('endif');
     skipWhitespace();
     next('}');
   };

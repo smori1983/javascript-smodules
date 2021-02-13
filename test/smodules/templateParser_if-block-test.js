@@ -18,7 +18,7 @@ QUnit.test('if block - if elseif else', function (assert) {
     '<div>value3</div>' +
     '{ else }' +
     '<div>value4</div>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   assert.strictEqual(result[0].type, 'if');
@@ -53,7 +53,7 @@ QUnit.test('if block - condition - simple', function (assert) {
   const src =
     '{ if $foo === "hoge" }' +
     '<p>hoge</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;
@@ -71,7 +71,7 @@ QUnit.test('if block - condition - redundant round brackets', function (assert) 
   const src =
     '{ if ( ( ( $foo === "hoge" ) ) ) }' +
     '<p>hoge</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;
@@ -89,7 +89,7 @@ QUnit.test('if block - condition - complicated', function (assert) {
   const src =
     '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }' +
     '<p>ok</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;
@@ -131,7 +131,7 @@ QUnit.test('if block - condition - inversion of lval and rval', function (assert
   const src =
     '{ if 10 !== $price }' +
     '<p>ok</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;
@@ -149,7 +149,7 @@ QUnit.test('if block - condition - priority of and/or', function (assert) {
   const src =
     '{ if ( $var1 or $var2 ) and $var3 }' +
     '<p>ok</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;
@@ -171,7 +171,7 @@ QUnit.test('if block - and chain', function (assert) {
   const src =
     '{ if $var1 and $var2 and $var3 }' +
     '<p>ok</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;
@@ -193,7 +193,7 @@ QUnit.test('if block - or chain', function (assert) {
   const src =
     '{ if $var1 or $var2 or $var3 }' +
     '<p>ok</p>' +
-    '{ /if }';
+    '{ endif }';
   const result = this.parser.parse(src);
 
   const stack = result[0].sections[0].header.ctrl.stack;

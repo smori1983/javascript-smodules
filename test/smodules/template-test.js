@@ -157,7 +157,7 @@ QUnit.test('if block - simple', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true};
   const expected = '<p>yes</p>';
 
@@ -170,7 +170,7 @@ QUnit.test('if block - logical operator - and', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: false};
   const expected = '<p>no</p>';
 
@@ -183,7 +183,7 @@ QUnit.test('if block - logical operator - and chain 1', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: true, baz: true};
   const expected = '<p>yes</p>';
 
@@ -196,7 +196,7 @@ QUnit.test('if block - logical operator - and chain 2', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: false, bar: true, baz: true};
   const expected = '<p>no</p>';
 
@@ -209,7 +209,7 @@ QUnit.test('if block - logical operator - and chain 3', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: false, baz: true};
   const expected = '<p>no</p>';
 
@@ -222,7 +222,7 @@ QUnit.test('if block - logical operator - and chain 4', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: true, baz: false};
   const expected = '<p>no</p>';
 
@@ -235,7 +235,7 @@ QUnit.test('if block - logical operator - or', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: false};
   const expected = '<p>yes</p>';
 
@@ -248,7 +248,7 @@ QUnit.test('if block - logical operator - or chain 1', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: true, baz: true};
   const expected = '<p>yes</p>';
 
@@ -261,7 +261,7 @@ QUnit.test('if block - logical operator - or chain 2', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: false, bar: true, baz: true};
   const expected = '<p>yes</p>';
 
@@ -274,7 +274,7 @@ QUnit.test('if block - logical operator - or chain 3', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: false, baz: true};
   const expected = '<p>yes</p>';
 
@@ -287,7 +287,7 @@ QUnit.test('if block - logical operator - or chain 4', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: true, baz: false};
   const expected = '<p>yes</p>';
 
@@ -300,7 +300,7 @@ QUnit.test('if block - logical operator - combination', function (assert) {
     '<p>yes</p>' +
     '{ else }' +
     '<p>no</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true, bar: false, baz: true};
   const expected = '<p>yes</p>';
 
@@ -315,7 +315,7 @@ QUnit.test('if block - comparative operator', function (assert) {
     '<p>middle</p>' +
     '{ else }' +
     '<p>low</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {price: 50};
   const expected = '<p>middle</p>';
 
@@ -326,10 +326,10 @@ QUnit.test('if block - comparative operator - "===" and "=="', function (assert)
   const src =
     '{ if $foo === 1 }' +
     '<p>one</p>' +
-    '{ /if }' +
+    '{ endif }' +
     '{ if $foo == 1}' +
     '<p>two</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {foo: true};
   const expected = '<p>two</p>';
 
@@ -340,7 +340,7 @@ QUnit.test('if block - property chainable', function (assert) {
   const src =
     '{ if $data1.key and $data2.key }' +
     '<p>OK</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {
     data1: {key: true},
     data2: {key: true},
@@ -354,7 +354,7 @@ QUnit.test('if block - property not chainable - and 1', function (assert) {
   const src =
     '{ if $data1.key1 and $data2.key2 }' +
     '<p>OK</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {
     data1: {key1: true},
     data2: {key1: true},
@@ -368,7 +368,7 @@ QUnit.test('if block - property not chainable - and 2', function (assert) {
   const src =
     '{ if $data1.key1 and $data2.key2 }' +
     '<p>OK</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {
     data1: {key2: true},
     data2: {key2: true},
@@ -382,7 +382,7 @@ QUnit.test('if block - property not chainable - or 1', function (assert) {
   const src =
     '{ if $data1.key1 or $data2.key2 }' +
     '<p>OK</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {
     data1: {key1: true},
     data2: {key1: true},
@@ -396,7 +396,7 @@ QUnit.test('if block - property not chainable - or 2', function (assert) {
   const src =
     '{ if $data1.key1 or $data2.key2 }' +
     '<p>OK</p>' +
-    '{ /if }';
+    '{ endif }';
   const param = {
     data1: {key2: true},
     data2: {key2: true},
@@ -412,7 +412,7 @@ QUnit.test('if block - nested - for', function (assert) {
     '{ for $item in $data1.items }' +
     '<p>{ $item }</p>' +
     '{ /for }' +
-    '{ /if }';
+    '{ endif }';
   const param = {
     data1: {
       status: true,
@@ -479,7 +479,7 @@ QUnit.test('for block - nested - if', function (assert) {
     '<li>odd: { $id }</li>' +
     '{ else }' +
     '<li>even: { $id }</li>' +
-    '{ /if }' +
+    '{ endif }' +
     '{ /for }' +
     '</ul>' +
     '{ /for }';
@@ -505,7 +505,7 @@ QUnit.test('for block - nested - if with property access', function (assert) {
     '{ for $product in $item.products }' +
     '{ if $product.id === 1 }' +
     '<li>{ $product.name|h }</li>' +
-    '{ /if }' +
+    '{ endif }' +
     '{ /for }' +
     '</ul>' +
     '{ /for }';
