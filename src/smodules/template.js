@@ -195,7 +195,7 @@ const template = function() {
           return output + block.value;
         } else if (block.type === 'holder') {
           return output + applyFilters(getValue(block.keys, params), block.filters);
-        } else if (block.type === 'if') {
+        } else if (block.type === 'condition') {
           return output + loopIf(block, params);
         } else if (block.type === 'for') {
           return output + loopFor(block, params);
@@ -266,19 +266,19 @@ const template = function() {
     };
 
     const loopIf = function(block, params) {
-      let i, len, section;
+      let i, len, branch;
       let output = '';
 
-      for (i = 0, len = block.sections.length; i < len; i++) {
-        section = block.sections[i];
+      for (i = 0, len = block.branches.length; i < len; i++) {
+        branch = block.branches[i];
 
-        if (section.header.type === 'if' || section.header.type === 'elseif') {
-          if (evaluate(section.header.ctrl.stack, params)) {
-            output = loop(section.blocks, params);
+        if (branch.type === 'if' || branch.type === 'elseif') {
+          if (evaluate(branch.ctrl.stack, params)) {
+            output = loop(branch.children, params);
             break;
           }
         } else {
-          output = loop(section.blocks, params);
+          output = loop(branch.children, params);
         }
       }
 

@@ -503,31 +503,8 @@ const templateParser = function() {
     })(); // getReversePolish()
 
     return function() {
-      let type, stack = [];
-
-      if (readIfTag()) {
-        eatIfTag();
-        type = 'if';
-      } else if (readElseifTag()) {
-        eatElseifTag();
-        type = 'elseif';
-      } else if (readElseTag()) {
-        eatElseTag();
-        type = 'else';
-      } else {
-        exception('unknown condition expression');
-      }
-
-      if (type === 'if' || type === 'elseif') {
-        stack = getReversePolish();
-        next('}');
-      }
-
       return {
-        type:  type,
-        ctrl: {
-          stack: stack,
-        },
+        stack: getReversePolish(),
       };
     };
   })(); // parseCondition()
@@ -734,22 +711,44 @@ const templateParser = function() {
     };
   })(); // parseForBlock()
 
-  const parseIfBlock = function () {
-    const sections = [];
+  const parseConditionBlock = function () {
+    const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
-      sections.push({
-        header: parseCondition(),
-        blocks: loop([], true),
+      let type;
+      let ctrl;
+
+      if (readIfTag()) {
+        eatIfTag();
+        type = 'if';
+      } else if (readElseifTag()) {
+        eatElseifTag();
+        type = 'elseif';
+      } else if (readElseTag()) {
+        eatElseTag();
+        type = 'else';
+      } else {
+        exception('unknown condition expression');
+      }
+
+      if (type === 'if' || type === 'elseif') {
+        ctrl = parseCondition();
+        next('}');
+      }
+
+      branches.push({
+        type: type,
+        ctrl: ctrl,
+        children: loop([], true),
       });
     }
     eatEndIfTag();
 
     return {
-      type:     'if',
-      sections: sections,
+      type: 'condition',
+      branches: branches,
     };
-  }; // parseIfBlock()
+  }; // parseConditionBlock()
 
   const loop = function(result, inBlock) {
     while (eatable()) {
@@ -759,7 +758,7 @@ const templateParser = function() {
         } else if (readLiteralTag()) {
           result.push(parseLiteralBlock());
         } else if (readIfTag()) {
-          result.push(parseIfBlock());
+          result.push(parseConditionBlock());
         } else if (readForTag()) {
           result.push(parseForBlock());
         } else if (readHolderTag()) {
