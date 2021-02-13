@@ -69,6 +69,18 @@ Includes minimal template engine.
 - `type` - `string` (= `'value'`)
 - `value` - `null`, `boolean`, `string`, `number`
 
+### `condition`
+
+- `type` - `string` (= `'condition'`)
+- `branches` - `AST_NODE[]` (= `<condition_branch>`)
+
+### `condition_branch`
+
+- `type` - `string` (= `'if'` | `'elseif'` | `'else'`)
+- `ctrl` (`type` = `'if'` | `'elseif'`)
+  - `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
+- `children` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<condition>`)
+
 ### `andor`
 
 - `type` - `string` (= `'andor'`)
@@ -87,21 +99,14 @@ Includes minimal template engine.
 
 - `type` - `string` (= `'endRoundBracket'`)
 
-### `if`
+### `for`
 
-- `type` - `string` (= `'if'`)
+- `type` - `string` (= `'for'`)
 - `ctrl`
-  - `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
-
-### `elseif`
-
-- `type` - `string` (= `'elseif'`)
-- `ctrl`
-  - `stack` - `AST_NODE[]` (= `<var>` | `<value>` | `<andor>` | `<comp>`)
-
-### `else`
-
-- `type` - `string` (= `'else'`)
+  - [`k`] - `string`
+  - `v` - `string`
+  - `keys` - `string[]`
+- `children` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<condition>`)
 
 ### `normal`
 
@@ -123,20 +128,6 @@ Includes minimal template engine.
 
 - `name` - `string`
 - `args` - `*[]`
-
-### `for`
-
-- `type` - `string` (= `'for'`)
-- `ctrl`
-  - [`k`] - `string`
-  - `v` - `string`
-  - `keys` - `string[]`
-- `children` - `AST_NODE[]` (= `<normal>` | `<literal>` | `<holder>` | `<for>` | `<if>`)
-
-### `if` (?)
-
-- `type` - `string` (= `'if'`)
-- `sections`
 
 
 ## LICENSE
