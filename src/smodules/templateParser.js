@@ -122,15 +122,13 @@ const templateParser = function() {
   };
 
   const readEndLiteralTag = function () {
-    return readRegex(/^{\s*\/\s*literal\s*}/);
+    return readRegex(/^{\s*endliteral\s*}/);
   };
 
   const eatEndLiteralTag = function () {
     next('{');
     skipWhitespace();
-    next('/');
-    skipWhitespace();
-    next('literal');
+    next('endliteral');
     skipWhitespace();
     next('}');
   };
@@ -580,7 +578,7 @@ const templateParser = function() {
     }
 
     if (closed === false) {
-      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by {/literal}');
+      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by {endliteral}');
     }
 
     return {

@@ -19,8 +19,8 @@ QUnit.test('normal block', function (assert) {
 });
 
 QUnit.test('literal block', function (assert) {
-  const src = '{literal}<p>{literal} {left}/literal{right}</p>{/literal}';
-  const expected = '<p>{literal} {/literal}</p>';
+  const src = '{literal}<p>{literal} {left}endliteral{right}</p>{endliteral}';
+  const expected = '<p>{literal} {endliteral}</p>';
 
   assert.strictEqual(this.bindAndGet(src), expected);
 });
