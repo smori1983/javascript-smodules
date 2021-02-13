@@ -735,10 +735,10 @@ const templateParser = function() {
   })(); // parseForBlock()
 
   const parseConditionBlock = function () {
-    const sections = [];
+    const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
-      sections.push({
+      branches.push({
         header: parseCondition(),
         blocks: loop([], true),
       });
@@ -747,7 +747,7 @@ const templateParser = function() {
 
     return {
       type: 'condition',
-      sections: sections,
+      branches: branches,
     };
   }; // parseConditionBlock()
 

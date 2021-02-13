@@ -266,19 +266,19 @@ const template = function() {
     };
 
     const loopIf = function(block, params) {
-      let i, len, section;
+      let i, len, branch;
       let output = '';
 
-      for (i = 0, len = block.sections.length; i < len; i++) {
-        section = block.sections[i];
+      for (i = 0, len = block.branches.length; i < len; i++) {
+        branch = block.branches[i];
 
-        if (section.header.type === 'if' || section.header.type === 'elseif') {
-          if (evaluate(section.header.ctrl.stack, params)) {
-            output = loop(section.blocks, params);
+        if (branch.header.type === 'if' || branch.header.type === 'elseif') {
+          if (evaluate(branch.header.ctrl.stack, params)) {
+            output = loop(branch.blocks, params);
             break;
           }
         } else {
-          output = loop(section.blocks, params);
+          output = loop(branch.blocks, params);
         }
       }
 
