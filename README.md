@@ -13,7 +13,7 @@ Includes minimal template engine.
 
 ### Condition
 
-- `{if}` .. `{elseif}` .. `{else}` .. `{/if}`
+- `{if}` .. `{elseif}` .. `{else}` .. `{endif}`
 
 #### Operators
 
@@ -28,23 +28,23 @@ Includes minimal template engine.
 ...
 {else}
 ...
-{/if}
+{endif}
 ```
 
 ### Iteration
 
-- `{for}` .. `{/for}`
+- `{for}` .. `{endfor}`
 
 ```
 {for $value in $items}
 {$value}
-{/for}
+{endfor}
 ```
 
 ```
 {for $index, $value in $items}
 {$index} - {$value}
-{/for}
+{endfor}
 ```
 
 ### Delimiter
