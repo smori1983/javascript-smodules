@@ -21,7 +21,7 @@ QUnit.test('if block - if elseif else', function (assert) {
     '{ endif }';
   const result = this.parser.parse(src);
 
-  assert.strictEqual(result[0].type, 'if');
+  assert.strictEqual(result[0].type, 'condition');
   assert.strictEqual(result[0].sections.length, 4);
 
   section = result[0].sections[0];

@@ -746,7 +746,7 @@ const templateParser = function() {
     eatEndIfTag();
 
     return {
-      type:     'if',
+      type: 'condition',
       sections: sections,
     };
   }; // parseConditionBlock()

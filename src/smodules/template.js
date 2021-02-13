@@ -195,7 +195,7 @@ const template = function() {
           return output + block.value;
         } else if (block.type === 'holder') {
           return output + applyFilters(getValue(block.keys, params), block.filters);
-        } else if (block.type === 'if') {
+        } else if (block.type === 'condition') {
           return output + loopIf(block, params);
         } else if (block.type === 'for') {
           return output + loopFor(block, params);
