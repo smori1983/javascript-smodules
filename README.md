@@ -54,7 +54,7 @@ Includes minimal template engine.
 
 ### Literal
 
-- `{literal}` .. `{/literal}`
+- `{literal}` .. `{endliteral}`
 
 
 ## AST
