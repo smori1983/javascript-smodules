@@ -274,11 +274,11 @@ const template = function() {
 
         if (branch.header.type === 'if' || branch.header.type === 'elseif') {
           if (evaluate(branch.header.ctrl.stack, params)) {
-            output = loop(branch.blocks, params);
+            output = loop(branch.children, params);
             break;
           }
         } else {
-          output = loop(branch.blocks, params);
+          output = loop(branch.children, params);
         }
       }
 
