@@ -272,8 +272,8 @@ const template = function() {
       for (i = 0, len = block.branches.length; i < len; i++) {
         branch = block.branches[i];
 
-        if (branch.header.type === 'if' || branch.header.type === 'elseif') {
-          if (evaluate(branch.header.ctrl.stack, params)) {
+        if (branch.type === 'if' || branch.type === 'elseif') {
+          if (evaluate(branch.ctrl.stack, params)) {
             output = loop(branch.children, params);
             break;
           }

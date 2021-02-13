@@ -738,10 +738,11 @@ const templateParser = function() {
     const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
-      branches.push({
-        header: parseCondition(),
-        children: loop([], true),
-      });
+      const condition = parseCondition();
+
+      condition.children = loop([], true);
+
+      branches.push(condition);
     }
     eatEndIfTag();
 
