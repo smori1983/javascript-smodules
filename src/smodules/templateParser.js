@@ -734,7 +734,7 @@ const templateParser = function() {
     };
   })(); // parseForBlock()
 
-  const parseIfBlock = function () {
+  const parseConditionBlock = function () {
     const sections = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
@@ -749,7 +749,7 @@ const templateParser = function() {
       type:     'if',
       sections: sections,
     };
-  }; // parseIfBlock()
+  }; // parseConditionBlock()
 
   const loop = function(result, inBlock) {
     while (eatable()) {
@@ -759,7 +759,7 @@ const templateParser = function() {
         } else if (readLiteralTag()) {
           result.push(parseLiteralBlock());
         } else if (readIfTag()) {
-          result.push(parseIfBlock());
+          result.push(parseConditionBlock());
         } else if (readForTag()) {
           result.push(parseForBlock());
         } else if (readHolderTag()) {
