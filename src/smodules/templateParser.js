@@ -193,15 +193,13 @@ const templateParser = function() {
   };
 
   const readEndForTag = function () {
-    return readRegex(/^{\s*\/\s*for\s*}/);
+    return readRegex(/^{\s*endfor\s*}/);
   };
 
   const eatEndForTag = function () {
     next('{');
     skipWhitespace();
-    next('/');
-    skipWhitespace();
-    next('for');
+    next('endfor');
     skipWhitespace();
     next('}');
   };

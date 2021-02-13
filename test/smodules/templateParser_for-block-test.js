@@ -10,7 +10,7 @@ QUnit.test('for block - only value part in dummy variable', function (assert) {
   const src =
     '{ for $item in $items }' +
     '<p>{ $item | h }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const result = this.parser.parse(src);
 
   const block = result[0];
@@ -26,7 +26,7 @@ QUnit.test('for block - use index in dummy variable', function (assert) {
   const src =
     '{ for $idx, $item in $items }' +
     '<p>{ $item | h }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const result = this.parser.parse(src);
 
   const block = result[0];
@@ -42,7 +42,7 @@ QUnit.test('for block - use index in dummy variable - space before comma', funct
   const src =
     '{ for $idx , $item in $items }' +
     '<p>{ $item | h }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const result = this.parser.parse(src);
 
   const block = result[0];
@@ -58,7 +58,7 @@ QUnit.test('for block - variable chain in haystack', function (assert) {
   const src =
     '{ for $item in $items.key1.key2 }' +
     '<p>{ $item | h }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const result = this.parser.parse(src);
 
   const block = result[0];

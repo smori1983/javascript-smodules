@@ -411,7 +411,7 @@ QUnit.test('if block - nested - for', function (assert) {
     '{ if $data1.status }' +
     '{ for $item in $data1.items }' +
     '<p>{ $item }</p>' +
-    '{ /for }' +
+    '{ endfor }' +
     '{ endif }';
   const param = {
     data1: {
@@ -428,7 +428,7 @@ QUnit.test('for block', function (assert) {
   const src =
     '{ for $item in $items }' +
     '<p>{ $item }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {items: ['one', 'two', 'three']};
   const expected = '<p>one</p><p>two</p><p>three</p>';
 
@@ -439,7 +439,7 @@ QUnit.test('for block - use index', function (assert) {
   const src =
     '{ for $idx,$item in $items }' +
     '<p>{ $idx }-{ $item }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {items: ['one', 'two']};
   const expected = '<p>0-one</p><p>1-two</p>';
 
@@ -452,9 +452,9 @@ QUnit.test('for block - nested', function (assert) {
     '<ul>' +
     '{ for $id in $item.ids }' +
     '<li>{ $id }</li>' +
-    '{ /for }' +
+    '{ endfor }' +
     '</ul>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {
     items: [
       {ids: [1, 2]},
@@ -480,9 +480,9 @@ QUnit.test('for block - nested - if', function (assert) {
     '{ else }' +
     '<li>even: { $id }</li>' +
     '{ endif }' +
-    '{ /for }' +
+    '{ endfor }' +
     '</ul>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {
     items: [
       {ids: [1, 2]},
@@ -506,9 +506,9 @@ QUnit.test('for block - nested - if with property access', function (assert) {
     '{ if $product.id === 1 }' +
     '<li>{ $product.name|h }</li>' +
     '{ endif }' +
-    '{ /for }' +
+    '{ endfor }' +
     '</ul>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {
     items: [
       {
@@ -536,7 +536,7 @@ QUnit.test('for block - not iterable', function (assert) {
   const src =
     '{ for $item in $items }' +
     '<p>{ $item }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {items: 'hello, world!'};
   const expected = '';
 
@@ -547,7 +547,7 @@ QUnit.test('for block - haystack property chainable', function (assert) {
   const src =
     '{ for $value in $items.data }' +
     '<p>{ $value | h }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {
     items: {
       data: [1, 2, 3],
@@ -562,7 +562,7 @@ QUnit.test('for block - haystack property not chainable 1', function (assert) {
   const src =
     '{ for $item in $items.foo.bar }' +
     '<p>{ $item }</p>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {items: [1, 2, 3]};
   const expected = '';
 
@@ -575,8 +575,8 @@ QUnit.test('for block - haystack property not chainable 2', function (assert) {
     '<div>{ $item.name | h }</div>' +
     '{ for $data in $item.data }' +
     '<p>{ $data | h }</p>' +
-    '{ /for}' +
-    '{ /for }';
+    '{ endfor}' +
+    '{ endfor }';
   const param = {
     items: [
       {name: 'name1', data: 'data1'},
@@ -592,7 +592,7 @@ QUnit.test('for block - dummy variable chainable', function (assert) {
   const src =
     '{ for $item in $items }' +
     '<div>{ $item.data.key1 | h }</div>' +
-    '{ /for }';
+    '{ endfor }';
   const param = {
     items: [
       {data: {key1: 'value1'}},
