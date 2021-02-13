@@ -503,31 +503,8 @@ const templateParser = function() {
     })(); // getReversePolish()
 
     return function() {
-      let type, stack = [];
-
-      if (readIfTag()) {
-        eatIfTag();
-        type = 'if';
-      } else if (readElseifTag()) {
-        eatElseifTag();
-        type = 'elseif';
-      } else if (readElseTag()) {
-        eatElseTag();
-        type = 'else';
-      } else {
-        exception('unknown condition expression');
-      }
-
-      if (type === 'if' || type === 'elseif') {
-        stack = getReversePolish();
-        next('}');
-      }
-
       return {
-        type:  type,
-        ctrl: {
-          stack: stack,
-        },
+        stack: getReversePolish(),
       };
     };
   })(); // parseCondition()
@@ -738,11 +715,32 @@ const templateParser = function() {
     const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
-      const condition = parseCondition();
+      let type;
+      let ctrl;
 
-      condition.children = loop([], true);
+      if (readIfTag()) {
+        eatIfTag();
+        type = 'if';
+      } else if (readElseifTag()) {
+        eatElseifTag();
+        type = 'elseif';
+      } else if (readElseTag()) {
+        eatElseTag();
+        type = 'else';
+      } else {
+        exception('unknown condition expression');
+      }
 
-      branches.push(condition);
+      if (type === 'if' || type === 'elseif') {
+        ctrl = parseCondition();
+        next('}');
+      }
+
+      branches.push({
+        type: type,
+        ctrl: ctrl,
+        children: loop([], true),
+      });
     }
     eatEndIfTag();
 
