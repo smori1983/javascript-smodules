@@ -106,11 +106,8 @@ const template = function() {
     }
   };
 
-  const _registerFromString = function (source, callback) {
+  const _registerFromString = function (source) {
     _register(source, source);
-    if (typeof callback === 'function') {
-      callback();
-    }
   };
 
   const _execute = function(source, bindParams, callback) {
