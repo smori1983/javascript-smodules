@@ -127,7 +127,7 @@ class Evaluator {
       node = nodeStack[i];
 
       if (node.type === 'value') {
-        result.push(node.value || node.expr);
+        result.push(node.value);
       } else if (node.type === 'var') {
         result.push(this._getValue(node.keys, params, true));
       } else if (node.type === 'comp') {
