@@ -223,8 +223,16 @@ const template = function() {
     return that;
   };
 
-  // default filters
-  _filterManager.register('h', (function () {
+  registerPredefinedFilters(_filterManager);
+
+  return that;
+};
+
+/**
+ * @param {FilterManager} filterManager
+ */
+const registerPredefinedFilters = (filterManager) => {
+  filterManager.register('h', (() => {
     const list = {
       '<': '&lt;',
       '>': '&gt;',
@@ -233,34 +241,32 @@ const template = function() {
       "'": '&#039;', // eslint-disable-line quotes
     };
 
-    return function(value) {
-      return value.replace(/[<>&"']/g, function (matched) {
+    return (value) => {
+      return value.replace(/[<>&"']/g, (matched) => {
         return list[matched];
       });
     };
   })());
 
-  _filterManager.register('default', function (value, defaultValue) {
+  filterManager.register('default', (value, defaultValue) => {
     return value.length === 0 ? defaultValue : value;
   });
 
-  _filterManager.register('upper', function (value) {
+  filterManager.register('upper', (value) => {
     return value.toLocaleUpperCase();
   });
 
-  _filterManager.register('lower', function (value) {
+  filterManager.register('lower', (value) => {
     return value.toLocaleLowerCase();
   });
 
-  _filterManager.register('plus', function (value, plus) {
+  filterManager.register('plus', (value, plus) => {
     if (isFinite(value) && typeof plus === 'number' && isFinite(plus)) {
       return (+(value) + plus).toString();
     } else {
       return value;
     }
   });
-
-  return that;
 };
 
 module.exports.init = function () {
