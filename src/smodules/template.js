@@ -1,3 +1,4 @@
+const Evaluator = require('./evaluator');
 const FilterManager = require('./filter-manager');
 const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
@@ -141,179 +142,15 @@ const template = function() {
     }
   };
 
-  const _bind = (function() {
-    let src;
+  const _bind = function(source, bindParams) {
+    const evaluator = new Evaluator(_filterManager);
 
-    const exception = function (message) {
-      throw new Error('smodules.template - ' + message + ' in source ' + src);
-    };
-
-    const getValue = function (keys, params, asis) {
-      let pIdx, i, len, value;
-
-      for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
-        value = params[pIdx];
-        for (i = 0, len = keys.length; i < len; i++) {
-          if (typeof value[keys[i]] === 'undefined') {
-            value = null;
-            break;
-          } else {
-            value = value[keys[i]];
-          }
-        }
-        if (i === len) {
-          break;
-        }
-      }
-
-      if (asis) {
-        return value;
-      } else {
-        return value === null ? '' : value.toString();
-      }
-    };
-
-    const getFilter = function (name) {
-      try {
-        return _filterManager.get(name);
-      } catch (e) {
-        exception(e.message);
-      }
-    };
-
-    const applyFilters = function (value, filters) {
-      filters.forEach(function (filter) {
-        value = getFilter(filter.name).apply(null, [value].concat(filter.args));
-      });
-
-      return value;
-    };
-
-    const loop = function (blocks, params) {
-      return blocks.reduce(function (output, block) {
-        if (block.type === 'normal' || block.type === 'literal') {
-          return output + block.value;
-        } else if (block.type === 'holder') {
-          return output + applyFilters(getValue(block.keys, params), block.filters);
-        } else if (block.type === 'condition') {
-          return output + loopIf(block, params);
-        } else if (block.type === 'for') {
-          return output + loopFor(block, params);
-        } else {
-          return output;
-        }
-      }, '');
-    };
-
-    const evaluateComp = function (lval, rval, comp) {
-      if (comp === '===') {
-        return lval === rval;
-      } else if (comp === '==') {
-        return lval == rval; // eslint-disable-line eqeqeq
-      } else if (comp === '!==') {
-        return lval !== rval;
-      } else if (comp === '!=') {
-        return lval != rval; // eslint-disable-line eqeqeq
-      } else if (comp === 'lte') {
-        return lval <= rval;
-      } else if (comp === 'lt') {
-        return lval < rval;
-      } else if (comp === 'gte') {
-        return lval >= rval;
-      } else if (comp === 'gt') {
-        return lval > rval;
-      } else {
-        exception('invalid comparer');
-      }
-    };
-
-    const evaluateAndOr = function (lval, rval, type) {
-      if (type === 'and') {
-        return lval && rval;
-      } else if (type === 'or') {
-        return lval || rval;
-      } else {
-        exception('unknown operator');
-      }
-    };
-
-    const evaluate = function (conditions, params) {
-      let result = [], i, len, section, lval, rval;
-
-      for (i = 0, len = conditions.length; i < len; i++) {
-        section = conditions[i];
-
-        if (section.type === 'value') {
-          result.push(section.value || section.expr);
-        } else if (section.type === 'var') {
-          result.push(getValue(section.keys, params, true));
-        } else if (section.type === 'comp') {
-          rval = result.pop();
-          lval = result.pop();
-          result.push(evaluateComp(lval, rval, section.expr));
-        } else if (section.type === 'andor') {
-          rval = result.pop();
-          lval = result.pop();
-          result.push(evaluateAndOr(lval, rval, section.expr));
-        }
-      }
-
-      if (result.length !== 1) {
-        exception('invalid condition expression');
-      }
-
-      return result[0];
-    };
-
-    const loopIf = function(block, params) {
-      let i, len, branch;
-      let output = '';
-
-      for (i = 0, len = block.branches.length; i < len; i++) {
-        branch = block.branches[i];
-
-        if (branch.type === 'if' || branch.type === 'elseif') {
-          if (evaluate(branch.ctrl.stack, params)) {
-            output = loop(branch.children, params);
-            break;
-          }
-        } else {
-          output = loop(branch.children, params);
-        }
-      }
-
-      return output;
-    };
-
-    const loopFor = function(block, params) {
-      const array = getValue(block.ctrl.keys, params, true);
-      let output = '';
-
-      if (Array.isArray(array)) {
-        array.forEach(function(value, idx) {
-          const additional = {};
-
-          if (block.ctrl.tmp_k) {
-            additional[block.ctrl.tmp_k] = idx;
-          }
-          additional[block.ctrl.tmp_v] = value;
-
-          params.push(additional);
-          output += loop(block.children, params);
-          params.pop();
-        });
-      }
-
-      return output;
-    };
-
-    return function(source, bindParams) {
-      src = source;
-
-      return loop(_templates.get(source), [bindParams]);
-    };
-  })();
-
+    try {
+      return evaluator.evaluate(_templates.get(source), [bindParams]);
+    } catch (e) {
+      throw new Error('template - ' + e.message + ' in source ' + source);
+    }
+  };
 
   // APIs.
   that.bind = function(source, bindParams) {

@@ -18,7 +18,7 @@ class FilterManager {
   /**
    * @param {string} name
    * @return {function}
-   * @throws Error
+   * @throws {Error}
    */
   get(name) {
     if (this.filters.has(name)) {
