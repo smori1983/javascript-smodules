@@ -1,8 +1,8 @@
-const templateParser = require('../src/templateParser');
+const parser = require('../src/parser');
 
-QUnit.module('templateParser', {
+QUnit.module('parser', {
   beforeEach: function () {
-    this.parser = templateParser.init();
+    this.parser = parser.init();
   },
 });
 

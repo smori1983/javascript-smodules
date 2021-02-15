@@ -2,7 +2,7 @@ const Evaluator = require('./evaluator');
 const FilterManager = require('./filter-manager');
 const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
-const templateParser = require('./templateParser');
+const parser = require('./parser');
 
 const template = function() {
   const that = {};
@@ -11,7 +11,7 @@ const template = function() {
 
   const _templates = new Hash();
 
-  const _parser = templateParser.init();
+  const _parser = parser.init();
 
   const _remoteQueue = new QueueHash();
 

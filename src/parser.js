@@ -1,6 +1,6 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
 
-const templateParser = function() {
+const parser = function() {
   const that = {};
   let src;
   let text;
@@ -11,7 +11,7 @@ const templateParser = function() {
   let at;
 
   const exception = function (message) {
-    throw new Error('smodules.templateParser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
+    throw new Error('parser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
   };
 
   const eatable = function () {
@@ -791,5 +791,5 @@ const templateParser = function() {
 };
 
 module.exports.init = function () {
-  return templateParser();
+  return parser();
 };
