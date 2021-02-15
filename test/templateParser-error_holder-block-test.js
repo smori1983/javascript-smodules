@@ -1,4 +1,4 @@
-const templateParser = require('../../src/smodules/templateParser');
+const templateParser = require('../src/templateParser');
 
 QUnit.module('templateParser - error', {
   beforeEach: function () {

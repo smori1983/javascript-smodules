@@ -1,4 +1,4 @@
-const template = require('../../src/smodules/template');
+const template = require('../src/template');
 
 QUnit.module('template', {
   before: function () {
