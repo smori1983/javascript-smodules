@@ -329,7 +329,7 @@ const parser = function() {
     } else if (readNumber()) {
       return parseNumber();
     } else {
-      exception('value shoud be written');
+      exception('value should be written');
     }
   };
 
