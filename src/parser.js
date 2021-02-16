@@ -341,7 +341,7 @@ const parser = function() {
 
   const parseAndOr = function () {
     // eslint-disable-next-line quotes
-    const matched = regexMatched(andOrRegex, "'and' or 'or' should be written");
+    const matched = regexMatched(andOrRegex, '"and" or "or" should be written');
 
     next(matched[1]);
 
