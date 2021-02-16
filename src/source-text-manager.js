@@ -109,6 +109,19 @@ class SourceTextManager {
   }
 
   /**
+   * @return {string}
+   */
+  skipWhitespace() {
+    let skipped = '';
+
+    while (this.charMatch(/\s/)) {
+      skipped = this.next(this.getChar());
+    }
+
+    return skipped;
+  }
+
+  /**
    * @param {string} expr
    * @return {boolean}
    */

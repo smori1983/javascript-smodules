@@ -56,13 +56,7 @@ const parser = function() {
   };
 
   const skipWhitespace = function () {
-    let skipped = '';
-
-    while (charMatch(/\s/)) {
-      skipped += next(getChar());
-    }
-
-    return skipped;
+    return sourceTextManager.skipWhitespace();
   };
 
   // eslint-disable-next-line no-unused-vars
