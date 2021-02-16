@@ -12,13 +12,6 @@ const parser = function() {
   let sourceTextManager;
 
   /**
-   * @return {number}
-   */
-  const getPtr = function () {
-    return sourceTextManager.getPtr();
-  };
-
-  /**
    * @return {string}
    */
   const getChar = function () {
@@ -39,13 +32,6 @@ const parser = function() {
   /**
    * @return {number}
    */
-  const getLen = function () {
-    return sourceTextManager.getLen();
-  };
-
-  /**
-   * @return {number}
-   */
   const getLine = function () {
     return sourceTextManager.getLine();
   };
@@ -62,7 +48,7 @@ const parser = function() {
   };
 
   const eatable = function () {
-    return getPtr() < getLen();
+    return sourceTextManager.eatable();
   };
 
   const next = function (expr) {

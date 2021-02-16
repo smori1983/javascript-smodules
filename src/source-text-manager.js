@@ -12,9 +12,17 @@ class SourceTextManager {
   }
 
   /**
-   * @return {number}
+   * @return {boolean}
    */
-  getPtr() {
+  eatable() {
+    return this._getPtr() < this._getLen();
+  }
+
+  /**
+   * @return {number}
+   * @private
+   */
+  _getPtr() {
     return this._ptr;
   }
 
@@ -43,8 +51,9 @@ class SourceTextManager {
 
   /**
    * @return {number}
+   * @private
    */
-  getLen() {
+  _getLen() {
     return this._len;
   }
 
@@ -104,7 +113,7 @@ class SourceTextManager {
    * @return {boolean}
    */
   read(expr) {
-    return this._sourceText.indexOf(expr, this.getPtr()) === this.getPtr();
+    return this._sourceText.indexOf(expr, this._getPtr()) === this._getPtr();
   }
 
   /**
@@ -136,7 +145,7 @@ class SourceTextManager {
    * @private
    */
   _getText() {
-    return this._sourceText.slice(this.getPtr());
+    return this._sourceText.slice(this._getPtr());
   }
 }
 
