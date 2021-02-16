@@ -1,68 +1,77 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
+const SourceTextManager = require('./source-text-manager');
 
 const parser = function() {
   const that = {};
+
   let src;
-  let text;
-  let ptr;
-  let ch;
-  let len;
-  let line;
-  let at;
+
+  /**
+   * @type {SourceTextManager}
+   */
+  let sourceTextManager;
+
+  /**
+   * @return {string}
+   */
+  const getChar = function () {
+    return sourceTextManager.getChar();
+  };
+
+  const charIs = function (value) {
+    return sourceTextManager.charIs(value);
+  }
+
+  /**
+   * @param {RegExp} regexp
+   */
+  const charMatch = function (regexp) {
+    return sourceTextManager.charMatch(regexp);
+  }
+
+  /**
+   * @return {number}
+   */
+  const getLine = function () {
+    return sourceTextManager.getLine();
+  };
+
+  /**
+   * @return {number}
+   */
+  const getAt = function () {
+    return sourceTextManager.getAt();
+  };
 
   const exception = function (message) {
-    throw new Error('parser - ' + message + ' in source ' + src + ' [' + line + ',' + at + ']');
+    throw new Error('parser - ' + message + ' in source ' + src + ' [' + getLine() + ',' + getAt() + ']');
   };
 
   const eatable = function () {
-    return ptr < len;
+    return sourceTextManager.eatable();
   };
 
-  const next = (function () {
-    const position = function (expr) {
-      while (expr.length > 0) {
-        if (expr.slice(0, 1) === '\n') {
-          line++;
-          at = 1;
-        } else {
-          at++;
-        }
-        expr = expr.slice(1);
-      }
-    };
-
-    return function (expr) {
-      expr = expr || ch;
-
-      if (read(expr) === false) {
-        exception('syntax error');
-      }
-
-      position(expr);
-
-      ptr += expr.length;
-      ch = text.charAt(ptr);
-
-      return expr;
-    };
-  })();
+  const next = function (expr) {
+    return sourceTextManager.next(expr);
+  };
 
   const skipWhitespace = function () {
     let skipped = '';
 
-    while (/\s/.test(ch)) {
-      skipped += next(ch);
+    while (charMatch(/\s/)) {
+      skipped += next(getChar());
     }
 
     return skipped;
   };
 
+  // eslint-disable-next-line no-unused-vars
   const read = function(expr) {
-    return text.indexOf(expr, ptr) === ptr;
+    return sourceTextManager.read(expr);
   };
 
   const readRegex = function (regex) {
-    return regex.test(text.slice(ptr));
+    return sourceTextManager.readRegexp(regex);
   };
 
   const checkRegex = function (regex, errorMessage) {
@@ -72,13 +81,7 @@ const parser = function() {
   };
 
   const regexMatched = function (regex, errorMessage) {
-    const result = text.slice(ptr).match(regex);
-
-    if (result === null && typeof errorMessage === 'string') {
-      exception(errorMessage);
-    }
-
-    return result;
+    return sourceTextManager.regexpMatched(regex, errorMessage);
   };
 
   const readLeftTag = function () {
@@ -215,8 +218,8 @@ const parser = function() {
   const eatTmpVar = function () {
     let s = next('$');
 
-    while (/\w/.test(ch)) {
-      s += next(ch);
+    while (charMatch(/\w/)) {
+      s += next(getChar());
     }
 
     if (s === '$') {
@@ -233,8 +236,8 @@ const parser = function() {
   const parseVar = function () {
     let parsed = next('$');
 
-    while (/[\w.]/.test(ch)) {
-      parsed += next(ch);
+    while (charMatch(/[\w.]/)) {
+      parsed += next(getChar());
     }
 
     if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
@@ -279,7 +282,7 @@ const parser = function() {
 
   const readString = function () {
     // eslint-disable-next-line quotes
-    return ch === "'" || ch === '"';
+    return charIs("'") || charIs('"');
   };
 
   const parseString = function () {
@@ -295,7 +298,7 @@ const parser = function() {
   };
 
   const readNumber = function () {
-    return ch === '+' || ch === '-' || (ch >= '0' && ch <= '9');
+    return charIs('+') || charIs('-') || charMatch(/[0-9]/);
   };
 
   const parseNumber = function () {
@@ -367,7 +370,7 @@ const parser = function() {
   };
 
   const readRoundBracket = function () {
-    return ch === '(';
+    return charIs('(');
   };
 
   const parseRoundBracket = function () {
@@ -379,7 +382,7 @@ const parser = function() {
   };
 
   const readEndRoundBracket = function () {
-    return ch === ')';
+    return charIs(')');
   };
 
   const parseEndRoundBracket = function () {
@@ -455,7 +458,7 @@ const parser = function() {
         let parsed, polish = [], stack = [], stackTop;
 
         while (eatable()) {
-          if (ch === '}') {
+          if (charIs('}')) {
             break;
           }
 
@@ -517,12 +520,12 @@ const parser = function() {
         value += eatLeftTag();
       } else if (readRightTag()) {
         value += eatRightTag();
-      } else if (ch === '{') {
+      } else if (charIs('{')) {
         break;
-      } else if (ch === '}') {
+      } else if (charIs('}')) {
         exception('syntax error');
       } else {
-        value += next(ch);
+        value += next(getChar());
       }
     }
 
@@ -535,8 +538,8 @@ const parser = function() {
   const parseLiteralBlock = function () {
     let value = '';
     let closed = false;
-    const startLine = line;
-    const startAt = at;
+    const startLine = getLine();
+    const startAt = getAt();
 
     eatLiteralTag();
 
@@ -550,7 +553,7 @@ const parser = function() {
         closed = true;
         break;
       } else {
-        value += next(ch);
+        value += next(getChar());
       }
     }
 
@@ -571,8 +574,8 @@ const parser = function() {
 
         skipWhitespace();
 
-        while (/[\w-]/.test(ch)) {
-          name += next(ch);
+        while (charMatch(/[\w-]/)) {
+          name += next(getChar());
         }
 
         if (name === '') {
@@ -587,7 +590,7 @@ const parser = function() {
 
         skipWhitespace();
 
-        if (ch === ':') {
+        if (charIs(':')) {
           next(':');
 
           while (eatable()) {
@@ -601,9 +604,9 @@ const parser = function() {
 
             skipWhitespace();
 
-            if (ch === ',') {
+            if (charIs(',')) {
               next(',');
-            } else if (ch === '|' || ch === '}') {
+            } else if (charIs('|') || charIs('}')) {
               break;
             } else {
               exception('invalid filter args expression');
@@ -620,7 +623,7 @@ const parser = function() {
         skipWhitespace();
 
         while (eatable()) {
-          if (ch !== '|') {
+          if (!charIs('|')) {
             break;
           }
 
@@ -631,9 +634,9 @@ const parser = function() {
             args: getFilterArgsSection(),
           });
 
-          if (ch === '}') {
+          if (charIs('}')) {
             break;
-          } else if (ch !== '|') {
+          } else if (!charIs('|')) {
             exception('syntax error');
           }
         }
@@ -752,7 +755,7 @@ const parser = function() {
 
   const loop = function(result, inBlock) {
     while (eatable()) {
-      if (ch === '{') {
+      if (charIs('{')) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
         } else if (readLiteralTag()) {
@@ -776,13 +779,9 @@ const parser = function() {
 
 
   that.parse = function(content, source) {
+    sourceTextManager = new SourceTextManager(content);
+
     src  = source || '';
-    text = content;
-    ptr  = 0;
-    ch   = content.charAt(0);
-    len  = content.length;
-    line = 1;
-    at   = 1;
 
     return loop([]);
   };
