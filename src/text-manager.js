@@ -15,17 +15,23 @@ class TextManager {
   }
 
   /**
+   * @return {string}
+   */
+  getSourceText() {
+    return this._sourceText;
+  }
+
+  /**
    * @return {boolean}
    */
   eatable() {
-    return this._getPtr() < this._getLen();
+    return this.getPtr() < this._getLen();
   }
 
   /**
    * @return {number}
-   * @private
    */
-  _getPtr() {
+  getPtr() {
     return this._ptr;
   }
 
@@ -129,7 +135,7 @@ class TextManager {
    * @return {boolean}
    */
   read(expr) {
-    return this._sourceText.indexOf(expr, this._getPtr()) === this._getPtr();
+    return this._sourceText.indexOf(expr, this.getPtr()) === this.getPtr();
   }
 
   /**
@@ -161,7 +167,7 @@ class TextManager {
    * @private
    */
   _getText() {
-    return this._sourceText.slice(this._getPtr());
+    return this._sourceText.slice(this.getPtr());
   }
 }
 
