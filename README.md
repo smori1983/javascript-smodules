@@ -130,6 +130,229 @@ Includes minimal template engine.
 - `args` - `*[]`
 
 
+## Examples of parsed AST
+
+### Nested conditions
+
+```js
+const template = `
+{if $item.code === 'xxx'}
+  <span>{$item.name|h}</span>
+  {if $item.value gt 1000}
+  <span>high</span>
+  {endif}
+{endif}
+`;
+
+console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
+```
+
+```json
+[
+  {
+    "type": "condition",
+    "branches": [
+      {
+        "type": "if",
+        "ctrl": {
+          "stack": [
+            {
+              "type": "var",
+              "keys": [
+                "item",
+                "code"
+              ],
+              "order": 5
+            },
+            {
+              "type": "value",
+              "value": "xxx",
+              "order": 5
+            },
+            {
+              "type": "comp",
+              "expr": "===",
+              "order": 4
+            }
+          ]
+        },
+        "children": [
+          {
+            "type": "normal",
+            "value": "\n  <span>"
+          },
+          {
+            "type": "holder",
+            "keys": [
+              "item",
+              "name"
+            ],
+            "filters": [
+              {
+                "name": "h",
+                "args": []
+              }
+            ]
+          },
+          {
+            "type": "normal",
+            "value": "</span>\n  "
+          },
+          {
+            "type": "condition",
+            "branches": [
+              {
+                "type": "if",
+                "ctrl": {
+                  "stack": [
+                    {
+                      "type": "var",
+                      "keys": [
+                        "item",
+                        "value"
+                      ],
+                      "order": 5
+                    },
+                    {
+                      "type": "value",
+                      "value": 1000,
+                      "order": 5
+                    },
+                    {
+                      "type": "comp",
+                      "expr": "gt",
+                      "order": 4
+                    }
+                  ]
+                },
+                "children": [
+                  {
+                    "type": "normal",
+                    "value": "\n  <span>high</span>\n  "
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "normal",
+            "value": "\n"
+          }
+        ]
+      }
+    ]
+  }
+]
+```
+
+### Nested conditions
+
+```js
+const template = `
+{for $item in $items}
+<div>{$item.name|h}</div>
+<ul>
+  {for $index, $name in $item.categories}
+  <li>{$index|h}:{$name|h}</li>  
+  {endfor}
+</ul>
+{endfor}
+`;
+
+console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
+```
+
+```json
+[
+  {
+    "type": "for",
+    "ctrl": {
+      "tmp_v": "item",
+      "keys": [
+        "items"
+      ]
+    },
+    "children": [
+      {
+        "type": "normal",
+        "value": "\n<div>"
+      },
+      {
+        "type": "holder",
+        "keys": [
+          "item",
+          "name"
+        ],
+        "filters": [
+          {
+            "name": "h",
+            "args": []
+          }
+        ]
+      },
+      {
+        "type": "normal",
+        "value": "</div>\n<ul>\n  "
+      },
+      {
+        "type": "for",
+        "ctrl": {
+          "tmp_k": "index",
+          "tmp_v": "name",
+          "keys": [
+            "item",
+            "categories"
+          ]
+        },
+        "children": [
+          {
+            "type": "normal",
+            "value": "\n  <li>"
+          },
+          {
+            "type": "holder",
+            "keys": [
+              "index"
+            ],
+            "filters": [
+              {
+                "name": "h",
+                "args": []
+              }
+            ]
+          },
+          {
+            "type": "normal",
+            "value": ":"
+          },
+          {
+            "type": "holder",
+            "keys": [
+              "name"
+            ],
+            "filters": [
+              {
+                "name": "h",
+                "args": []
+              }
+            ]
+          },
+          {
+            "type": "normal",
+            "value": "</li>  \n  "
+          }
+        ]
+      },
+      {
+        "type": "normal",
+        "value": "\n</ul>\n"
+      }
+    ]
+  }
+]
+```
+
+
 ## LICENSE
 
 MIT
