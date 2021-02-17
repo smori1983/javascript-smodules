@@ -75,6 +75,20 @@ const parser = function() {
   };
 
   /**
+   * @return {string}
+   */
+  const openDelimiter = () => {
+    return '{';
+  };
+
+  /**
+   * @return {string}
+   */
+  const closeDelimiter = () => {
+    return '}';
+  };
+
+  /**
    * @return {boolean}
    */
   const readLeftTag = () => {
