@@ -75,6 +75,20 @@ const parser = function() {
   };
 
   /**
+   * @return {string}
+   */
+  const openDelimiter = () => {
+    return '{';
+  };
+
+  /**
+   * @return {string}
+   */
+  const closeDelimiter = () => {
+    return '}';
+  };
+
+  /**
    * @return {boolean}
    */
   const readLeftTag = () => {
@@ -93,18 +107,18 @@ const parser = function() {
   const eatLeftTag = () => {
     processLeftTag(sourceTextManager);
 
-    return '{';
+    return openDelimiter();
   };
 
   /**
    * @param {TextManager} textManager
    */
   const processLeftTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('left');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   /**
@@ -126,18 +140,18 @@ const parser = function() {
   const eatRightTag = () => {
     processRightTag(sourceTextManager);
 
-    return '}';
+    return closeDelimiter();
   };
 
   /**
    * @param {TextManager} textManager
    */
   const processRightTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('right');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   /**
@@ -161,11 +175,11 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processLiteralTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('literal');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   /**
@@ -189,11 +203,11 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processEndLiteralTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('endliteral');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   /**
@@ -217,7 +231,7 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processIfTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('if');
     textManager.readRegexp(/^\s+/, true);
@@ -245,7 +259,7 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processElseifTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('elseif');
     textManager.readRegexp(/^\s+/, true);
@@ -273,11 +287,11 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processElseTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('else');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   /**
@@ -301,11 +315,11 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processEndIfTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('endif');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   /**
@@ -329,7 +343,7 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processForTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('for');
     textManager.readRegexp(/^\s+/, true);
@@ -357,11 +371,11 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processEndForTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('endfor');
     textManager.skipWhitespace();
-    textManager.next('}');
+    textManager.next(closeDelimiter());
   };
 
   // NOTE: currently not used.
@@ -829,7 +843,7 @@ const parser = function() {
         let parsed, polish = [], stack = [], stackTop;
 
         while (eatable()) {
-          if (charIs('}')) {
+          if (charIs(closeDelimiter())) {
             break;
           }
 
@@ -891,9 +905,9 @@ const parser = function() {
         value += eatLeftTag();
       } else if (readRightTag()) {
         value += eatRightTag();
-      } else if (charIs('{')) {
+      } else if (charIs(openDelimiter())) {
         break;
-      } else if (charIs('}')) {
+      } else if (charIs(closeDelimiter())) {
         exception('syntax error');
       } else {
         value += next(getChar());
@@ -929,7 +943,7 @@ const parser = function() {
     }
 
     if (closed === false) {
-      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by {endliteral}');
+      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by ' + openDelimiter() + 'endliteral' + closeDelimiter());
     }
 
     return {
@@ -955,7 +969,7 @@ const parser = function() {
    * @param {TextManager} textManager
    */
   const processHolderTag = (textManager) => {
-    textManager.next('{');
+    textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.readRegexp(/^\$/, true);
   };
@@ -999,7 +1013,7 @@ const parser = function() {
 
             if (charIs(',')) {
               next(',');
-            } else if (charIs('|') || charIs('}')) {
+            } else if (charIs('|') || charIs(closeDelimiter())) {
               break;
             } else {
               exception('invalid filter args expression');
@@ -1027,7 +1041,7 @@ const parser = function() {
             args: getFilterArgsSection(),
           });
 
-          if (charIs('}')) {
+          if (charIs(closeDelimiter())) {
             break;
           } else if (!charIs('|')) {
             exception('syntax error');
@@ -1043,14 +1057,14 @@ const parser = function() {
     return function () {
       let keySection, filterSection;
 
-      next('{');
+      next(openDelimiter());
 
       skipWhitespace();
 
       keySection = parseVar();
       filterSection = getFilterSection();
 
-      next('}');
+      next(closeDelimiter());
 
       return {
         type: 'holder',
@@ -1084,7 +1098,7 @@ const parser = function() {
       array = parseVar();
 
       skipWhitespace();
-      next('}');
+      next(closeDelimiter());
 
       return {
         tmp_k: k,
@@ -1129,7 +1143,7 @@ const parser = function() {
 
       if (type === 'if' || type === 'elseif') {
         ctrl = parseCondition();
-        next('}');
+        next(closeDelimiter());
       }
 
       branches.push({
@@ -1148,7 +1162,7 @@ const parser = function() {
 
   const loop = function(result, inBlock) {
     while (eatable()) {
-      if (charIs('{')) {
+      if (charIs(openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
         } else if (readLiteralTag()) {
