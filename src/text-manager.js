@@ -140,10 +140,18 @@ class TextManager {
 
   /**
    * @param {RegExp} regexp
+   * @param {boolean} [throwError]
    * @return {boolean}
+   * @throws {Error}
    */
-  readRegexp(regexp) {
-    return regexp.test(this._getText());
+  readRegexp(regexp, throwError) {
+    const result = regexp.test(this._getText());
+
+    if (result === false && throwError === true) {
+      throw new Error();
+    }
+
+    return result;
   }
 
   /**

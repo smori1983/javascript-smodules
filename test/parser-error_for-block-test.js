@@ -94,6 +94,14 @@ QUnit.test('for block - error - too many elements 3', function (assert) {
   }, /syntax error/);
 });
 
+QUnit.test('for block - error - no space after for', function (assert) {
+  const src = '{for$item in $items}<p>{$item}</p>{endfor}';
+
+  assert.throws(function () {
+    this.parser.parse(src);
+  }, /unknown tag/);
+});
+
 QUnit.test('for block - error - no space around in 1', function (assert) {
   const src = '{for $itemin $items}<p>{$item}</p>{endfor}';
 

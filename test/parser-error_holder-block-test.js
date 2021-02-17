@@ -6,6 +6,14 @@ QUnit.module('parser - error', {
   },
 });
 
+QUnit.test('holder block - no $ mark', function (assert) {
+  const src = '{ foo }';
+
+  assert.throws(function () {
+    this.parser.parse(src);
+  }, /unknown tag/);
+});
+
 QUnit.test('holder block - no filters - error - tag not closed', function (assert) {
   const src = '{ $foo';
 
@@ -147,7 +155,7 @@ QUnit.test('holder block - filter with args - string - error - quote 1', functio
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /string expression not closed/);
+  }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote 2', function (assert) {
@@ -163,7 +171,7 @@ QUnit.test('holder block - filter with args - string - error - quote char 1', fu
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /string expression not closed/);
+  }, /invalid filter args/);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote char 2', function (assert) {
@@ -171,5 +179,5 @@ QUnit.test('holder block - filter with args - string - error - quote char 2', fu
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /string expression not closed/);
+  }, /invalid filter args/);
 });
