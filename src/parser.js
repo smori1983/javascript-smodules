@@ -74,10 +74,6 @@ const parser = function() {
     }
   };
 
-  const regexMatched = function (regex, errorMessage) {
-    return sourceTextManager.regexpMatched(regex, errorMessage);
-  };
-
   /**
    * @return {boolean}
    */
