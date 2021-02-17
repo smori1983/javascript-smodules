@@ -74,133 +74,294 @@ const parser = function() {
     }
   };
 
-  const regexMatched = function (regex, errorMessage) {
-    return sourceTextManager.regexpMatched(regex, errorMessage);
+  /**
+   * @return {boolean}
+   */
+  const readLeftTag = () => {
+    try {
+      processLeftTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const readLeftTag = function () {
-    return readRegex(/^{\s*left\s*}/);
-  };
-
-  const eatLeftTag = function () {
-    next('{');
-    skipWhitespace();
-    next('left');
-    skipWhitespace();
-    next('}');
+  /**
+   * @return {string}
+   */
+  const eatLeftTag = () => {
+    processLeftTag(sourceTextManager);
 
     return '{';
   };
 
-  const readRightTag = function () {
-    return readRegex(/^{\s*right\s*}/);
+  /**
+   * @param {TextManager} textManager
+   */
+  const processLeftTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('left');
+    textManager.skipWhitespace();
+    textManager.next('}');
   };
 
-  const eatRightTag = function () {
-    next('{');
-    skipWhitespace();
-    next('right');
-    skipWhitespace();
-    next('}');
+  /**
+   * @return {boolean}
+   */
+  const readRightTag = () => {
+    try {
+      processRightTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @return {string}
+   */
+  const eatRightTag = () => {
+    processRightTag(sourceTextManager);
 
     return '}';
   };
 
-  const readLiteralTag = function () {
-    return readRegex(/^{\s*literal\s*}/);
+  /**
+   * @param {TextManager} textManager
+   */
+  const processRightTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('right');
+    textManager.skipWhitespace();
+    textManager.next('}');
   };
 
-  const eatLiteralTag = function () {
-    next('{');
-    skipWhitespace();
-    next('literal');
-    skipWhitespace();
-    next('}');
+  /**
+   * @return {boolean}
+   */
+  const readLiteralTag = () => {
+    try {
+      processLiteralTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const readEndLiteralTag = function () {
-    return readRegex(/^{\s*endliteral\s*}/);
+  const eatLiteralTag = () => {
+    processLiteralTag(sourceTextManager);
   };
 
-  const eatEndLiteralTag = function () {
-    next('{');
-    skipWhitespace();
-    next('endliteral');
-    skipWhitespace();
-    next('}');
+  /**
+   * @param {TextManager} textManager
+   */
+  const processLiteralTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('literal');
+    textManager.skipWhitespace();
+    textManager.next('}');
   };
 
-  const readIfTag = function () {
-    return readRegex(/^{\s*if\s/);
+  /**
+   * @return {boolean}
+   */
+  const readEndLiteralTag = () => {
+    try {
+      processEndLiteralTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const eatIfTag = function () {
-    next('{');
-    skipWhitespace();
-    next('if');
-    skipWhitespace();
+  const eatEndLiteralTag = () => {
+    processEndLiteralTag(sourceTextManager);
   };
 
-  const readElseifTag = function () {
-    return readRegex(/^{\s*elseif\s/);
+  /**
+   * @param {TextManager} textManager
+   */
+  const processEndLiteralTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('endliteral');
+    textManager.skipWhitespace();
+    textManager.next('}');
   };
 
-  const eatElseifTag = function () {
-    next('{');
-    skipWhitespace();
-    next('elseif');
-    skipWhitespace();
+  /**
+   * @return {boolean}
+   */
+  const readIfTag = () => {
+    try {
+      processIfTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const readElseTag = function () {
-    return readRegex(/^{\s*else\s*}/);
+  const eatIfTag = () => {
+    processIfTag(sourceTextManager);
   };
 
-  const eatElseTag = function () {
-    next('{');
-    skipWhitespace();
-    next('else');
-    skipWhitespace();
-    next('}');
+  /**
+   * @param {TextManager} textManager
+   */
+  const processIfTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('if');
+    textManager.readRegexp(/^\s+/, true);
+    textManager.skipWhitespace();
   };
 
-  const readEndIfTag = function () {
-    return readRegex(/^{\s*endif\s*}/);
+  /**
+   * @return {boolean}
+   */
+  const readElseifTag = () => {
+    try {
+      processElseifTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const eatEndIfTag = function () {
-    next('{');
-    skipWhitespace();
-    next('endif');
-    skipWhitespace();
-    next('}');
+  const eatElseifTag = () => {
+    processElseifTag(sourceTextManager);
   };
 
-  const readForTag = function () {
-    return readRegex(/^{\s*for\s/);
+  /**
+   * @param {TextManager} textManager
+   */
+  const processElseifTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('elseif');
+    textManager.readRegexp(/^\s+/, true);
+    textManager.skipWhitespace();
   };
 
-  const eatForTag = function () {
-    next('{');
-    skipWhitespace();
-    next('for');
-    skipWhitespace();
+  /**
+   * @return {boolean}
+   */
+  const readElseTag = () => {
+    try {
+      processElseTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const readEndForTag = function () {
-    return readRegex(/^{\s*endfor\s*}/);
+  const eatElseTag = () => {
+    processElseTag(sourceTextManager);
   };
 
-  const eatEndForTag = function () {
-    next('{');
-    skipWhitespace();
-    next('endfor');
-    skipWhitespace();
-    next('}');
+  /**
+   * @param {TextManager} textManager
+   */
+  const processElseTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('else');
+    textManager.skipWhitespace();
+    textManager.next('}');
   };
 
-  const readHolderTag = function () {
-    return readRegex(/^{\s*\$/);
+  /**
+   * @return {boolean}
+   */
+  const readEndIfTag = () => {
+    try {
+      processEndIfTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const eatEndIfTag = () => {
+    processEndIfTag(sourceTextManager);
+  };
+
+  /**
+   * @param {TextManager} textManager
+   */
+  const processEndIfTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('endif');
+    textManager.skipWhitespace();
+    textManager.next('}');
+  };
+
+  /**
+   * @return {boolean}
+   */
+  const readForTag = () => {
+    try {
+      processForTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const eatForTag = () => {
+    processForTag(sourceTextManager);
+  };
+
+  /**
+   * @param {TextManager} textManager
+   */
+  const processForTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('for');
+    textManager.readRegexp(/^\s+/, true);
+    textManager.skipWhitespace();
+  };
+
+  /**
+   * @return {boolean}
+   */
+  const readEndForTag = () => {
+    try {
+      processEndForTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const eatEndForTag = () => {
+    processEndForTag(sourceTextManager);
+  };
+
+  /**
+   * @param {TextManager} textManager
+   */
+  const processEndForTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.next('endfor');
+    textManager.skipWhitespace();
+    textManager.next('}');
   };
 
   // NOTE: currently not used.
@@ -209,47 +370,102 @@ const parser = function() {
     return readRegex(/^\$\w+[^\w]/);
   };
 
-  const eatTmpVar = function () {
-    let s = next('$');
+  /**
+   * @return {string}
+   */
+  const eatTmpVar = () => {
+    try {
+      return processTmpVar(sourceTextManager);
+    } catch (e) {
+      exception(e.message);
+    }
+  };
 
-    while (charMatch(/\w/)) {
-      s += next(getChar());
+  /**
+   * @param {TextManager} textManager
+   * @return {string}
+   * @throws {Error}
+   */
+  const processTmpVar = (textManager) => {
+    let s = textManager.next('$');
+
+    while (textManager.charMatch(/\w/)) {
+      s += textManager.next(textManager.getChar());
     }
 
     if (s === '$') {
-      exception('tmp variable not found');
+      throw new Error('tmp variable not found');
     }
 
     return s.slice(1);
   };
 
-  const readVar = function () {
-    return readRegex(/^\$\w+(?:\.\w+)*(?:[^\w]|$)/);
+  /**
+   * @return {boolean}
+   */
+  const readVar = () => {
+    try {
+      processVar(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const parseVar = function () {
-    let parsed = next('$');
+  /**
+   * @return {Object}
+   */
+  const parseVar = () => {
+    try {
+      const parsed = processVar(sourceTextManager);
 
-    while (charMatch(/[\w.]/)) {
-      parsed += next(getChar());
+      return {
+        type: 'var',
+        keys: parsed.split('.'),
+      };
+    } catch (e) {
+      exception(e.message);
+    }
+  };
+
+  /**
+   * @param {TextManager} textManager
+   * @return {string}
+   * @throws {Error}
+   */
+  const processVar = (textManager) => {
+    let parsed = textManager.next('$');
+
+    while (textManager.charMatch(/[\w.]/)) {
+      parsed += textManager.next(textManager.getChar());
     }
 
     if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
-      exception('invalid variable expression');
+      throw new Error('invalid variable expression');
     }
 
-    return {
-      type: 'var',
-      keys: parsed.slice(1).split('.'),
-    };
+    return parsed.slice(1);
   };
 
-  const readNull = function () {
-    return readRegex(/^null[^\w]/);
+  /**
+   * @return {boolean}
+   */
+  const readNull = () => {
+    try {
+      processNull(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const parseNull = function () {
-    next('null');
+  /**
+   * @return {Object}
+   */
+  const parseNull = () => {
+    processNull(sourceTextManager);
 
     return {
       type: 'value',
@@ -257,66 +473,146 @@ const parser = function() {
     };
   };
 
-  const boolRegex = /^(true|false)[^\w]/;
+  /**
+   * @param {TextManager} textManager
+   */
+  const processNull = (textManager) => {
+    const regexp = /^(null)[^\w]/;
+    const matched = textManager.regexpMatched(regexp, 'null should be written');
 
-  const readBool = function () {
-    return readRegex(boolRegex);
+    textManager.next(matched[1]);
   };
 
-  const parseBool = function () {
-    const matched = regexMatched(boolRegex, 'bool should be written');
+  /**
+   * @return {boolean}
+   */
+  const readBool = () => {
+    try {
+      processBool(sourceTextManager.lookaheadTextManager());
 
-    next(matched[1]);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @return {Object}
+   */
+  const parseBool = () => {
+    const matched = processBool(sourceTextManager);
 
     return {
       type: 'value',
-      value: matched[1] === 'true',
+      value: matched === 'true',
     };
   };
 
-  const readString = function () {
-    // eslint-disable-next-line quotes
-    return charIs("'") || charIs('"');
+  /**
+   * @param {TextManager} textManager
+   */
+  const processBool = (textManager) => {
+    const regexp = /^(true|false)[^\w]/;
+    const matched = textManager.regexpMatched(regexp, 'bool should be written');
+
+    textManager.next(matched[1]);
+
+    return matched[1];
   };
 
-  const parseString = function () {
-    const regex = /^(["'])(?:\\\1|\s|\S)*?\1/;
-    const matched = regexMatched(regex, 'string expression not closed');
+  /**
+   * @return {boolean}
+   */
+  const readString = () => {
+    try {
+      processString(sourceTextManager.lookaheadTextManager());
 
-    next(matched[0]);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @return {Object}
+   */
+  const parseString = () => {
+    const matched = processString(sourceTextManager);
 
     return {
       type: 'value',
-      value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
+      value: matched,
     };
   };
 
-  const readNumber = function () {
-    return charIs('+') || charIs('-') || charMatch(/[0-9]/);
+  /**
+   * @param {TextManager} textManager
+   * @return {string}
+   */
+  const processString = (textManager) => {
+    const regexp = /^(["'])(?:\\\1|\s|\S)*?\1/;
+    const matched = textManager.regexpMatched(regexp, 'string expression not closed');
+
+    textManager.next(matched[0]);
+
+    return matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]);
   };
 
-  const parseNumber = function () {
-    const regex = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
-    const matched = regexMatched(regex);
-    let value;
+  /**
+   * @return {boolean}
+   */
+  const readNumber = () => {
+    try {
+      processNumber(sourceTextManager.lookaheadTextManager());
 
-    if (matched && !isNaN(value = +(matched[0]))) {
-      next(matched[0]);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @return {Object}
+   */
+  const parseNumber = () => {
+    try {
+      const value = processNumber(sourceTextManager);
 
       return {
         type: 'value',
         value: value,
       };
-    } else {
-      exception('invalid number expression');
+    } catch (e) {
+      exception(e.message);
     }
   };
 
-  const readValue = function () {
+  /**
+   * @param {TextManager} textManager
+   * @throws {Error}
+   */
+  const processNumber = (textManager) => {
+    const regexp = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
+    const matched = textManager.regexpMatched(regexp);
+    let value;
+
+    if (matched && !isNaN(value = +(matched[0]))) {
+      textManager.next(matched[0]);
+
+      return value;
+    } else {
+      throw new Error('invalid number expression');
+    }
+  };
+
+  /**
+   * @return {boolean}
+   */
+  const readValue = () => {
     return readNull() || readBool() || readString() || readNumber();
   };
 
-  const parseValue = function () {
+  const parseValue = () => {
     if (readNull()) {
       return parseNull();
     } else if (readBool()) {
@@ -330,61 +626,142 @@ const parser = function() {
     }
   };
 
-  const andOrRegex = /^(and|or)[^\w]/;
-
+  /**
+   * @return {boolean}
+   */
   const readAndOr = function () {
-    return readRegex(andOrRegex);
+    try {
+      processAndOr(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const parseAndOr = function () {
-    // eslint-disable-next-line quotes
-    const matched = regexMatched(andOrRegex, '"and" or "or" should be written');
-
-    next(matched[1]);
+  /**
+   * @return {Object}
+   */
+  const parseAndOr = () => {
+    const matched = processAndOr(sourceTextManager);
 
     return {
       type: 'andor',
-      expr: matched[1],
+      expr: matched,
     };
   };
 
-  const compRegex = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
+  /**
+   * @param {TextManager} textManager
+   * @return {string}
+   */
+  const processAndOr = (textManager) => {
+    const regexp = /^(and|or)[^\w]/;
+    const matched = textManager.regexpMatched(regexp, '"and" or "or" should be written');
 
-  const readComp = function () {
-    return readRegex(compRegex);
+    textManager.next(matched[1]);
+
+    return matched[1];
   };
 
-  const parseComp = function () {
-    const matched = regexMatched(compRegex, 'comparer should be written');
+  /**
+   * @return {boolean}
+   */
+  const readComp = () => {
+    try {
+      processComp(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @return {Object}
+   */
+  const parseComp = () => {
+    const matched = processComp(sourceTextManager);
 
     return {
       type: 'comp',
-      expr: next(matched[0]),
+      expr: matched,
     };
   };
 
-  const readRoundBracket = function () {
-    return charIs('(');
+  /**
+   * @param {TextManager} textManager
+   * @return {string}
+   */
+  const processComp = (textManager) => {
+    const regexp = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
+    const matched = textManager.regexpMatched(regexp, 'comparer should be written');
+
+    textManager.next(matched[0]);
+
+    return matched[0];
+  }
+
+  /**
+   * @return {boolean}
+   */
+  const readRoundBracket = () => {
+    try {
+      processRoundBracket(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
-  const parseRoundBracket = function () {
-    next('(');
+  /**
+   * @return {Object}
+   */
+  const parseRoundBracket = () => {
+    processRoundBracket(sourceTextManager);
 
     return {
       type: 'roundBracket',
     };
   };
 
-  const readEndRoundBracket = function () {
-    return charIs(')');
+  /**
+   * @param {TextManager} textManager
+   */
+  const processRoundBracket = (textManager) => {
+    textManager.next('(');
   };
 
-  const parseEndRoundBracket = function () {
-    next(')');
+  /**
+   * @return {boolean}
+   */
+  const readEndRoundBracket = () => {
+    try {
+      processEndRoundBracket(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @return {Object}
+   */
+  const parseEndRoundBracket = () => {
+    processEndRoundBracket(sourceTextManager);
 
     return {
       type: 'endRoundBracket',
     };
+  };
+
+  /**
+   * @param {TextManager} textManager
+   */
+  const processEndRoundBracket = (textManager) => {
+    textManager.next(')');
   };
 
   const parseCondition = (function() {
@@ -559,6 +936,28 @@ const parser = function() {
       type: 'literal',
       value: value,
     };
+  };
+
+  /**
+   * @return {boolean}
+   */
+  const readHolderTag = () => {
+    try {
+      processHolderTag(sourceTextManager.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
+   * @param {TextManager} textManager
+   */
+  const processHolderTag = (textManager) => {
+    textManager.next('{');
+    textManager.skipWhitespace();
+    textManager.readRegexp(/^\$/, true);
   };
 
   const parseHolderBlock = (function () {
