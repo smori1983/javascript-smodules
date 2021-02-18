@@ -12,14 +12,14 @@ QUnit.module('template', {
 });
 
 QUnit.test('normal block', function (assert) {
-  const src = '<p>{left}ok{right}</p>';
+  const src = '<p>{open}ok{close}</p>';
   const expected = '<p>{ok}</p>';
 
   assert.strictEqual(this.bindAndGet(src), expected);
 });
 
 QUnit.test('literal block', function (assert) {
-  const src = '{literal}<p>{literal} {left}endliteral{right}</p>{endliteral}';
+  const src = '{literal}<p>{literal} {open}endliteral{close}</p>{endliteral}';
   const expected = '<p>{literal} {endliteral}</p>';
 
   assert.strictEqual(this.bindAndGet(src), expected);

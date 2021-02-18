@@ -91,9 +91,9 @@ const parser = function() {
   /**
    * @return {boolean}
    */
-  const readLeftTag = () => {
+  const readOpenTag = () => {
     try {
-      processLeftTag(sourceTextManager.lookaheadTextManager());
+      processOpenTag(sourceTextManager.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -104,8 +104,8 @@ const parser = function() {
   /**
    * @return {string}
    */
-  const eatLeftTag = () => {
-    processLeftTag(sourceTextManager);
+  const eatOpenTag = () => {
+    processOpenTag(sourceTextManager);
 
     return openDelimiter();
   };
@@ -113,10 +113,10 @@ const parser = function() {
   /**
    * @param {TextManager} textManager
    */
-  const processLeftTag = (textManager) => {
+  const processOpenTag = (textManager) => {
     textManager.next(openDelimiter());
     textManager.skipWhitespace();
-    textManager.next('left');
+    textManager.next('open');
     textManager.skipWhitespace();
     textManager.next(closeDelimiter());
   };
@@ -124,9 +124,9 @@ const parser = function() {
   /**
    * @return {boolean}
    */
-  const readRightTag = () => {
+  const readCloseTag = () => {
     try {
-      processRightTag(sourceTextManager.lookaheadTextManager());
+      processCloseTag(sourceTextManager.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -137,8 +137,8 @@ const parser = function() {
   /**
    * @return {string}
    */
-  const eatRightTag = () => {
-    processRightTag(sourceTextManager);
+  const eatCloseTag = () => {
+    processCloseTag(sourceTextManager);
 
     return closeDelimiter();
   };
@@ -146,10 +146,10 @@ const parser = function() {
   /**
    * @param {TextManager} textManager
    */
-  const processRightTag = (textManager) => {
+  const processCloseTag = (textManager) => {
     textManager.next(openDelimiter());
     textManager.skipWhitespace();
-    textManager.next('right');
+    textManager.next('close');
     textManager.skipWhitespace();
     textManager.next(closeDelimiter());
   };
@@ -901,10 +901,10 @@ const parser = function() {
     let value = '';
 
     while (eatable()) {
-      if (readLeftTag()) {
-        value += eatLeftTag();
-      } else if (readRightTag()) {
-        value += eatRightTag();
+      if (readOpenTag()) {
+        value += eatOpenTag();
+      } else if (readCloseTag()) {
+        value += eatCloseTag();
       } else if (charIs(openDelimiter())) {
         break;
       } else if (charIs(closeDelimiter())) {
@@ -929,10 +929,10 @@ const parser = function() {
     eatLiteralTag();
 
     while (eatable()) {
-      if (readLeftTag()) {
-        value += eatLeftTag();
-      } else if (readRightTag()) {
-        value += eatRightTag();
+      if (readOpenTag()) {
+        value += eatOpenTag();
+      } else if (readCloseTag()) {
+        value += eatCloseTag();
       } else if (readEndLiteralTag()) {
         eatEndLiteralTag();
         closed = true;
