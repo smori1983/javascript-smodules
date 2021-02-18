@@ -373,12 +373,6 @@ const parser = function() {
     textManager.next(closeDelimiter());
   };
 
-  // NOTE: currently not used.
-  // eslint-disable-next-line no-unused-vars
-  const readTmpVar = function () {
-    return readRegex(/^\$\w+[^\w]/);
-  };
-
   /**
    * @return {string}
    */
