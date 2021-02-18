@@ -1,7 +1,7 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
 const SourceTextManager = require('./source-text-manager');
 
-const parser = function() {
+const parser = () => {
   const that = {};
 
   let src;
@@ -14,56 +14,86 @@ const parser = function() {
   /**
    * @return {string}
    */
-  const getChar = function () {
+  const getChar = () => {
     return sourceTextManager.getChar();
   };
 
-  const charIs = function (value) {
+  /**
+   * @param {string} value
+   * @return {boolean}
+   */
+  const charIs = (value) => {
     return sourceTextManager.charIs(value);
   }
 
   /**
    * @param {RegExp} regexp
+   * @return {boolean}
    */
-  const charMatch = function (regexp) {
+  const charMatch = (regexp) => {
     return sourceTextManager.charMatch(regexp);
   }
 
   /**
    * @return {number}
    */
-  const getLine = function () {
+  const getLine = () => {
     return sourceTextManager.getLine();
   };
 
   /**
    * @return {number}
    */
-  const getAt = function () {
+  const getAt = () => {
     return sourceTextManager.getAt();
   };
 
-  const exception = function (message) {
+  /**
+   * @param {string} message
+   * @throws {Error}
+   */
+  const exception = (message) => {
     throw new Error('parser - ' + message + ' in source ' + src + ' [' + getLine() + ',' + getAt() + ']');
   };
 
-  const eatable = function () {
+  /**
+   * @return {boolean}
+   */
+  const eatable = () => {
     return sourceTextManager.eatable();
   };
 
-  const next = function (expr) {
+  /**
+   * @param expr
+   * @return {string}
+   * @throws {Error}
+   */
+  const next = (expr) => {
     return sourceTextManager.next(expr);
   };
 
-  const skipWhitespace = function () {
+  /**
+   * @return {string}
+   */
+  const skipWhitespace = () => {
     return sourceTextManager.skipWhitespace();
   };
 
-  const readRegex = function (regex) {
+  /**
+   * @param {RegExp} regex
+   * @return {boolean}
+   * @throws {Error}
+   */
+  const readRegex = (regex) => {
     return sourceTextManager.readRegexp(regex);
   };
 
-  const checkRegex = function (regex, errorMessage) {
+  /**
+   * @param {RegExp} regex
+   * @param {string} errorMessage
+   * @throws {Error}
+   */
+  const checkRegex = (regex, errorMessage) => {
     if (readRegex(regex) === false) {
       exception(errorMessage);
     }
@@ -632,7 +662,7 @@ const parser = function() {
   /**
    * @return {boolean}
    */
-  const readAndOr = function () {
+  const readAndOr = () => {
     try {
       processAndOr(sourceTextManager.lookaheadTextManager());
 
@@ -767,8 +797,8 @@ const parser = function() {
     textManager.next(')');
   };
 
-  const parseCondition = (function() {
-    const getReversePolish = (function() {
+  const parseCondition = (() => {
+    const getReversePolish = (() => {
       // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
       const state = {
@@ -801,13 +831,13 @@ const parser = function() {
         'roundBracket':    6,
       };
 
-      const getOrder = function (section) {
+      const getOrder = (section) => {
         // parseAndor() returns section.type with 'andor'.
         // Use section.expr instead.
         return order[section.type] || order[section.expr];
       };
 
-      const parse = function (sourceType) {
+      const parse = (sourceType) => {
         const transitableTypes = state[sourceType];
         let i, size, type, result;
 
@@ -827,7 +857,7 @@ const parser = function() {
         }
       };
 
-      const main = function () {
+      const main = () => {
         const history = new ReversePolishNodeHistory();
         let parsed, polish = [], stack = [], stackTop;
 
@@ -870,7 +900,7 @@ const parser = function() {
         return polish;
       };
 
-      return function () {
+      return () => {
         try {
           return main();
         } catch (e) {
@@ -879,14 +909,14 @@ const parser = function() {
       };
     })(); // getReversePolish()
 
-    return function() {
+    return () => {
       return {
         stack: getReversePolish(),
       };
     };
   })(); // parseCondition()
 
-  const parseNormalBlock = function () {
+  const parseNormalBlock = () => {
     let value = '';
 
     while (eatable()) {
@@ -909,7 +939,7 @@ const parser = function() {
     };
   };
 
-  const parseLiteralBlock = function () {
+  const parseLiteralBlock = () => {
     let value = '';
     let closed = false;
     const startLine = getLine();
@@ -963,9 +993,9 @@ const parser = function() {
     textManager.readRegexp(/^\$/, true);
   };
 
-  const parseHolderBlock = (function () {
-    const getFilterSection = (function () {
-      const getFilterNameSection = function () {
+  const parseHolderBlock = (() => {
+    const getFilterSection = (() => {
+      const getFilterNameSection = () => {
         let name = '';
 
         skipWhitespace();
@@ -981,7 +1011,7 @@ const parser = function() {
         return name;
       };
 
-      const getFilterArgsSection = function () {
+      const getFilterArgsSection = () => {
         const args = [];
 
         skipWhitespace();
@@ -1013,7 +1043,7 @@ const parser = function() {
         return args;
       };
 
-      return function () {
+      return () => {
         const filters = [];
 
         skipWhitespace();
@@ -1043,7 +1073,7 @@ const parser = function() {
       };
     })(); // getFilterSection()
 
-    return function () {
+    return () => {
       let keySection, filterSection;
 
       next(openDelimiter());
@@ -1063,8 +1093,8 @@ const parser = function() {
     };
   })(); // parseHolderBlock()
 
-  const parseForBlock = (function () {
-    const parseControlData = function () {
+  const parseForBlock = (() => {
+    const parseControlData = () => {
       let k, v, array;
 
       eatForTag();
@@ -1096,7 +1126,7 @@ const parser = function() {
       };
     }; // parseHeader()
 
-    return function () {
+    return () => {
       const ctrl = parseControlData();
       const blocks = loop([], true);
 
@@ -1110,7 +1140,7 @@ const parser = function() {
     };
   })(); // parseForBlock()
 
-  const parseConditionBlock = function () {
+  const parseConditionBlock = () => {
     const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
@@ -1149,7 +1179,7 @@ const parser = function() {
     };
   }; // parseConditionBlock()
 
-  const loop = function(result, inBlock) {
+  const loop = (result, inBlock) => {
     while (eatable()) {
       if (charIs(openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
@@ -1174,10 +1204,10 @@ const parser = function() {
   };
 
 
-  that.parse = function(content, source) {
+  that.parse = (content, source) => {
     sourceTextManager = new SourceTextManager(content);
 
-    src  = source || '';
+    src = source || '';
 
     return loop([]);
   };
@@ -1185,6 +1215,6 @@ const parser = function() {
   return that;
 };
 
-module.exports.init = function () {
+module.exports.init = () => {
   return parser();
 };
