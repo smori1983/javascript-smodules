@@ -59,11 +59,6 @@ const parser = function() {
     return sourceTextManager.skipWhitespace();
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const read = function(expr) {
-    return sourceTextManager.read(expr);
-  };
-
   const readRegex = function (regex) {
     return sourceTextManager.readRegexp(regex);
   };
