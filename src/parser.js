@@ -149,7 +149,7 @@ const parser = function() {
   const processCloseTag = (textManager) => {
     textManager.next(openDelimiter());
     textManager.skipWhitespace();
-    textManager.next('right');
+    textManager.next('close');
     textManager.skipWhitespace();
     textManager.next(closeDelimiter());
   };

@@ -42,7 +42,7 @@ QUnit.test('normal block - plain html broken', function (assert) {
 });
 
 QUnit.test('normal block - delimiter tag', function (assert) {
-  const src = '<div>{open}Hello, world!{right}</div>';
+  const src = '<div>{open}Hello, world!{close}</div>';
   const result = this.parser.parse(src);
 
   assert.strictEqual(result.length, 1);

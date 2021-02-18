@@ -7,7 +7,7 @@ QUnit.module('parser', {
 });
 
 QUnit.test('literal block', function (assert) {
-  const src = '<div>{literal}{foo} {open}bar{right} {open}endliteral{right} function() {};{endliteral}</div>';
+  const src = '<div>{literal}{foo} {open}bar{close} {open}endliteral{close} function() {};{endliteral}</div>';
   const result = this.parser.parse(src);
 
   assert.strictEqual(result.length, 3);
