@@ -124,9 +124,9 @@ const parser = function() {
   /**
    * @return {boolean}
    */
-  const readRightTag = () => {
+  const readCloseTag = () => {
     try {
-      processRightTag(sourceTextManager.lookaheadTextManager());
+      processCloseTag(sourceTextManager.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -137,8 +137,8 @@ const parser = function() {
   /**
    * @return {string}
    */
-  const eatRightTag = () => {
-    processRightTag(sourceTextManager);
+  const eatCloseTag = () => {
+    processCloseTag(sourceTextManager);
 
     return closeDelimiter();
   };
@@ -146,7 +146,7 @@ const parser = function() {
   /**
    * @param {TextManager} textManager
    */
-  const processRightTag = (textManager) => {
+  const processCloseTag = (textManager) => {
     textManager.next(openDelimiter());
     textManager.skipWhitespace();
     textManager.next('right');
@@ -903,8 +903,8 @@ const parser = function() {
     while (eatable()) {
       if (readOpenTag()) {
         value += eatOpenTag();
-      } else if (readRightTag()) {
-        value += eatRightTag();
+      } else if (readCloseTag()) {
+        value += eatCloseTag();
       } else if (charIs(openDelimiter())) {
         break;
       } else if (charIs(closeDelimiter())) {
@@ -931,8 +931,8 @@ const parser = function() {
     while (eatable()) {
       if (readOpenTag()) {
         value += eatOpenTag();
-      } else if (readRightTag()) {
-        value += eatRightTag();
+      } else if (readCloseTag()) {
+        value += eatCloseTag();
       } else if (readEndLiteralTag()) {
         eatEndLiteralTag();
         closed = true;
