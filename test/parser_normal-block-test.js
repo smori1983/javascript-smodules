@@ -41,8 +41,8 @@ QUnit.test('normal block - plain html broken', function (assert) {
   assert.strictEqual(result[0].value, '<ul><li>one<li>two</div>');
 });
 
-QUnit.test('normal block - literal tag', function (assert) {
-  const src = '<div>{left}Hello, world!{right}</div>';
+QUnit.test('normal block - delimiter tag', function (assert) {
+  const src = '<div>{open}Hello, world!{right}</div>';
   const result = this.parser.parse(src);
 
   assert.strictEqual(result.length, 1);

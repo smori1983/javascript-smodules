@@ -116,7 +116,7 @@ const parser = function() {
   const processOpenTag = (textManager) => {
     textManager.next(openDelimiter());
     textManager.skipWhitespace();
-    textManager.next('left');
+    textManager.next('open');
     textManager.skipWhitespace();
     textManager.next(closeDelimiter());
   };
