@@ -406,7 +406,7 @@ const parser = () => {
   /**
    * @return {string}
    */
-  const eatTmpVar = () => {
+  const parseTmpVar = () => {
     try {
       return processTmpVar(sourceTextManager);
     } catch (e) {
@@ -1099,14 +1099,14 @@ const parser = () => {
 
       eatForTag();
 
-      v = eatTmpVar();
+      v = parseTmpVar();
 
       if (readRegex(/^\s*,\s*/)) {
         skipWhitespace();
         next(',');
         skipWhitespace();
         k = v;
-        v = eatTmpVar();
+        v = parseTmpVar();
       }
 
       checkRegex(/^\s+in\s+/, 'invalid for expression');
