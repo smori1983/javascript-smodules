@@ -49,8 +49,8 @@ Includes minimal template engine.
 
 ### Delimiter
 
-- `{left}`
-- `{right}`
+- `{open}`
+- `{close}`
 
 ### Literal
 
