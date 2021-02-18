@@ -59,11 +59,6 @@ const parser = function() {
     return sourceTextManager.skipWhitespace();
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const read = function(expr) {
-    return sourceTextManager.read(expr);
-  };
-
   const readRegex = function (regex) {
     return sourceTextManager.readRegexp(regex);
   };
@@ -376,12 +371,6 @@ const parser = function() {
     textManager.next('endfor');
     textManager.skipWhitespace();
     textManager.next(closeDelimiter());
-  };
-
-  // NOTE: currently not used.
-  // eslint-disable-next-line no-unused-vars
-  const readTmpVar = function () {
-    return readRegex(/^\$\w+[^\w]/);
   };
 
   /**
