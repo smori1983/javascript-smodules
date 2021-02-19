@@ -65,6 +65,10 @@ class ReversePolishNodeHistory {
     return balance;
   }
 
+  /**
+   * @return {number}
+   * @private
+   */
   _calcOperandOperatorBalance() {
     let balance = 0;
 
