@@ -866,7 +866,7 @@ const parser = () => {
             break;
           }
 
-          // By typeHistory.init(), history has at least 'start' type.
+          // history has at least 'start' type at the beginning.
           parsed = parse(history.latest());
 
           history.add(parsed.type);
