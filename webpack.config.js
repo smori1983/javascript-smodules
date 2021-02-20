@@ -5,7 +5,7 @@ module.exports = {
   // mode: 'production',
   // mode: 'development',
   mode: 'none',
-  entry: './src/templr.js',
+  entry: './src/templr-browser.js',
   plugins: [
     new webpack.ProgressPlugin(),
   ],
