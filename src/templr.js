@@ -1,18 +1,24 @@
-const FilterManager = require('./filter-manager');
 const Evaluator = require('./evaluator');
+const FilterManager = require('./filter-manager');
 const parser = require('./parser');
 
-/**
- * @param {string} source
- * @param {Object} param
- * @return {string}
- */
-const render = (source, param) => {
-  const filterManager = new FilterManager();
-  const evaluator = new Evaluator(filterManager);
-  const ast = parser.init().parse(source);
+class Templr {
+  constructor() {
+    this._filterManager = new FilterManager();
+    this._evaluator = new Evaluator(this._filterManager);
+    this._parser = parser.init();
+  }
 
-  return evaluator.evaluate(ast, [param]);
-};
+  /**
+   * @param {string} source
+   * @param {Object} param
+   * @return {string}
+   */
+  render(source, param) {
+    const ast = this._parser.parse(source);
 
-module.exports.render = render;
+    return this._evaluator.evaluate(ast, [param]);
+  }
+}
+
+module.exports = Templr;
