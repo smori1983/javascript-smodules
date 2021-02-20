@@ -5,16 +5,16 @@ module.exports = {
   // mode: 'production',
   // mode: 'development',
   mode: 'none',
-  entry: './src/index.js',
+  entry: './src/templr-browser.js',
   plugins: [
     new webpack.ProgressPlugin(),
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'template.js',
+    filename: 'templr.js',
     library: {
       type: 'umd',
-      name: 'template',
+      name: 'templr',
     },
   },
   module: {
