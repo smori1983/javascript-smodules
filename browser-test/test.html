@@ -3,19 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <title>javascript-smodules.js test</title>
-<link rel="stylesheet" href="../lib/qunit/qunit/qunit.css">
-<script src="../lib/jquery-1.7.2.js"></script>
-<script src="../lib/qunit/qunit/qunit.js"></script>
-<script src="../src/smodules/HEAD.js"></script>
-<script src="../src/smodules/a.js"></script>
-<script src="../src/smodules/data.HEAD.js"></script>
-<script src="../src/data.hash.js"></script>
-<script src="../src/data.queueHash.js"></script>
-<script src="../src/smodules/mod.HEAD.js"></script>
-<script src="../src/smodules/mod.superior.js"></script>
-<script src="../src/template.js"></script>
-<script src="../src/templateParser.js"></script>
-<script src="smodules/template-test.js"></script>
+<link rel="stylesheet" href="lib/qunit/qunit/qunit.css">
+<script src="./lib/jquery-1.7.2.js"></script>
+<script src="./lib/qunit/qunit/qunit.js"></script>
+<script src="./templr.js"></script>
+<script src="test/template-test.js"></script>
 <style type="text/css">
 #template-test { margin-top: 20px; }
 #template-test > div { border:1px solid #000000; margin-bottom: 10px; padding: 0px 20px; }
@@ -26,15 +18,15 @@
 
 <div id="template-test" style="display:block;">
     <div>
-        <strong>bind - appendTo - remote source</strong>
+        <strong>appendTo - remote source</strong>
         <div id="template-appendTo"></div>
     </div>
     <div>
-        <strong>bind - insertBefore - remote source</strong>
+        <strong>insertBefore - remote source</strong>
         <div id="template-insertBefore"><div id="template-insertBefore-child"></div></div>
     </div>
     <div>
-        <strong>bind - appendTo - embedded source</strong>
+        <strong>appendTo - embedded source</strong>
         <div id="template-textarea"></div>
     </div>
 </div>
@@ -42,18 +34,18 @@
 <textarea id="textarea" style="display:block;width:80%;height:300px;">
 {for $idx,$item in $items}
 <div class="item">
-    <p>{ $item.title | h }</p>
+    <p>{ $item.title }</p>
     {if $item.tags.length gt 0}
     <ul>
         {for $tag in $item.tags}
-        <li>{ $tag | h }</li>
-        {/for}
+        <li>{ $tag }</li>
+        {endfor}
     </ul>
     {else}
     <p>no tag</p>
-    {/if}
+    {endif}
 </div>
-{/for}
+{endfor}
 </textarea>
 
 </body>
