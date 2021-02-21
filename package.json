@@ -5,7 +5,8 @@
   "scripts": {
     "test": "qunit test",
     "watch:test": "watch 'npm run test' src/ test/ --interval=1 --ignoreDotFiles",
-    "build": "webpack"
+    "build": "webpack",
+    "build:test": "webpack --config webpack.test.config.js"
   },
   "dependencies": {},
   "devDependencies": {
