@@ -1,6 +1,6 @@
 ## ABOUT
 
-Includes minimal template engine.
+`templr`: minimal template engine for JavaScript.
 
 
 ## Tokens
