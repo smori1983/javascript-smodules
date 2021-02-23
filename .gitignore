@@ -2,5 +2,5 @@
 /.idea
 /dist
 /archive
-/browser-test/templr.js
+/test_browser/templr.js
 /node_modules
