@@ -9,7 +9,7 @@
     "build:test:vendor": "webpack -c webpack.test_vendor.config.js",
     "test:cli": "qunit test",
     "test:cli:watch": "watch 'npm run test' src/ test/ --interval=1 --ignoreDotFiles",
-    "test:browser:serve": "reload --port=9876 --dir=test_browser/",
+    "test:browser:serve": "reload --port=9876 --dir=test_browser/ --browser",
     "test:broser:puppeteer": "node-qunit-puppeteer http://localhost:9876/ 3000",
     "test:broser:puppeteer:watch": "watch 'npm run test:broser:puppeteer' test_browser/ --interval=1 --ignoreDotFiles"
   },
