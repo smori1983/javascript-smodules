@@ -14,6 +14,14 @@ class Templr {
 
   /**
    * @param {string} cacheId
+   * @return {boolean}
+   */
+  hasCache(cacheId) {
+    return this._templates.has(cacheId);
+  }
+
+  /**
+   * @param {string} cacheId
    * @param {string} source
    */
   registerCache(cacheId, source) {
