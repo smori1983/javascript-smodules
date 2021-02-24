@@ -48,7 +48,10 @@ const template = function() {
 
     return {
       add: function (sourceList, callback) {
-        jobList.push({sourceList: sourceList, callback: callback});
+        jobList.push({
+          sourceList: sourceList,
+          callback: callback,
+        });
         check();
       },
       notifyFetched: function () {
@@ -87,7 +90,7 @@ const template = function() {
     };
   })();
 
-  const _execute = function(source, bindParams, callback) {
+  const _execute = function (source, bindParams, callback) {
     if (_templates.has(source)) {
       if (typeof callback === 'function') {
         callback(_bind(source, bindParams));
@@ -97,12 +100,15 @@ const template = function() {
     } else if (_isRemoteFile(source)) {
       if (typeof callback === 'function') {
         _registerFromRemote(source);
-        _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
+        _remoteQueue.addTo(source, {
+          bindParams: bindParams,
+          callback: callback,
+        });
       }
     }
   };
 
-  const _bind = function(source, bindParams) {
+  const _bind = function (source, bindParams) {
     const evaluator = new Evaluator(_filterManager);
 
     try {
@@ -113,11 +119,11 @@ const template = function() {
   };
 
   // APIs.
-  that.bind = function(source, bindParams) {
+  that.bind = function (source, bindParams) {
     return {
-      get: function(callback) {
+      get: function (callback) {
         if (typeof callback === 'function') {
-          _execute(source, bindParams, function(output) {
+          _execute(source, bindParams, function (output) {
             callback(output);
           });
         } else {
@@ -137,15 +143,15 @@ const template = function() {
     };
   };
 
-  that.addFilter = function(name, func) {
+  that.addFilter = function (name, func) {
     _filterManager.register(name, func);
   };
 
-  that.preFetch = function(source, callback) {
+  that.preFetch = function (source, callback) {
     const sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
     if (Array.isArray(sourceList)) {
-      sourceList.forEach(function(source) {
+      sourceList.forEach(function (source) {
         if (_isRemoteFile(source)) {
           _registerFromRemote(source);
         }
@@ -156,7 +162,7 @@ const template = function() {
     return that;
   };
 
-  that.clearTemplateCache = function(source) {
+  that.clearTemplateCache = function (source) {
     if (typeof source === 'string') {
       _templates.remove(source);
     } else {
