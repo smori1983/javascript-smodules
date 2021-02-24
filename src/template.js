@@ -169,10 +169,6 @@ const template = function() {
     return that;
   };
 
-  that.getTemplateCacheList = function() {
-    return _templates.getKeys();
-  };
-
   that.clearTemplateCache = function(source) {
     if (typeof source === 'string') {
       _templates.remove(source);
