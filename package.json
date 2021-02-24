@@ -4,9 +4,8 @@
   "version": "0.3.0",
   "scripts": {
     "build": "webpack",
-    "build:test": "webpack --config webpack.test.config.js",
-    "build:test:watch": "webpack --config webpack.test.config.js --watch",
-    "build:test:vendor": "webpack -c webpack.test_vendor.config.js",
+    "build:test:browser": "webpack --config webpack.test_browser.config.js",
+    "build:test:browser:watch": "webpack --config webpack.test_browser.config.js --watch",
     "test:cli": "qunit test",
     "test:cli:watch": "watch 'npm run test:cli' src/ test/ --interval=1 --ignoreDotFiles",
     "test:browser:serve": "reload --port=9876 --dir=test_browser/ --browser",
