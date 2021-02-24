@@ -1,3 +1,7 @@
+const $ = require('jquery');
+const QUnit = require('qunit').QUnit;
+const templr = require('./../../src/templr-browser');
+
 QUnit.module('templr');
 
 QUnit.test('appendTo - remote source', function (assert) {
