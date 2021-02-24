@@ -2,4 +2,6 @@
 /.idea
 /dist
 /archive
+/test_browser/templr.js
+/test_browser/vendor.*
 /node_modules

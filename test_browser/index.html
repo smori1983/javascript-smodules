@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>templr test</title>
+<script src="./vendor.jquery.js"></script>
+<script src="./vendor.qunit.js"></script>
+<script src="./templr.js"></script>
+<script src="./test/templr-test.js"></script>
+</head>
+<body>
+<div id="qunit"></div>
+
+<div id="template-test" style="display:block;">
+    <div>
+        <strong>appendTo - remote source</strong>
+        <div id="template-appendTo"></div>
+    </div>
+    <div>
+        <strong>insertBefore - remote source</strong>
+        <div id="template-insertBefore"><div id="template-insertBefore-child"></div></div>
+    </div>
+    <div>
+        <strong>appendTo - embedded source</strong>
+        <div id="template-textarea"></div>
+    </div>
+</div>
+
+<textarea id="textarea" style="display:block;width:80%;height:300px;">
+{for $idx,$item in $items}
+<div class="item">
+    <p>{ $item.title }</p>
+    {if $item.tags.length gt 0}
+    <ul>
+        {for $tag in $item.tags}
+        <li>{ $tag }</li>
+        {endfor}
+    </ul>
+    {else}
+    <p>no tag</p>
+    {endif}
+</div>
+{endfor}
+</textarea>
+
+</body>
+</html>
