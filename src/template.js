@@ -197,19 +197,6 @@ const template = function() {
     return that;
   };
 
-  that.setRemoteFilePattern = function (arg) {
-    if (typeof arg === 'string') {
-      _testRemoteFile = function (file) {
-        return file.indexOf(arg) === 0;
-      };
-    } else if (typeof arg === 'object' && typeof arg.test === 'function' && (/^\/.+\/$/).test(arg.toString())) {
-      _testRemoteFile = function (file) {
-        return arg.test(file);
-      };
-    }
-    return that;
-  };
-
   that.getTemplateCacheList = function() {
     return _templates.getKeys();
   };
