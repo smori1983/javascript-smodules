@@ -87,10 +87,6 @@ const template = function() {
     };
   })();
 
-  const _registerFromString = function (source) {
-    _register(source, source);
-  };
-
   const _execute = function(source, bindParams, callback) {
     if (_templates.has(source)) {
       if (typeof callback === 'function') {
@@ -102,13 +98,6 @@ const template = function() {
       if (typeof callback === 'function') {
         _registerFromRemote(source);
         _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
-      }
-    } else {
-      _registerFromString(source);
-      if (typeof callback === 'function') {
-        callback(_bind(source, bindParams));
-      } else {
-        return _bind(source, bindParams);
       }
     }
   };
@@ -159,8 +148,6 @@ const template = function() {
       sourceList.forEach(function(source) {
         if (_isRemoteFile(source)) {
           _registerFromRemote(source);
-        } else {
-          _registerFromString(source);
         }
       });
 
