@@ -15,12 +15,8 @@ const template = function() {
 
   const _remoteQueue = new QueueHash();
 
-  let _testRemoteFile = function (file) {
-    return (/\.html$/).test(file);
-  };
-
   const _isRemoteFile = function (source) {
-    return _testRemoteFile(source);
+    return (/\.html$/).test(source);
   };
 
   const _isEmbedded = function (source) {
