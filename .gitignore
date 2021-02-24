@@ -1,6 +1,5 @@
 *.swp
 /.idea
 /dist
-/archive
-/test_browser/index.js
 /node_modules
+/test_browser/public/index.js

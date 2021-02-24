@@ -8,9 +8,9 @@
     "build:test:browser:watch": "webpack --config webpack.test_browser.config.js --watch",
     "test:cli": "qunit test",
     "test:cli:watch": "watch 'npm run test:cli' src/ test/ --interval=1 --ignoreDotFiles",
-    "test:browser:serve": "reload --port=9876 --dir=test_browser/ --browser",
+    "test:browser:serve": "reload --port=9876 --dir=test_browser/public/ --browser",
     "test:broser:puppeteer": "node-qunit-puppeteer http://localhost:9876/ 3000",
-    "test:broser:puppeteer:watch": "watch 'npm run test:broser:puppeteer' test_browser/ --interval=1 --ignoreDotFiles"
+    "test:broser:puppeteer:watch": "watch 'npm run test:broser:puppeteer' test_browser/public/ --interval=1 --ignoreDotFiles"
   },
   "dependencies": {},
   "devDependencies": {

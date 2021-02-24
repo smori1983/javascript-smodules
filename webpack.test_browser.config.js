@@ -10,7 +10,7 @@ module.exports = {
     new webpack.ProgressPlugin(),
   ],
   output: {
-    path: path.resolve(__dirname, 'test_browser'),
+    path: path.resolve(__dirname, 'test_browser/public'),
     filename: 'index.js',
     library: {
       type: 'umd',
