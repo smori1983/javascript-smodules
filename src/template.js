@@ -19,10 +19,6 @@ const template = function() {
     return (/\.html$/).test(source);
   };
 
-  const _isEmbedded = function (source) {
-    return source.indexOf('#') === 0;
-  };
-
   const _preFetchJobList = (function () {
     let jobList = [];
 
@@ -91,17 +87,6 @@ const template = function() {
     };
   })();
 
-  const _registerFromHTML = function (source, callback) {
-    if ($(source)[0].tagName.toLowerCase() === 'textarea') {
-      _register(source, $(source).val());
-    } else {
-      _register(source, $(source).html());
-    }
-    if (typeof callback === 'function') {
-      callback();
-    }
-  };
-
   const _registerFromString = function (source) {
     _register(source, source);
   };
@@ -117,13 +102,6 @@ const template = function() {
       if (typeof callback === 'function') {
         _registerFromRemote(source);
         _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
-      }
-    } else if (_isEmbedded(source)) {
-      _registerFromHTML(source);
-      if (typeof callback === 'function') {
-        callback(_bind(source, bindParams));
-      } else {
-        return _bind(source, bindParams);
       }
     } else {
       _registerFromString(source);
@@ -181,8 +159,6 @@ const template = function() {
       sourceList.forEach(function(source) {
         if (_isRemoteFile(source)) {
           _registerFromRemote(source);
-        } else if (_isEmbedded(source)) {
-          _registerFromHTML(source);
         } else {
           _registerFromString(source);
         }
