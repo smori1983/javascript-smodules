@@ -113,9 +113,9 @@ const template = () => {
   const _execute = (source, bindParams, callback) => {
     if (_templates.has(source)) {
       if (typeof callback === 'function') {
-        callback(_bind(source, bindParams));
+        callback(_evaluate(source, bindParams));
       } else {
-        return _bind(source, bindParams);
+        return _evaluate(source, bindParams);
       }
     } else if (_isRemoteFile(source)) {
       if (typeof callback === 'function') {
@@ -133,7 +133,7 @@ const template = () => {
    * @param {Object[]} bindParams
    * @return {string}
    */
-  const _bind = (source, bindParams) => {
+  const _evaluate = (source, bindParams) => {
     try {
       return _evaluator.evaluate(_templates.get(source), [bindParams]);
     } catch (e) {
