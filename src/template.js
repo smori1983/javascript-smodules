@@ -78,7 +78,7 @@ const template = () => {
   const _registerFromRemote = (() => {
     const _fetching = new Hash();
 
-    return (source) => {
+    return (source, checkCallback) => {
       if (!_fetching.has(source)) {
         _fetching.add(source, true);
 
@@ -86,6 +86,10 @@ const template = () => {
           url: source,
           success: (response) => {
             let queue;
+
+            if (typeof checkCallback === 'function') {
+              checkCallback(source);
+            }
 
             _register(source, response);
             _fetching.remove(source);
@@ -176,20 +180,20 @@ const template = () => {
   /**
    * @param {string} source
    * @param {function} callback
+   * @param {function} [checkCallback] Called every time when a source fetched.
    */
-  that.preFetch = (source, callback) => {
+  that.prefetch = (source, callback, checkCallback) => {
     const sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
     if (Array.isArray(sourceList)) {
       sourceList.forEach((source) => {
         if (_isRemoteFile(source)) {
-          _registerFromRemote(source);
+          _registerFromRemote(source, checkCallback);
         }
       });
 
       _preFetchJobList.add(sourceList, callback);
     }
-    return that;
   };
 
   that.clearTemplateCache = () => {
