@@ -26,21 +26,22 @@ class PrefetchManager {
   }
 
   notifyFetched() {
+    const undone = [];
     const finished = [];
 
     this._jobList.forEach((job) => {
-      job.sourceList = job.sourceList.filter((source) => {
+      const unacquired = job.sourceList.filter((source) => {
         return !this._templates.has(source);
       });
 
-      if (job.sourceList.length === 0) {
+      if (unacquired.length > 0) {
+        undone.push(job);
+      } else {
         finished.push(job);
       }
     });
 
-    this._jobList = this._jobList.filter((job) => {
-      return job.sourceList.length > 0;
-    });
+    this._jobList = undone;
 
     finished.forEach((job) => {
       if (typeof job.callback === 'function') {
