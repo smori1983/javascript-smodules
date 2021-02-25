@@ -5,6 +5,51 @@ const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
 const parser = require('./parser');
 
+class PrefetchManager {
+  /**
+   * @param {Hash} templates
+   */
+  constructor(templates) {
+    this._jobList = [];
+    this._templates = templates;
+  }
+
+  /**
+   * @param {string[]} sourceList
+   * @param {function} callback
+   */
+  add(sourceList, callback) {
+    this._jobList.push({
+      sourceList: sourceList,
+      callback: callback,
+    });
+  }
+
+  notifyFetched() {
+    const finished = [];
+
+    this._jobList.forEach((job) => {
+      job.sourceList = job.sourceList.filter((source) => {
+        return !this._templates.has(source);
+      });
+
+      if (job.sourceList.length === 0) {
+        finished.push(job);
+      }
+    });
+
+    this._jobList = this._jobList.filter((job) => {
+      return job.sourceList.length > 0;
+    });
+
+    finished.forEach((job) => {
+      if (typeof job.callback === 'function') {
+        job.callback();
+      }
+    });
+  }
+}
+
 const template = () => {
   const that = {};
 
@@ -18,6 +63,8 @@ const template = () => {
 
   const _remoteQueue = new QueueHash();
 
+  const _preFetchJobList = new PrefetchManager(_templates);
+
   /**
    * @param {string} source
    * @return {boolean}
@@ -25,47 +72,6 @@ const template = () => {
   const _isRemoteFile = (source) => {
     return (/\.html$/).test(source);
   };
-
-  const _preFetchJobList = (() => {
-    let jobList = [];
-
-    const check = () => {
-      const finished = [];
-
-      jobList.forEach((job) => {
-        job.sourceList = job.sourceList.filter((source) => {
-          return !_templates.has(source);
-        });
-
-        if (job.sourceList.length === 0) {
-          finished.push(job);
-        }
-      });
-
-      jobList = jobList.filter((job) => {
-        return job.sourceList.length > 0;
-      });
-
-      finished.forEach((job) => {
-        if (typeof job.callback === 'function') {
-          job.callback();
-        }
-      });
-    };
-
-    return {
-      add: (sourceList, callback) => {
-        jobList.push({
-          sourceList: sourceList,
-          callback: callback,
-        });
-        check();
-      },
-      notifyFetched: () => {
-        check();
-      },
-    };
-  })();
 
   /**
    * @param {string} source
