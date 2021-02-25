@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const Evaluator = require('./evaluator');
 const FilterManager = require('./filter-manager');
 const Hash = require('./data.hash');
