@@ -192,16 +192,8 @@ const template = () => {
     return that;
   };
 
-  /**
-   * @param {string} [source]
-   */
-  that.clearTemplateCache = (source) => {
-    if (typeof source === 'string') {
-      _templates.remove(source);
-    } else {
-      _templates.clear();
-    }
-    return that;
+  that.clearTemplateCache = () => {
+    _templates.clear();
   };
 
   registerPredefinedFilters(_filterManager);
