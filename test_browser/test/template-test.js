@@ -43,3 +43,79 @@ QUnit.test('prefetch - callback invoked once after all templates fetched', funct
     }
   );
 });
+
+QUnit.test('prefetch - multiple sets', function (assert) {
+  const done1 = assert.async();
+  const done2 = assert.async();
+
+  const sources1 = [
+    '/tpl/prefetch_01_a.html',
+    '/tpl/prefetch_01_b.html',
+    '/tpl/prefetch_01_c.html',
+  ];
+  const sources2 = [
+    '/tpl/prefetch_02_a.html',
+    '/tpl/prefetch_02_b.html',
+    '/tpl/prefetch_02_c.html',
+  ];
+
+  let callCount1 = 0;
+  let callCount2 = 0;
+
+  this.template.prefetch(
+    sources1,
+    () => {
+      assert.strictEqual(callCount1, 3);
+      done1();
+    },
+    () => {
+      callCount1 += 1;
+    }
+  );
+
+  this.template.prefetch(
+    sources2,
+    () => {
+      assert.strictEqual(callCount2, 3);
+      done2();
+    },
+    () => {
+      callCount2 += 1;
+    }
+  );
+});
+
+QUnit.test('prefetch - multiple sets that fetch the same templates', function (assert) {
+  const done1 = assert.async();
+  const done2 = assert.async();
+
+  const sources = [
+    '/tpl/prefetch_01_a.html',
+    '/tpl/prefetch_01_b.html',
+    '/tpl/prefetch_01_c.html',
+  ];
+
+  let totalCallCount = 0;
+
+  this.template.prefetch(
+    sources,
+    () => {
+      assert.strictEqual(totalCallCount, 3);
+      done1();
+    },
+    () => {
+      totalCallCount += 1;
+    }
+  );
+
+  this.template.prefetch(
+    sources,
+    () => {
+      assert.strictEqual(totalCallCount, 3);
+      done2();
+    },
+    () => {
+      totalCallCount += 1;
+    }
+  );
+});
