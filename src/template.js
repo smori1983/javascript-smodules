@@ -10,6 +10,8 @@ const template = () => {
 
   const _filterManager = new FilterManager();
 
+  const _evaluator = new Evaluator(_filterManager);
+
   const _templates = new Hash();
 
   const _parser = parser.init();
@@ -128,10 +130,8 @@ const template = () => {
    * @return {string}
    */
   const _bind = (source, bindParams) => {
-    const evaluator = new Evaluator(_filterManager);
-
     try {
-      return evaluator.evaluate(_templates.get(source), [bindParams]);
+      return _evaluator.evaluate(_templates.get(source), [bindParams]);
     } catch (e) {
       throw new Error('template - ' + e.message + ' in source ' + source);
     }
