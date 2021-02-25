@@ -7,7 +7,7 @@ QUnit.module('template', {
   },
 });
 
-QUnit.test('sample', function (assert) {
+QUnit.test('renderAsync', function (assert) {
   const done = assert.async();
 
   const source = '/tpl/template.html';
@@ -15,7 +15,7 @@ QUnit.test('sample', function (assert) {
     message: 'foo',
   };
 
-  this.template.bind(source, param).get((output) => {
+  this.template.renderAsync(source, param, (output) => {
     assert.true(output.indexOf('<p>foo</p>') >= 0);
     done();
   });

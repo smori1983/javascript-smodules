@@ -107,7 +107,7 @@ const template = () => {
 
   /**
    * @param {string} source
-   * @param {Object[]} bindParams
+   * @param {Object} bindParams
    * @param {function} [callback]
    */
   const _execute = (source, bindParams, callback) => {
@@ -130,7 +130,7 @@ const template = () => {
 
   /**
    * @param {string} source
-   * @param {Object[]} bindParams
+   * @param {Object} bindParams
    * @return {string}
    */
   const _evaluate = (source, bindParams) => {
@@ -142,39 +142,28 @@ const template = () => {
   };
 
   /**
-   * @param {string} source
-   * @param {Object[]} bindParams
-   */
-  that.bind = (source, bindParams) => {
-    return {
-      get: (callback) => {
-        if (typeof callback === 'function') {
-          _execute(source, bindParams, (output) => {
-            callback(output);
-          });
-        } else {
-          return _execute(source, bindParams);
-        }
-      },
-      //appendTo: function(target) {
-      //  _execute(source, bindParams, function(output) {
-      //    $(output).appendTo(target);
-      //  });
-      //},
-      //insertBefore: function(target) {
-      //  _execute(source, bindParams, function(output) {
-      //    $(output).insertBefore(target);
-      //  });
-      //},
-    };
-  };
-
-  /**
    * @param {string} name
    * @param {function} func
    */
   that.addFilter = (name, func) => {
     _filterManager.register(name, func);
+  };
+
+  /**
+   * @param {string} source
+   * @param {Object} param
+   */
+  that.render = (source, param) => {
+    return _execute(source, param);
+  };
+
+  /**
+   * @param {string} source
+   * @param {Object} param
+   * @param {function} callback
+   */
+  that.renderAsync = (source, param, callback) => {
+    _execute(source, param, callback);
   };
 
   /**
