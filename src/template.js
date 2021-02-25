@@ -63,7 +63,7 @@ const template = () => {
 
   const _remoteQueue = new QueueHash();
 
-  const _preFetchJobList = new PrefetchManager(_templates);
+  const _prefetchManager = new PrefetchManager(_templates);
 
   /**
    * @param {string} source
@@ -106,7 +106,7 @@ const template = () => {
 
         _register(source, req.responseText);
         _fetching.remove(source);
-        _preFetchJobList.notifyFetched();
+        _prefetchManager.notifyFetched();
 
         while (_remoteQueue.sizeOf(source) > 0) {
           queue = _remoteQueue.getFrom(source);
@@ -193,7 +193,7 @@ const template = () => {
         }
       });
 
-      _preFetchJobList.add(sourceList, callback);
+      _prefetchManager.add(sourceList, callback);
     }
   };
 
