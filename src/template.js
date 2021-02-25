@@ -85,33 +85,35 @@ const template = () => {
     const _fetching = new Hash();
 
     return (source, checkCallback) => {
-      if (!_fetching.has(source)) {
-        _fetching.add(source, true);
-
-        const req = new XMLHttpRequest();
-        req.open('GET', source, true);
-        req.onreadystatechange = () => {
-          if (req.readyState !== 4 || req.status !== 200) {
-            return;
-          }
-
-          let queue;
-
-          if (typeof checkCallback === 'function') {
-            checkCallback(source);
-          }
-
-          _register(source, req.responseText);
-          _fetching.remove(source);
-          _preFetchJobList.notifyFetched();
-
-          while (_remoteQueue.sizeOf(source) > 0) {
-            queue = _remoteQueue.getFrom(source);
-            _execute(source, queue.bindParams, queue.callback);
-          }
-        };
-        req.send();
+      if (_fetching.has(source)) {
+        return;
       }
+
+      _fetching.add(source, true);
+
+      const req = new XMLHttpRequest();
+      req.open('GET', source, true);
+      req.onreadystatechange = () => {
+        if (req.readyState !== 4 || req.status !== 200) {
+          return;
+        }
+
+        let queue;
+
+        if (typeof checkCallback === 'function') {
+          checkCallback(source);
+        }
+
+        _register(source, req.responseText);
+        _fetching.remove(source);
+        _preFetchJobList.notifyFetched();
+
+        while (_remoteQueue.sizeOf(source) > 0) {
+          queue = _remoteQueue.getFrom(source);
+          _execute(source, queue.bindParams, queue.callback);
+        }
+      };
+      req.send();
     };
   })();
 
