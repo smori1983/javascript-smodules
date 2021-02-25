@@ -5,7 +5,7 @@ const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
 const parser = require('./parser');
 
-const template = function() {
+const template = () => {
   const that = {};
 
   const _filterManager = new FilterManager();
@@ -16,18 +16,22 @@ const template = function() {
 
   const _remoteQueue = new QueueHash();
 
-  const _isRemoteFile = function (source) {
+  /**
+   * @param {string} source
+   * @return {boolean}
+   */
+  const _isRemoteFile = (source) => {
     return (/\.html$/).test(source);
   };
 
-  const _preFetchJobList = (function () {
+  const _preFetchJobList = (() => {
     let jobList = [];
 
-    const check = function () {
+    const check = () => {
       const finished = [];
 
-      jobList.forEach(function (job) {
-        job.sourceList = job.sourceList.filter(function (source) {
+      jobList.forEach((job) => {
+        job.sourceList = job.sourceList.filter((source) => {
           return !_templates.has(source);
         });
 
@@ -36,11 +40,11 @@ const template = function() {
         }
       });
 
-      jobList = jobList.filter(function (job) {
+      jobList = jobList.filter((job) => {
         return job.sourceList.length > 0;
       });
 
-      finished.forEach(function (job) {
+      finished.forEach((job) => {
         if (typeof job.callback === 'function') {
           job.callback();
         }
@@ -48,33 +52,37 @@ const template = function() {
     };
 
     return {
-      add: function (sourceList, callback) {
+      add: (sourceList, callback) => {
         jobList.push({
           sourceList: sourceList,
           callback: callback,
         });
         check();
       },
-      notifyFetched: function () {
+      notifyFetched: () => {
         check();
       },
     };
   })();
 
-  const _register = function (source, content) {
+  /**
+   * @param {string} source
+   * @param {string} content
+   */
+  const _register = (source, content) => {
     _templates.add(source, _parser.parse(content, source));
   };
 
-  const _registerFromRemote = (function () {
+  const _registerFromRemote = (() => {
     const _fetching = new Hash();
 
-    return function (source) {
+    return (source) => {
       if (!_fetching.has(source)) {
         _fetching.add(source, true);
 
         $.ajax({
           url: source,
-          success: function (response) {
+          success: (response) => {
             let queue;
 
             _register(source, response);
@@ -91,7 +99,12 @@ const template = function() {
     };
   })();
 
-  const _execute = function (source, bindParams, callback) {
+  /**
+   * @param {string} source
+   * @param {Object[]} bindParams
+   * @param {function} [callback]
+   */
+  const _execute = (source, bindParams, callback) => {
     if (_templates.has(source)) {
       if (typeof callback === 'function') {
         callback(_bind(source, bindParams));
@@ -109,7 +122,12 @@ const template = function() {
     }
   };
 
-  const _bind = function (source, bindParams) {
+  /**
+   * @param {string} source
+   * @param {Object[]} bindParams
+   * @return {string}
+   */
+  const _bind = (source, bindParams) => {
     const evaluator = new Evaluator(_filterManager);
 
     try {
@@ -119,12 +137,15 @@ const template = function() {
     }
   };
 
-  // APIs.
-  that.bind = function (source, bindParams) {
+  /**
+   * @param {string} source
+   * @param {Object[]} bindParams
+   */
+  that.bind = (source, bindParams) => {
     return {
-      get: function (callback) {
+      get: (callback) => {
         if (typeof callback === 'function') {
-          _execute(source, bindParams, function (output) {
+          _execute(source, bindParams, (output) => {
             callback(output);
           });
         } else {
@@ -144,15 +165,23 @@ const template = function() {
     };
   };
 
-  that.addFilter = function (name, func) {
+  /**
+   * @param {string} name
+   * @param {function} func
+   */
+  that.addFilter = (name, func) => {
     _filterManager.register(name, func);
   };
 
-  that.preFetch = function (source, callback) {
+  /**
+   * @param {string} source
+   * @param {function} callback
+   */
+  that.preFetch = (source, callback) => {
     const sourceList = (typeof source === 'string') ? [].concat(source) : source;
 
     if (Array.isArray(sourceList)) {
-      sourceList.forEach(function (source) {
+      sourceList.forEach((source) => {
         if (_isRemoteFile(source)) {
           _registerFromRemote(source);
         }
@@ -163,7 +192,10 @@ const template = function() {
     return that;
   };
 
-  that.clearTemplateCache = function (source) {
+  /**
+   * @param {string} [source]
+   */
+  that.clearTemplateCache = (source) => {
     if (typeof source === 'string') {
       _templates.remove(source);
     } else {
@@ -218,6 +250,6 @@ const registerPredefinedFilters = (filterManager) => {
   });
 };
 
-module.exports.init = function () {
+module.exports.init = () => {
   return template();
 };
