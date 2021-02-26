@@ -179,12 +179,12 @@ const template = () => {
   };
 
   /**
-   * @param {string} source
-   * @param {function} callback
+   * @param {string|string[]} target
+   * @param {function} callback Called once when all sources fetched.
    * @param {function} [checkCallback] Called every time when a source fetched.
    */
-  that.prefetch = (source, callback, checkCallback) => {
-    const sourceList = (typeof source === 'string') ? [].concat(source) : source;
+  that.prefetch = (target, callback, checkCallback) => {
+    const sourceList = (typeof target === 'string') ? [].concat(target) : target;
 
     if (Array.isArray(sourceList)) {
       sourceList.forEach((source) => {
