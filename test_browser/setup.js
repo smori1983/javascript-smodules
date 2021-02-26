@@ -11,4 +11,6 @@ require('./test/template-test');
 
 const QUnit = require('qunit').QUnit;
 
+QUnit.config.testTimeout = 3000;
+
 QUnit.start();
