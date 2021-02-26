@@ -124,11 +124,7 @@ const template = () => {
    */
   const _execute = (source, bindParams, callback) => {
     if (_templates.has(source)) {
-      if (typeof callback === 'function') {
-        callback(_evaluate(source, bindParams));
-      } else {
-        return _evaluate(source, bindParams);
-      }
+      return _evaluate(source, bindParams);
     } else if (_isRemoteFile(source)) {
       if (typeof callback === 'function') {
         _registerFromRemote(source);
