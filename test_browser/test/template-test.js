@@ -7,6 +7,14 @@ QUnit.module('template', {
   },
 });
 
+QUnit.test('render - template string', function (assert) {
+  const source = '<p>{$message | h}</p>';
+
+  const rendered = this.template.render(source, {message: 'foo'});
+
+  assert.strictEqual(rendered, '<p>foo</p>');
+});
+
 QUnit.test('renderAsync', function (assert) {
   const done = assert.async();
 
@@ -32,6 +40,19 @@ QUnit.test('renderAsync - multiple calls require the same source', function (ass
   this.template.renderAsync(source, {message: 'bar'}, (output) => {
     assert.true(output.indexOf('<p>bar</p>') >= 0);
     done2();
+  });
+});
+
+QUnit.test('prefetch - call render()', function (assert) {
+  const done = assert.async();
+
+  const source = '/tpl/template.html';
+
+  this.template.prefetch(source, () => {
+    const rendered = this.template.render(source, {message: 'foo'});
+
+    assert.true(rendered.indexOf('<p>foo</p>') >= 0);
+    done();
   });
 });
 

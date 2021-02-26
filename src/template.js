@@ -120,25 +120,6 @@ const template = () => {
   /**
    * @param {string} source
    * @param {Object} bindParams
-   * @param {function} [callback]
-   */
-  const _execute = (source, bindParams, callback) => {
-    if (_templates.has(source)) {
-      return _evaluate(source, bindParams);
-    } else if (_isRemoteFile(source)) {
-      if (typeof callback === 'function') {
-        _registerFromRemote(source);
-        _remoteQueue.addTo(source, {
-          bindParams: bindParams,
-          callback: callback,
-        });
-      }
-    }
-  };
-
-  /**
-   * @param {string} source
-   * @param {Object} bindParams
    * @return {string}
    */
   const _evaluate = (source, bindParams) => {
@@ -162,7 +143,11 @@ const template = () => {
    * @param {Object} param
    */
   that.render = (source, param) => {
-    return _execute(source, param);
+    if (!_templates.has(source)) {
+      _register(source, source);
+    }
+
+    return _evaluate(source, param);
   };
 
   /**
@@ -171,7 +156,11 @@ const template = () => {
    * @param {function} callback
    */
   that.renderAsync = (source, param, callback) => {
-    _execute(source, param, callback);
+    _registerFromRemote(source);
+    _remoteQueue.addTo(source, {
+      bindParams: param,
+      callback: callback,
+    });
   };
 
   /**
