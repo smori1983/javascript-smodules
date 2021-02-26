@@ -110,7 +110,7 @@ const template = () => {
 
         while (_remoteQueue.sizeOf(source) > 0) {
           queue = _remoteQueue.getFrom(source);
-          _execute(source, queue.bindParams, queue.callback);
+          queue.callback(_evaluate(source, queue.bindParams));
         }
       };
       req.send();
