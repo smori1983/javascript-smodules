@@ -129,8 +129,12 @@ const template = () => {
         return;
       }
 
-      _fetching.add(source, true);
-      _fetchRemoteSource(source, data);
+      if (_templates.has(source)) {
+        _consumeRemoteQueue(source);
+      } else {
+        _fetching.add(source, true);
+        _fetchRemoteSource(source, data);
+      }
     };
   })();
 

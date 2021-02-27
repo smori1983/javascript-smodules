@@ -26,7 +26,7 @@ QUnit.test('renderAsync', function (assert) {
   });
 });
 
-QUnit.test('renderAsync - multiple calls require the same source', function (assert) {
+QUnit.test('renderAsync - simultaneous multiple calls require the same source', function (assert) {
   const done1 = assert.async();
   const done2 = assert.async();
 
@@ -40,6 +40,23 @@ QUnit.test('renderAsync - multiple calls require the same source', function (ass
   this.template.renderAsync(source, {message: 'bar'}, (output) => {
     assert.true(output.indexOf('<p>bar</p>') >= 0);
     done2();
+  });
+});
+
+QUnit.test('renderAsync - subsequent multiple calls require the same source', function (assert) {
+  const done1 = assert.async();
+  const done2 = assert.async();
+
+  const source = '/tpl/template.html';
+
+  this.template.renderAsync(source, {message: 'foo'}, (output) => {
+    assert.true(output.indexOf('<p>foo</p>') >= 0);
+    done1();
+
+    this.template.renderAsync(source, {message: 'bar'}, (output) => {
+      assert.true(output.indexOf('<p>bar</p>') >= 0);
+      done2();
+    });
   });
 });
 
