@@ -90,6 +90,15 @@ const template = () => {
       });
     };
 
+    const _consumeRemoteQueue = (source) => {
+      let queue;
+
+      while (_remoteQueue.sizeOf(source) > 0) {
+        queue = _remoteQueue.getFrom(source);
+        queue.callback(_evaluate(source, queue.param));
+      }
+    };
+
     return (source, data) => {
       if (data.render) {
         _registerRemoteQueue(source, data.render);
@@ -108,8 +117,6 @@ const template = () => {
           return;
         }
 
-        let queue;
-
         if (data.check && typeof data.check.callback === 'function') {
           data.check.callback(source);
         }
@@ -118,10 +125,7 @@ const template = () => {
         _fetching.remove(source);
         _prefetchManager.notifyFetched();
 
-        while (_remoteQueue.sizeOf(source) > 0) {
-          queue = _remoteQueue.getFrom(source);
-          queue.callback(_evaluate(source, queue.param));
-        }
+        _consumeRemoteQueue(source);
       };
       req.send();
     };
