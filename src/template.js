@@ -185,17 +185,15 @@ const template = () => {
   that.prefetch = (target, callback, checkCallback) => {
     const sourceList = (typeof target === 'string') ? [].concat(target) : target;
 
-    if (Array.isArray(sourceList)) {
-      sourceList.forEach((source) => {
-        _registerFromRemote(source, {
-          check: {
-            callback: checkCallback,
-          },
-        });
+    sourceList.forEach((source) => {
+      _registerFromRemote(source, {
+        check: {
+          callback: checkCallback,
+        },
       });
+    });
 
-      _prefetchManager.add(sourceList, callback);
-    }
+    _prefetchManager.add(sourceList, callback);
   };
 
   that.clearTemplateCache = () => {
