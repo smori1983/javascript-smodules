@@ -99,18 +99,9 @@ const template = () => {
       }
     };
 
-    return (source, data) => {
-      if (data.render) {
-        _registerRemoteQueue(source, data.render);
-      }
-
-      if (_fetching.has(source)) {
-        return;
-      }
-
-      _fetching.add(source, true);
-
+    const _fetchRemoteSource = (source, data) => {
       const req = new XMLHttpRequest();
+
       req.open('GET', source, true);
       req.onreadystatechange = () => {
         if (req.readyState !== 4 || req.status !== 200) {
@@ -124,10 +115,22 @@ const template = () => {
         _register(source, req.responseText);
         _fetching.remove(source);
         _prefetchManager.notifyFetched();
-
         _consumeRemoteQueue(source);
       };
       req.send();
+    };
+
+    return (source, data) => {
+      if (data.render) {
+        _registerRemoteQueue(source, data.render);
+      }
+
+      if (_fetching.has(source)) {
+        return;
+      }
+
+      _fetching.add(source, true);
+      _fetchRemoteSource(source, data);
     };
   })();
 
