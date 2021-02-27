@@ -84,7 +84,7 @@ const template = () => {
   const _registerFromRemote = (() => {
     const _fetching = new Hash();
 
-    return (source, checkCallback) => {
+    return (source, data) => {
       if (_fetching.has(source)) {
         return;
       }
@@ -100,8 +100,8 @@ const template = () => {
 
         let queue;
 
-        if (typeof checkCallback === 'function') {
-          checkCallback(source);
+        if (data.check && typeof data.check.callback === 'function') {
+          data.check.callback(source);
         }
 
         _register(source, req.responseText);
@@ -174,7 +174,11 @@ const template = () => {
     if (Array.isArray(sourceList)) {
       sourceList.forEach((source) => {
         if (_isRemoteFile(source)) {
-          _registerFromRemote(source, checkCallback);
+          _registerFromRemote(source, {
+            check: {
+              callback: checkCallback,
+            },
+          });
         }
       });
 
