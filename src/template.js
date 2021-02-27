@@ -91,7 +91,7 @@ const template = () => {
       }
     };
 
-    const _fetchRemoteSource = (source, data) => {
+    const _fetchRemoteSource = (source, data, callback) => {
       const req = new XMLHttpRequest();
 
       req.open('GET', source, true);
@@ -100,14 +100,7 @@ const template = () => {
           return;
         }
 
-        if (data.check && typeof data.check.callback === 'function') {
-          data.check.callback(source);
-        }
-
-        _register(source, req.responseText);
-        _fetching.remove(source);
-        _prefetchManager.notifyFetched();
-        _consumeRemoteQueue(source);
+        callback(req.responseText);
       };
       req.send();
     };
@@ -125,7 +118,16 @@ const template = () => {
         _consumeRemoteQueue(source);
       } else {
         _fetching.add(source, true);
-        _fetchRemoteSource(source, data);
+        _fetchRemoteSource(source, data, (content) => {
+          if (data.check && typeof data.check.callback === 'function') {
+            data.check.callback(source);
+          }
+
+          _register(source, content);
+          _fetching.remove(source);
+          _prefetchManager.notifyFetched();
+          _consumeRemoteQueue(source);
+        });
       }
     };
   })();
