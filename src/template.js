@@ -65,14 +65,6 @@ const template = () => {
 
   /**
    * @param {string} source
-   * @return {boolean}
-   */
-  const _isRemoteFile = (source) => {
-    return (/\.html$/).test(source);
-  };
-
-  /**
-   * @param {string} source
    * @param {string} content
    */
   const _register = (source, content) => {
@@ -195,13 +187,11 @@ const template = () => {
 
     if (Array.isArray(sourceList)) {
       sourceList.forEach((source) => {
-        if (_isRemoteFile(source)) {
-          _registerFromRemote(source, {
-            check: {
-              callback: checkCallback,
-            },
-          });
-        }
+        _registerFromRemote(source, {
+          check: {
+            callback: checkCallback,
+          },
+        });
       });
 
       _prefetchManager.add(sourceList, callback);
