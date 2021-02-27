@@ -83,12 +83,16 @@ const template = () => {
     const _remoteQueue = new QueueHash();
     const _fetching = new Hash();
 
+    const _registerRemoteQueue = (source, data) => {
+      _remoteQueue.addTo(source, {
+        param: data.param,
+        callback: data.callback,
+      });
+    };
+
     return (source, data) => {
       if (data.render) {
-        _remoteQueue.addTo(source, {
-          param: data.render.param,
-          callback: data.render.callback,
-        });
+        _registerRemoteQueue(source, data.render);
       }
 
       if (_fetching.has(source)) {
