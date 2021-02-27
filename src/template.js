@@ -61,8 +61,6 @@ const template = () => {
 
   const _parser = parser.init();
 
-  const _remoteQueue = new QueueHash();
-
   const _prefetchManager = new PrefetchManager(_templates);
 
   /**
@@ -82,9 +80,17 @@ const template = () => {
   };
 
   const _registerFromRemote = (() => {
+    const _remoteQueue = new QueueHash();
     const _fetching = new Hash();
 
     return (source, data) => {
+      if (data.render) {
+        _remoteQueue.addTo(source, {
+          bindParams: data.render.bindParams,
+          callback: data.render.callback,
+        });
+      }
+
       if (_fetching.has(source)) {
         return;
       }
@@ -156,10 +162,11 @@ const template = () => {
    * @param {function} callback
    */
   that.renderAsync = (source, param, callback) => {
-    _registerFromRemote(source);
-    _remoteQueue.addTo(source, {
-      bindParams: param,
-      callback: callback,
+    _registerFromRemote(source, {
+      render: {
+        bindParams: param,
+        callback: callback,
+      },
     });
   };
 
