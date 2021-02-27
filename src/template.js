@@ -86,7 +86,7 @@ const template = () => {
     return (source, data) => {
       if (data.render) {
         _remoteQueue.addTo(source, {
-          bindParams: data.render.bindParams,
+          param: data.render.param,
           callback: data.render.callback,
         });
       }
@@ -116,7 +116,7 @@ const template = () => {
 
         while (_remoteQueue.sizeOf(source) > 0) {
           queue = _remoteQueue.getFrom(source);
-          queue.callback(_evaluate(source, queue.bindParams));
+          queue.callback(_evaluate(source, queue.param));
         }
       };
       req.send();
@@ -164,7 +164,7 @@ const template = () => {
   that.renderAsync = (source, param, callback) => {
     _registerFromRemote(source, {
       render: {
-        bindParams: param,
+        param: param,
         callback: callback,
       },
     });
