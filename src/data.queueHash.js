@@ -7,14 +7,6 @@ class QueueHash {
 
   /**
    * @param {string} key
-   * @return {boolean}
-   */
-  has(key) {
-    return this.hash.has(key);
-  }
-
-  /**
-   * @param {string} key
    * @param {*} value
    */
   pushTo(key, value) {
@@ -23,17 +15,6 @@ class QueueHash {
     queue.push(value);
 
     this.hash.add(key, queue);
-  }
-
-  /**
-   * @param {string} key
-   */
-  remove(key) {
-    this.hash.remove(key);
-  }
-
-  clear() {
-    this.hash.clear();
   }
 
   /**
@@ -56,6 +37,25 @@ class QueueHash {
     if (this.hash.has(key)) {
       return this.hash.get(key).shift();
     }
+  }
+
+  /**
+   * @param {string} key
+   * @return {boolean}
+   */
+  has(key) {
+    return this.hash.has(key);
+  }
+
+  /**
+   * @param {string} key
+   */
+  remove(key) {
+    this.hash.remove(key);
+  }
+
+  clear() {
+    this.hash.clear();
   }
 
   /**
