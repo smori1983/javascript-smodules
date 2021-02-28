@@ -87,10 +87,18 @@ QUnit.test('holder block - array index access - not chainable', function (assert
   assert.strictEqual(this.templr.render(src, param), expected);
 });
 
-QUnit.test('holder block - default filter - h - explicit call', function (assert) {
-  const src = '<p>{ $foo | h }</p>';
+QUnit.test('holder block - default filter - h - implicit call', function (assert) {
+  const src = '<p>{ $foo }</p>';
   const param = { foo: '<strong>"it\'s mine & that\'s yours"</strong>' };
   const expected = '<p>&lt;strong&gt;&quot;it&#039;s mine &amp; that&#039;s yours&quot;&lt;/strong&gt;</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - default filter - h - explicit call will be escaped twice', function (assert) {
+  const src = '<p>{ $foo | h }</p>';
+  const param = { foo: '<strong>foo</strong>' };
+  const expected = '<p>&amp;lt;strong&amp;gt;foo&amp;lt;/strong&amp;gt;</p>';
 
   assert.strictEqual(this.templr.render(src, param), expected);
 });
