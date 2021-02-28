@@ -167,18 +167,18 @@ QUnit.test('holder block - default filter - raw - null', function (assert) {
 //   assert.strictEqual(this.templr.render(src, param), expected);
 // });
 
-// QUnit.test('holder block - original filter', function (assert) {
-//   // create original filter
-//   this.template.addFilter('originalFilter', function (value, size, tail) {
-//     return value.slice(0, size) + (tail ? tail : '');
-//   });
-//
-//   const src = '<p>{ $foo | originalFilter:1 }</p><p>{ $foo | originalFilter:3,"..." }</p>';
-//   const param = {foo: 'abcdefghi'};
-//   const expected = '<p>a</p><p>abc...</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
+QUnit.test('holder block - original filter', function (assert) {
+  // create original filter
+  this.templr.addFilter('originalFilter', (value, size, tail) => {
+    return value.slice(0, size) + (tail ? tail : '');
+  });
+
+  const src = '<p>{ $foo | originalFilter:1 }</p><p>{ $foo | originalFilter:3,"..." }</p>';
+  const param = {foo: 'abcdefghi'};
+  const expected = '<p>a</p><p>abc...</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
 
 QUnit.test('if block - simple', function (assert) {
   const src =

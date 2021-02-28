@@ -60,6 +60,14 @@ class Templr {
 
     return this._evaluator.evaluate(ast, [param]);
   }
+
+  /**
+   * @param {string} name
+   * @param {function} func
+   */
+  addFilter(name, func) {
+    this._filterManager.register(name, func);
+  }
 }
 
 module.exports = Templr;
