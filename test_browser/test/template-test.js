@@ -1,9 +1,9 @@
 const QUnit = require('qunit').QUnit;
-const template = require('../../src/template');
+const Template = require('../../src/template');
 
 QUnit.module('template', {
   beforeEach: function () {
-    this.template = template.init();
+    this.template = new Template();
   },
 });
 

@@ -209,22 +209,14 @@ class RemoteManager {
   }
 }
 
-const template = () => {
-  const that = {};
+class Template {
+  constructor() {
+    this._filterManager = new FilterManager();
+    this._astCache = new AstCache(new Evaluator(this._filterManager));
+    this._remoteManager = new RemoteManager(this._astCache);
 
-  const _filterManager = new FilterManager();
-
-  const _astCache = new AstCache(new Evaluator(_filterManager));
-
-  const _remoteManager = new RemoteManager(_astCache);
-
-  /**
-   * @param {string} name
-   * @param {function} func
-   */
-  that.addFilter = (name, func) => {
-    _filterManager.register(name, func);
-  };
+    registerPredefinedFilters(this._filterManager);
+  }
 
   /**
    * @param {string} source
@@ -232,45 +224,50 @@ const template = () => {
    * @return {string}
    * @throws {Error}
    */
-  that.render = (source, param) => {
-    _astCache.save(source, source);
+  render(source, param) {
+    this._astCache.save(source, source);
 
-    return _astCache.evaluate(source, param);
-  };
+    return this._astCache.evaluate(source, param);
+  }
 
   /**
    * @param {string} source
    * @param {Object} param
    * @param {function} callback
+   * @throws {Error}
    */
-  that.renderAsync = (source, param, callback) => {
-    _remoteManager.register(source, {
+  renderAsync(source, param, callback) {
+    this._remoteManager.register(source, {
       render: {
         param: param,
         callback: callback,
       },
     });
-  };
+  }
 
   /**
    * @param {string|string[]} target
    * @param {function} callback Called once when all sources fetched.
    * @param {function} [checkCallback] Called every time when a source fetched.
    */
-  that.prefetch = (target, callback, checkCallback) => {
+  prefetch(target, callback, checkCallback) {
     const sourceList = (typeof target === 'string') ? [].concat(target) : target;
 
-    _remoteManager.prefetch(sourceList, callback, checkCallback);
-  };
+    this._remoteManager.prefetch(sourceList, callback, checkCallback);
+  }
 
-  that.clearTemplateCache = () => {
-    _astCache.clear();
-  };
+  /**
+   * @param {string} name
+   * @param {function} func
+   */
+  addFilter(name, func) {
+    this._filterManager.register(name, func);
+  }
 
-  registerPredefinedFilters(_filterManager);
-
-  return that;
-};
+  clearTemplateCache() {
+    this._astCache.clear();
+  }
+}
 
 /**
  * @param {FilterManager} filterManager
@@ -313,6 +310,4 @@ const registerPredefinedFilters = (filterManager) => {
   });
 };
 
-module.exports.init = () => {
-  return template();
-};
+module.exports = Template;
