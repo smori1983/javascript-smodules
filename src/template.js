@@ -142,14 +142,6 @@ const template = () => {
 
   const _remoteQueue = new RemoteQueue(_astCache);
 
-  /**
-   * @param {string} source
-   * @param {string} content
-   */
-  const _register = (source, content) => {
-    _astCache.save(source, content);
-  };
-
   const _registerFromRemote = (() => {
     const _fetching = new Hash();
 
@@ -209,7 +201,7 @@ const template = () => {
    * @throws {Error}
    */
   that.render = (source, param) => {
-    _register(source, source);
+    _astCache.save(source, source);
 
     return _astCache.evaluate(source, param);
   };
