@@ -4,6 +4,56 @@ const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
 const parser = require('./parser');
 
+class RemoteQueue {
+  /**
+   * @param {Evaluator} evaluator
+   * @param {Hash} templates
+   */
+  constructor(evaluator, templates) {
+    this._evaluator = evaluator;
+    this._templates = templates;
+    this._queueHash = new QueueHash();
+  }
+
+  /**
+   * @param {string} source
+   * @param {{param: Object, callback: function}} data
+   */
+  push(source, data) {
+    this._queueHash.addTo(source, {
+      param: data.param,
+      callback: data.callback,
+    });
+  }
+
+  /**
+   * @param {string} source
+   * @throws {Error}
+   */
+  consume(source) {
+    let queue;
+
+    while (this._queueHash.sizeOf(source) > 0) {
+      queue = this._queueHash.getFrom(source);
+      queue.callback(this._evaluate(source, queue.param));
+    }
+  }
+
+  /**
+   * @param {string} source
+   * @param {Object[]} param
+   * @throws {Error}
+   * @private
+   */
+  _evaluate(source, param) {
+    try {
+      return this._evaluator.evaluate(this._templates.get(source), [param]);
+    } catch (e) {
+      throw new Error('template - ' + e.message + ' in source ' + source);
+    }
+  }
+}
+
 class PrefetchManager {
   /**
    * @param {Hash} templates
@@ -63,6 +113,8 @@ const template = () => {
 
   const _prefetchManager = new PrefetchManager(_templates);
 
+  const _remoteQueue = new RemoteQueue(_evaluator, _templates);
+
   /**
    * @param {string} source
    * @param {string} content
@@ -72,24 +124,7 @@ const template = () => {
   };
 
   const _registerFromRemote = (() => {
-    const _remoteQueue = new QueueHash();
     const _fetching = new Hash();
-
-    const _registerRemoteQueue = (source, data) => {
-      _remoteQueue.addTo(source, {
-        param: data.param,
-        callback: data.callback,
-      });
-    };
-
-    const _consumeRemoteQueue = (source) => {
-      let queue;
-
-      while (_remoteQueue.sizeOf(source) > 0) {
-        queue = _remoteQueue.getFrom(source);
-        queue.callback(_evaluate(source, queue.param));
-      }
-    };
 
     const _fetchRemoteSource = (source, data, callback) => {
       const req = new XMLHttpRequest();
@@ -107,7 +142,7 @@ const template = () => {
 
     return (source, data) => {
       if (data.render) {
-        _registerRemoteQueue(source, data.render);
+        _remoteQueue.push(source, data.render);
       }
 
       if (_fetching.has(source)) {
@@ -115,7 +150,7 @@ const template = () => {
       }
 
       if (_templates.has(source)) {
-        _consumeRemoteQueue(source);
+        _remoteQueue.consume(source);
       } else {
         _fetching.add(source, true);
         _fetchRemoteSource(source, data, (content) => {
@@ -126,7 +161,7 @@ const template = () => {
           _register(source, content);
           _fetching.remove(source);
           _prefetchManager.notifyFetched();
-          _consumeRemoteQueue(source);
+          _remoteQueue.consume(source);
         });
       }
     };
