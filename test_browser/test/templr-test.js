@@ -38,7 +38,9 @@ QUnit.test('insertBefore - remote source', function (assert) {
   const param = {
     foo: {
       bar: {
-        hoge: 'hoge',
+        key1: 'value1',
+        key2: '',
+        key3: null,
       },
     },
   };
@@ -52,8 +54,10 @@ QUnit.test('insertBefore - remote source', function (assert) {
       const div = $('#template-insertBefore > div:first');
       const li = div.find('ul:first').find('li');
       assert.strictEqual(div.attr('id'), 'template-insertBefore-target');
-      assert.strictEqual(li.eq(0).text(), 'hoge', 'li.eq(0).text() is "hoge"');
+      assert.strictEqual(li.eq(0).text(), 'value1', 'li.eq(0).text() is "value1"');
       assert.strictEqual(li.eq(1).text(), '', 'li.eq(1).text() is ""');
+      assert.strictEqual(li.eq(2).text(), 'null', 'li.eq(1).text() is "null"');
+      assert.strictEqual(li.eq(3).text(), 'undefined', 'li.eq(1).text() is "undefined"');
 
       done();
     },
