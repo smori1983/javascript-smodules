@@ -145,13 +145,13 @@ const template = () => {
         _remoteQueue.push(source, data.render);
       }
 
-      if (_fetching.has(source)) {
-        return;
-      }
-
       if (_templates.has(source)) {
         _remoteQueue.consume(source);
       } else {
+        if (_fetching.has(source)) {
+          return;
+        }
+
         _fetching.add(source, true);
         _fetchRemoteSource(source, data, (content) => {
           if (data.check && typeof data.check.callback === 'function') {
