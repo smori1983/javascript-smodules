@@ -4,14 +4,51 @@ const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
 const parser = require('./parser');
 
+class AstCache {
+  constructor() {
+    this._parser = parser.init();
+    this._cache = new Hash();
+  }
+
+  /**
+   * @param {string} source
+   * @param {string} content
+   */
+  save(source, content) {
+    if (!this._cache.has(source)) {
+      this._cache.add(source, this._parser.parse(content, source));
+    }
+  }
+
+  /**
+   * @param {string} source
+   * @return {boolean}
+   */
+  has(source) {
+    return this._cache.has(source);
+  }
+
+  /**
+   * @param {string} source
+   * @return {Object}
+   */
+  get(source) {
+    return this._cache.get(source);
+  }
+
+  clear() {
+    this._cache.clear();
+  }
+}
+
 class RemoteQueue {
   /**
    * @param {Evaluator} evaluator
-   * @param {Hash} templates
+   * @param {AstCache} astCache
    */
-  constructor(evaluator, templates) {
+  constructor(evaluator, astCache) {
     this._evaluator = evaluator;
-    this._templates = templates;
+    this._astCache = astCache;
     this._queueHash = new QueueHash();
   }
 
@@ -47,7 +84,7 @@ class RemoteQueue {
    */
   _evaluate(source, param) {
     try {
-      return this._evaluator.evaluate(this._templates.get(source), [param]);
+      return this._evaluator.evaluate(this._astCache.get(source), [param]);
     } catch (e) {
       throw new Error('template - ' + e.message + ' in source ' + source);
     }
@@ -56,11 +93,11 @@ class RemoteQueue {
 
 class PrefetchManager {
   /**
-   * @param {Hash} templates
+   * @param {AstCache} astCache
    */
-  constructor(templates) {
+  constructor(astCache) {
     this._jobList = [];
-    this._templates = templates;
+    this._astCache = astCache;
   }
 
   /**
@@ -80,7 +117,7 @@ class PrefetchManager {
 
     this._jobList.forEach((job) => {
       const unacquired = job.sourceList.filter((source) => {
-        return !this._templates.has(source);
+        return !this._astCache.has(source);
       });
 
       if (unacquired.length > 0) {
@@ -107,24 +144,18 @@ const template = () => {
 
   const _evaluator = new Evaluator(_filterManager);
 
-  const _templates = new Hash();
+  const _astCache = new AstCache();
 
-  const _parser = parser.init();
+  const _prefetchManager = new PrefetchManager(_astCache);
 
-  const _prefetchManager = new PrefetchManager(_templates);
-
-  const _remoteQueue = new RemoteQueue(_evaluator, _templates);
+  const _remoteQueue = new RemoteQueue(_evaluator, _astCache);
 
   /**
    * @param {string} source
    * @param {string} content
    */
   const _register = (source, content) => {
-    if (_templates.has(source)) {
-      return;
-    }
-
-    _saveAst(source, content);
+    _astCache.save(source, content);
   };
 
   const _registerFromRemote = (() => {
@@ -149,7 +180,7 @@ const template = () => {
         _remoteQueue.push(source, data.render);
       }
 
-      if (_templates.has(source)) {
+      if (_astCache.has(source)) {
         _remoteQueue.consume(source);
       } else {
         if (_fetching.has(source)) {
@@ -162,7 +193,7 @@ const template = () => {
             data.check.callback(source);
           }
 
-          _saveAst(source, content);
+          _astCache.save(source, content);
           _fetching.remove(source);
           _prefetchManager.notifyFetched();
           _remoteQueue.consume(source);
@@ -173,21 +204,12 @@ const template = () => {
 
   /**
    * @param {string} source
-   * @param {string} content
-   * @private
-   */
-  const _saveAst = (source, content) => {
-    _templates.add(source, _parser.parse(content, source));
-  };
-
-  /**
-   * @param {string} source
    * @param {Object} bindParams
    * @return {string}
    */
   const _evaluate = (source, bindParams) => {
     try {
-      return _evaluator.evaluate(_templates.get(source), [bindParams]);
+      return _evaluator.evaluate(_astCache.get(source), [bindParams]);
     } catch (e) {
       throw new Error('template - ' + e.message + ' in source ' + source);
     }
@@ -245,7 +267,7 @@ const template = () => {
   };
 
   that.clearTemplateCache = () => {
-    _templates.clear();
+    _astCache.clear();
   };
 
   registerPredefinedFilters(_filterManager);
