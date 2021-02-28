@@ -34,14 +34,6 @@ class AstCache {
 
   /**
    * @param {string} source
-   * @return {Object}
-   */
-  get(source) {
-    return this._cache.get(source);
-  }
-
-  /**
-   * @param {string} source
    * @param {Object} param
    * @return {string}
    * @throws {Error}
