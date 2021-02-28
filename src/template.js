@@ -216,53 +216,7 @@ const template = () => {
 
   const _astCache = new AstCache(new Evaluator(_filterManager));
 
-  const _prefetchManager = new PrefetchManager(_astCache);
-
-  const _remoteQueue = new RemoteQueue(_astCache);
-
-  const _registerFromRemote = (() => {
-    const _fetching = new Hash();
-
-    const _fetchRemoteSource = (source, data, callback) => {
-      const req = new XMLHttpRequest();
-
-      req.open('GET', source, true);
-      req.onreadystatechange = () => {
-        if (req.readyState !== 4 || req.status !== 200) {
-          return;
-        }
-
-        callback(req.responseText);
-      };
-      req.send();
-    };
-
-    return (source, data) => {
-      if (data.render) {
-        _remoteQueue.push(source, data.render);
-      }
-
-      if (_astCache.has(source)) {
-        _remoteQueue.consume(source);
-      } else {
-        if (_fetching.has(source)) {
-          return;
-        }
-
-        _fetching.add(source, true);
-        _fetchRemoteSource(source, data, (content) => {
-          if (data.check && typeof data.check.callback === 'function') {
-            data.check.callback(source);
-          }
-
-          _astCache.save(source, content);
-          _fetching.remove(source);
-          _prefetchManager.notifyFetched();
-          _remoteQueue.consume(source);
-        });
-      }
-    };
-  })();
+  const _remoteManager = new RemoteManager(_astCache);
 
   /**
    * @param {string} name
@@ -290,7 +244,7 @@ const template = () => {
    * @param {function} callback
    */
   that.renderAsync = (source, param, callback) => {
-    _registerFromRemote(source, {
+    _remoteManager.register(source, {
       render: {
         param: param,
         callback: callback,
@@ -306,15 +260,7 @@ const template = () => {
   that.prefetch = (target, callback, checkCallback) => {
     const sourceList = (typeof target === 'string') ? [].concat(target) : target;
 
-    sourceList.forEach((source) => {
-      _registerFromRemote(source, {
-        check: {
-          callback: checkCallback,
-        },
-      });
-    });
-
-    _prefetchManager.add(sourceList, callback);
+    _remoteManager.prefetch(sourceList, callback, checkCallback);
   };
 
   that.clearTemplateCache = () => {
