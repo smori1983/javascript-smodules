@@ -62,11 +62,10 @@ class Evaluator {
   /**
    * @param {string[]} keys
    * @param {*[]} params
-   * @param {boolean} [asis]
    * @return {string|*}
    * @private
    */
-  _getValue(keys, params, asis) {
+  _getValue(keys, params) {
     let pIdx, i, len, value;
 
     for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
@@ -82,11 +81,7 @@ class Evaluator {
       }
     }
 
-    if (asis) {
-      return value;
-    } else {
-      return value;
-    }
+    return value;
   }
 
   /**
@@ -131,7 +126,7 @@ class Evaluator {
       if (node.type === 'value') {
         result.push(node.value);
       } else if (node.type === 'var') {
-        result.push(this._getValue(node.keys, params, true));
+        result.push(this._getValue(node.keys, params));
       } else if (node.type === 'comp') {
         rval = result.pop();
         lval = result.pop();
@@ -206,7 +201,7 @@ class Evaluator {
    * @private
    */
   _evaluateFor(node, params) {
-    const collection = this._getValue(node.ctrl.keys, params, true);
+    const collection = this._getValue(node.ctrl.keys, params);
     let result = '';
 
     if (Array.isArray(collection)) {
