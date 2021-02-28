@@ -111,6 +111,22 @@ QUnit.test('holder block - default filter - raw', function (assert) {
   assert.strictEqual(this.templr.render(src, param), expected);
 });
 
+QUnit.test('holder block - default filter - h - null', function (assert) {
+  const src = '<p>{ $value }</p>';
+  const param = {value: null};
+  const expected = '<p></p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - default filter - raw - null', function (assert) {
+  const src = '<p>{ $value | raw }</p>';
+  const param = {value: null};
+  const expected = '<p></p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
 // QUnit.test('holder block - default filter - default - template value is undefined', function (assert) {
 //   const src = '<p>{ $foo.bar | default:"piyo" }</p>';
 //   const param = {foo: 'foo'};
