@@ -120,6 +120,10 @@ const template = () => {
    * @param {string} content
    */
   const _register = (source, content) => {
+    if (_templates.has(source)) {
+      return;
+    }
+
     _saveAst(source, content);
   };
 
@@ -202,9 +206,7 @@ const template = () => {
    * @param {Object} param
    */
   that.render = (source, param) => {
-    if (!_templates.has(source)) {
-      _register(source, source);
-    }
+    _register(source, source);
 
     return _evaluate(source, param);
   };
