@@ -30,10 +30,18 @@ QUnit.test('holder block', function (assert) {
   assert.strictEqual(this.templr.render(src, param), expected);
 });
 
-QUnit.test('holder block - property not chainable', function (assert) {
+QUnit.test('holder block - property not chainable - undefined', function (assert) {
   const src = '<p>{ $foo.bar.baz }</p>';
   const param = {foo: {bar: 'hoge'}};
-  const expected = '<p></p>';
+  const expected = '<p>undefined</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - property not chainable - null', function (assert) {
+  const src = '<p>{ $foo.bar.baz }</p>';
+  const param = {foo: {bar: null}};
+  const expected = '<p>null</p>';
 
   assert.strictEqual(this.templr.render(src, param), expected);
 });
@@ -82,7 +90,7 @@ QUnit.test('holder block - array index access - not chainable', function (assert
       {name: 'c'},
     ],
   };
-  const expected = '<p></p>';
+  const expected = '<p>undefined</p>';
 
   assert.strictEqual(this.templr.render(src, param), expected);
 });
@@ -114,7 +122,7 @@ QUnit.test('holder block - default filter - raw', function (assert) {
 QUnit.test('holder block - default filter - h - null', function (assert) {
   const src = '<p>{ $value }</p>';
   const param = {value: null};
-  const expected = '<p></p>';
+  const expected = '<p>null</p>';
 
   assert.strictEqual(this.templr.render(src, param), expected);
 });
@@ -122,7 +130,7 @@ QUnit.test('holder block - default filter - h - null', function (assert) {
 QUnit.test('holder block - default filter - raw - null', function (assert) {
   const src = '<p>{ $value | raw }</p>';
   const param = {value: null};
-  const expected = '<p></p>';
+  const expected = '<p>null</p>';
 
   assert.strictEqual(this.templr.render(src, param), expected);
 });
@@ -176,6 +184,58 @@ QUnit.test('holder block - original filter', function (assert) {
   const src = '<p>{ $foo | originalFilter:1 }</p><p>{ $foo | originalFilter:3,"..." }</p>';
   const param = {foo: 'abcdefghi'};
   const expected = '<p>a</p><p>abc...</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - original filter - returns null - h', function (assert) {
+  // create original filter
+  this.templr.addFilter('originalFilter', (value) => {
+    return null;
+  });
+
+  const src = '<p>{ $value | originalFilter }</p>';
+  const param = {foo: 'foo'};
+  const expected = '<p>null</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - original filter - returns null - raw', function (assert) {
+  // create original filter
+  this.templr.addFilter('originalFilter', (value) => {
+    return null;
+  });
+
+  const src = '<p>{ $value | originalFilter | raw }</p>';
+  const param = {foo: 'foo'};
+  const expected = '<p>null</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - original filter - returns undefined - h', function (assert) {
+  // create original filter
+  this.templr.addFilter('originalFilter', (value, undef) => {
+    return undef;
+  });
+
+  const src = '<p>{ $value | originalFilter }</p>';
+  const param = {foo: 'foo'};
+  const expected = '<p>undefined</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - original filter - returns undefined - raw', function (assert) {
+  // create original filter
+  this.templr.addFilter('originalFilter', (value, undef) => {
+    return undef;
+  });
+
+  const src = '<p>{ $value | originalFilter | raw }</p>';
+  const param = {foo: 'foo'};
+  const expected = '<p>undefined</p>';
 
   assert.strictEqual(this.templr.render(src, param), expected);
 });

@@ -72,11 +72,9 @@ class Evaluator {
     for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
       value = params[pIdx];
       for (i = 0, len = keys.length; i < len; i++) {
-        if (typeof value[keys[i]] === 'undefined') {
-          value = null;
+        value = value[keys[i]];
+        if (typeof value === 'undefined' || value === null) {
           break;
-        } else {
-          value = value[keys[i]];
         }
       }
       if (i === len) {
@@ -87,7 +85,7 @@ class Evaluator {
     if (asis) {
       return value;
     } else {
-      return value === null ? '' : value.toString();
+      return value;
     }
   }
 
