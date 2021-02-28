@@ -120,7 +120,7 @@ const template = () => {
    * @param {string} content
    */
   const _register = (source, content) => {
-    _templates.add(source, _parser.parse(content, source));
+    _saveAst(source, content);
   };
 
   const _registerFromRemote = (() => {
@@ -158,7 +158,7 @@ const template = () => {
             data.check.callback(source);
           }
 
-          _register(source, content);
+          _saveAst(source, content);
           _fetching.remove(source);
           _prefetchManager.notifyFetched();
           _remoteQueue.consume(source);
@@ -166,6 +166,15 @@ const template = () => {
       }
     };
   })();
+
+  /**
+   * @param {string} source
+   * @param {string} content
+   * @private
+   */
+  const _saveAst = (source, content) => {
+    _templates.add(source, _parser.parse(content, source));
+  };
 
   /**
    * @param {string} source
