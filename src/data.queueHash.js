@@ -2,38 +2,19 @@ const Hash = require('./data.hash');
 
 class QueueHash {
   constructor() {
-    this.hash = new Hash();
-  }
-
-  /**
-   * @param {string} key
-   * @return {boolean}
-   */
-  has(key) {
-    return this.hash.has(key);
+    this._hash = new Hash();
   }
 
   /**
    * @param {string} key
    * @param {*} value
    */
-  addTo(key, value) {
-    const queue = this.hash.has(key) ? this.hash.get(key) : [];
+  pushTo(key, value) {
+    const queue = this._hash.has(key) ? this._hash.get(key) : [];
 
     queue.push(value);
 
-    this.hash.add(key, queue);
-  }
-
-  /**
-   * @param {string} key
-   */
-  remove(key) {
-    this.hash.remove(key);
-  }
-
-  clear() {
-    this.hash.clear();
+    this._hash.add(key, queue);
   }
 
   /**
@@ -41,8 +22,8 @@ class QueueHash {
    * @return {number}
    */
   sizeOf(key) {
-    if (this.hash.has(key)) {
-      return this.hash.get(key).length;
+    if (this._hash.has(key)) {
+      return this._hash.get(key).length;
     } else {
       return 0;
     }
@@ -52,17 +33,36 @@ class QueueHash {
    * @param {string} key
    * @return {*}
    */
-  getFrom(key) {
-    if (this.hash.has(key)) {
-      return this.hash.get(key).shift();
+  popFrom(key) {
+    if (this._hash.has(key)) {
+      return this._hash.get(key).shift();
     }
+  }
+
+  /**
+   * @param {string} key
+   * @return {boolean}
+   */
+  has(key) {
+    return this._hash.has(key);
+  }
+
+  /**
+   * @param {string} key
+   */
+  remove(key) {
+    this._hash.remove(key);
+  }
+
+  clear() {
+    this._hash.clear();
   }
 
   /**
    * @return {string[]}
    */
   getKeys() {
-    return this.hash.getKeys();
+    return this._hash.getKeys();
   }
 }
 

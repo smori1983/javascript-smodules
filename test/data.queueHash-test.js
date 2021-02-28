@@ -6,15 +6,15 @@ QUnit.module('data.queueHash', {
   },
 });
 
-QUnit.test('addTo and getFrom', function (assert) {
-  this.qh.addTo('list', 'a');
-  this.qh.addTo('list', 'b');
+QUnit.test('pushTo and popFrom', function (assert) {
+  this.qh.pushTo('list', 'a');
+  this.qh.pushTo('list', 'b');
 
   assert.strictEqual(this.qh.has('list'), true);
   assert.strictEqual(this.qh.sizeOf('list'), 2);
-  assert.strictEqual(this.qh.getFrom('list'), 'a');
+  assert.strictEqual(this.qh.popFrom('list'), 'a');
   assert.strictEqual(this.qh.sizeOf('list'), 1);
-  assert.strictEqual(this.qh.getFrom('list'), 'b');
+  assert.strictEqual(this.qh.popFrom('list'), 'b');
   assert.strictEqual(this.qh.sizeOf('list'), 0);
 
   this.qh.remove('list');
@@ -23,12 +23,12 @@ QUnit.test('addTo and getFrom', function (assert) {
 });
 
 QUnit.test('check keys', function (assert) {
-  this.qh.addTo('queue1', 'a');
+  this.qh.pushTo('queue1', 'a');
 
   assert.strictEqual(this.qh.getKeys().length, 1);
   assert.strictEqual(this.qh.getKeys()[0], 'queue1');
 
-  this.qh.addTo('queue2', 'A');
+  this.qh.pushTo('queue2', 'A');
 
   assert.strictEqual(this.qh.getKeys().length, 2);
   assert.strictEqual(this.qh.getKeys()[0], 'queue1');
@@ -42,5 +42,5 @@ QUnit.test('check keys', function (assert) {
 QUnit.test('using non-existent key', function (assert) {
   assert.strictEqual(this.qh.has('hoge'), false);
   assert.strictEqual(this.qh.sizeOf('hoge'), 0);
-  assert.strictEqual(typeof this.qh.getFrom('hoge'), 'undefined');
+  assert.strictEqual(typeof this.qh.popFrom('hoge'), 'undefined');
 });
