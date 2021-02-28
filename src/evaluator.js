@@ -61,7 +61,7 @@ class Evaluator {
 
   /**
    * @param {string[]} keys
-   * @param {*[]} params
+   * @param {Object[]} params
    * @return {string|*}
    * @private
    */
