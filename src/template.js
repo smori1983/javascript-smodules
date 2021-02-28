@@ -131,6 +131,84 @@ class PrefetchManager {
   }
 }
 
+class RemoteManager {
+  /**
+   * @param {AstCache} astCache
+   */
+  constructor(astCache) {
+    this._astCache = astCache;
+    this._prefetchManager = new PrefetchManager(astCache);
+    this._remoteQueue = new RemoteQueue(astCache);
+    this._fetching = new Hash();
+  }
+
+  /**
+   * @param {string} source
+   * @param {Object} data
+   */
+  register(source, data) {
+    if (data.render) {
+      this._remoteQueue.push(source, data.render);
+    }
+
+    if (this._astCache.has(source)) {
+      this._remoteQueue.consume(source);
+    } else {
+      if (this._fetching.has(source)) {
+        return;
+      }
+
+      this._fetching.add(source, true);
+      this._fetchRemoteSource(source, (content) => {
+        if (data.check && typeof data.check.callback === 'function') {
+          data.check.callback(source);
+        }
+
+        this._astCache.save(source, content);
+        this._fetching.remove(source);
+        this._prefetchManager.notifyFetched();
+        this._remoteQueue.consume(source);
+      });
+    }
+  }
+
+  /**
+   * @param {string[]} sourceList
+   * @param {function} callback
+   * @param {function} checkCallback
+   */
+  prefetch(sourceList, callback, checkCallback) {
+    this._prefetchManager.add(sourceList, callback);
+
+    sourceList.forEach((source) => {
+      this.register(source, {
+        check: {
+          callback: checkCallback,
+        },
+      });
+    });
+  }
+
+  /**
+   * @param {string} source
+   * @param {function} callback
+   * @private
+   */
+  _fetchRemoteSource(source, callback) {
+    const req = new XMLHttpRequest();
+
+    req.open('GET', source, true);
+    req.onreadystatechange = () => {
+      if (req.readyState !== 4 || req.status !== 200) {
+        return;
+      }
+
+      callback(req.responseText);
+    };
+    req.send();
+  }
+}
+
 const template = () => {
   const that = {};
 
