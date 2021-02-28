@@ -1,6 +1,6 @@
 class Hash {
   constructor() {
-    this.store = {};
+    this._store = {};
   }
 
   /**
@@ -8,7 +8,7 @@ class Hash {
    * @return {boolean}
    */
   has(key) {
-    return this.store.hasOwnProperty(key);
+    return this._store.hasOwnProperty(key);
   }
 
   /**
@@ -16,7 +16,7 @@ class Hash {
    * @param {*} value
    */
   add(key, value) {
-    this.store[key] = value;
+    this._store[key] = value;
   }
 
   /**
@@ -24,12 +24,12 @@ class Hash {
    */
   remove(key) {
     if (this.has(key)) {
-      delete this.store[key];
+      delete this._store[key];
     }
   }
 
   clear() {
-    this.store = {};
+    this._store = {};
   }
 
   /**
@@ -37,14 +37,14 @@ class Hash {
    * @return {*}
    */
   get(key) {
-    return this.store[key];
+    return this._store[key];
   }
 
   /**
    * @return {string[]}
    */
   getKeys() {
-    let keys = Object.keys(this.store);
+    let keys = Object.keys(this._store);
 
     keys.sort();
 
