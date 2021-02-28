@@ -135,46 +135,6 @@ QUnit.test('holder block - default filter - raw - null', function (assert) {
   assert.strictEqual(this.templr.render(src, param), expected);
 });
 
-// QUnit.test('holder block - default filter - default - template value is undefined', function (assert) {
-//   const src = '<p>{ $foo.bar | default:"piyo" }</p>';
-//   const param = {foo: 'foo'};
-//   const expected = '<p>piyo</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
-
-// QUnit.test('holder block - default filter - default - toString() will be called at end of binding', function (assert) {
-//   const src = '<p>{ $foo | default:"a" }</p>';
-//   const param = {foo: false};
-//   const expected = '<p>false</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
-
-// QUnit.test('holder block - default filter - upper', function (assert) {
-//   const src = '<p>{ $foo | upper }</p>';
-//   const param = {foo: 'abc'};
-//   const expected = '<p>ABC</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
-
-// QUnit.test('holder block - default filter - lower', function (assert) {
-//   const src = '<p>{ $foo | lower }</p>';
-//   const param = {foo: 'XYZ'};
-//   const expected = '<p>xyz</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
-
-// QUnit.test('holder block - default filter - plus', function (assert) {
-//   const src = '<p>{ $foo | plus:1 }</p><p>{ $bar | plus:2 }</p><p>{ $baz | plus:-1 }</p>';
-//   const param = {foo: 1, bar: 1.23, baz: 10};
-//   const expected = '<p>2</p><p>3.23</p><p>9</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
-
 QUnit.test('holder block - original filter', function (assert) {
   // create original filter
   this.templr.addFilter('originalFilter', (value, size, tail) => {
