@@ -61,22 +61,19 @@ class Evaluator {
 
   /**
    * @param {string[]} keys
-   * @param {*[]} params
-   * @param {boolean} [asis]
+   * @param {Object[]} params
    * @return {string|*}
    * @private
    */
-  _getValue(keys, params, asis) {
+  _getValue(keys, params) {
     let pIdx, i, len, value;
 
     for (pIdx = params.length - 1; pIdx >= 0; pIdx--) {
       value = params[pIdx];
       for (i = 0, len = keys.length; i < len; i++) {
-        if (typeof value[keys[i]] === 'undefined') {
-          value = null;
+        value = value[keys[i]];
+        if (typeof value === 'undefined' || value === null) {
           break;
-        } else {
-          value = value[keys[i]];
         }
       }
       if (i === len) {
@@ -84,11 +81,7 @@ class Evaluator {
       }
     }
 
-    if (asis) {
-      return value;
-    } else {
-      return value === null ? '' : value.toString();
-    }
+    return value;
   }
 
   /**
@@ -133,7 +126,7 @@ class Evaluator {
       if (node.type === 'value') {
         result.push(node.value);
       } else if (node.type === 'var') {
-        result.push(this._getValue(node.keys, params, true));
+        result.push(this._getValue(node.keys, params));
       } else if (node.type === 'comp') {
         rval = result.pop();
         lval = result.pop();
@@ -208,7 +201,7 @@ class Evaluator {
    * @private
    */
   _evaluateFor(node, params) {
-    const collection = this._getValue(node.ctrl.keys, params, true);
+    const collection = this._getValue(node.ctrl.keys, params);
     let result = '';
 
     if (Array.isArray(collection)) {

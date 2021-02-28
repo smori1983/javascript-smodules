@@ -41,6 +41,9 @@ class FilterManager {
       };
 
       return (value) => {
+        if (typeof value === 'undefined' || value === null) {
+          return '' + value;
+        }
         return value.toString().replace(/[<>&"']/g, (matched) => {
           return list[matched];
         });
@@ -48,7 +51,7 @@ class FilterManager {
     })());
 
     this.register('raw', (value) => {
-      return value.toString();
+      return value;
     });
   }
 }
