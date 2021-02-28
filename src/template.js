@@ -5,8 +5,12 @@ const QueueHash = require('./data.queueHash');
 const parser = require('./parser');
 
 class AstCache {
-  constructor() {
+  /**
+   * @param {Evaluator} evaluator
+   */
+  constructor(evaluator) {
     this._parser = parser.init();
+    this._evaluator = evaluator;
     this._cache = new Hash();
   }
 
@@ -36,6 +40,20 @@ class AstCache {
     return this._cache.get(source);
   }
 
+  /**
+   * @param {string} source
+   * @param {Object} param
+   * @return {string}
+   * @throws {Error}
+   */
+  evaluate(source, param) {
+    try {
+      return this._evaluator.evaluate(this._cache.get(source), [param]);
+    } catch (e) {
+      throw new Error('template - ' + e.message + ' in source ' + source);
+    }
+  }
+
   clear() {
     this._cache.clear();
   }
@@ -43,11 +61,9 @@ class AstCache {
 
 class RemoteQueue {
   /**
-   * @param {Evaluator} evaluator
    * @param {AstCache} astCache
    */
-  constructor(evaluator, astCache) {
-    this._evaluator = evaluator;
+  constructor(astCache) {
     this._astCache = astCache;
     this._queueHash = new QueueHash();
   }
@@ -72,21 +88,7 @@ class RemoteQueue {
 
     while (this._queueHash.sizeOf(source) > 0) {
       queue = this._queueHash.getFrom(source);
-      queue.callback(this._evaluate(source, queue.param));
-    }
-  }
-
-  /**
-   * @param {string} source
-   * @param {Object[]} param
-   * @throws {Error}
-   * @private
-   */
-  _evaluate(source, param) {
-    try {
-      return this._evaluator.evaluate(this._astCache.get(source), [param]);
-    } catch (e) {
-      throw new Error('template - ' + e.message + ' in source ' + source);
+      queue.callback(this._astCache.evaluate(source, queue.param));
     }
   }
 }
@@ -142,13 +144,11 @@ const template = () => {
 
   const _filterManager = new FilterManager();
 
-  const _evaluator = new Evaluator(_filterManager);
-
-  const _astCache = new AstCache();
+  const _astCache = new AstCache(new Evaluator(_filterManager));
 
   const _prefetchManager = new PrefetchManager(_astCache);
 
-  const _remoteQueue = new RemoteQueue(_evaluator, _astCache);
+  const _remoteQueue = new RemoteQueue(_astCache);
 
   /**
    * @param {string} source
@@ -203,19 +203,6 @@ const template = () => {
   })();
 
   /**
-   * @param {string} source
-   * @param {Object} bindParams
-   * @return {string}
-   */
-  const _evaluate = (source, bindParams) => {
-    try {
-      return _evaluator.evaluate(_astCache.get(source), [bindParams]);
-    } catch (e) {
-      throw new Error('template - ' + e.message + ' in source ' + source);
-    }
-  };
-
-  /**
    * @param {string} name
    * @param {function} func
    */
@@ -226,11 +213,13 @@ const template = () => {
   /**
    * @param {string} source
    * @param {Object} param
+   * @return {string}
+   * @throws {Error}
    */
   that.render = (source, param) => {
     _register(source, source);
 
-    return _evaluate(source, param);
+    return _astCache.evaluate(source, param);
   };
 
   /**
