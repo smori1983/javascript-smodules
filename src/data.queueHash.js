@@ -17,7 +17,7 @@ class QueueHash {
    * @param {string} key
    * @param {*} value
    */
-  addTo(key, value) {
+  pushTo(key, value) {
     const queue = this.hash.has(key) ? this.hash.get(key) : [];
 
     queue.push(value);
@@ -52,7 +52,7 @@ class QueueHash {
    * @param {string} key
    * @return {*}
    */
-  getFrom(key) {
+  popFrom(key) {
     if (this.hash.has(key)) {
       return this.hash.get(key).shift();
     }

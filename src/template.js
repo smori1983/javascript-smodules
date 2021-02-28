@@ -65,7 +65,7 @@ class RemoteQueue {
    * @param {{param: Object, callback: function}} data
    */
   push(source, data) {
-    this._queueHash.addTo(source, {
+    this._queueHash.pushTo(source, {
       param: data.param,
       callback: data.callback,
     });
@@ -79,7 +79,7 @@ class RemoteQueue {
     let queue;
 
     while (this._queueHash.sizeOf(source) > 0) {
-      queue = this._queueHash.getFrom(source);
+      queue = this._queueHash.popFrom(source);
       queue.callback(this._astCache.evaluate(source, queue.param));
     }
   }
