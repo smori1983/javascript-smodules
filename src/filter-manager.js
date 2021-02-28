@@ -3,6 +3,8 @@ const Hash = require('./data.hash');
 class FilterManager {
   constructor() {
     this._filters = new Hash();
+
+    this._registerDefaultFilters();
   }
 
   /**
@@ -26,6 +28,28 @@ class FilterManager {
     }
 
     throw new Error('filter "' + name + '" not found');
+  }
+
+  _registerDefaultFilters() {
+    this.register('h', (() => {
+      const list = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '&': '&amp;',
+        '"': '&quot;',
+        "'": '&#039;', // eslint-disable-line quotes
+      };
+
+      return (value) => {
+        return value.toString().replace(/[<>&"']/g, (matched) => {
+          return list[matched];
+        });
+      };
+    })());
+
+    this.register('raw', (value) => {
+      return value.toString();
+    });
   }
 }
 
