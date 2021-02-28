@@ -4,229 +4,270 @@ const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
 const parser = require('./parser');
 
-const template = function() {
-  const that = {};
+class AstCache {
+  /**
+   * @param {Evaluator} evaluator
+   */
+  constructor(evaluator) {
+    this._parser = parser.init();
+    this._evaluator = evaluator;
+    this._cache = new Hash();
+  }
 
-  const _filterManager = new FilterManager();
-
-  const _templates = new Hash();
-
-  const _parser = parser.init();
-
-  const _remoteQueue = new QueueHash();
-
-  let _testRemoteFile = function (file) {
-    return (/\.html$/).test(file);
-  };
-
-  const _isRemoteFile = function (source) {
-    return _testRemoteFile(source);
-  };
-
-  const _isEmbedded = function (source) {
-    return source.indexOf('#') === 0;
-  };
-
-  const _preFetchJobList = (function () {
-    let jobList = [];
-
-    const check = function () {
-      const finished = [];
-
-      jobList.forEach(function (job) {
-        job.sourceList = job.sourceList.filter(function (source) {
-          return !_templates.has(source);
-        });
-
-        if (job.sourceList.length === 0) {
-          finished.push(job);
-        }
-      });
-
-      jobList = jobList.filter(function (job) {
-        return job.sourceList.length > 0;
-      });
-
-      finished.forEach(function (job) {
-        if (typeof job.callback === 'function') {
-          job.callback();
-        }
-      });
-    };
-
-    return {
-      add: function (sourceList, callback) {
-        jobList.push({sourceList: sourceList, callback: callback});
-        check();
-      },
-      notifyFetched: function () {
-        check();
-      },
-    };
-  })();
-
-  const _register = function (source, content) {
-    _templates.add(source, _parser.parse(content, source));
-  };
-
-  const _registerFromRemote = (function () {
-    const _fetching = new Hash();
-
-    return function (source) {
-      if (!_fetching.has(source)) {
-        _fetching.add(source, true);
-
-        $.ajax({
-          url: source,
-          success: function (response) {
-            let queue;
-
-            _register(source, response);
-            _fetching.remove(source);
-            _preFetchJobList.notifyFetched();
-
-            while (_remoteQueue.sizeOf(source) > 0) {
-              queue = _remoteQueue.getFrom(source);
-              _execute(source, queue.bindParams, queue.callback);
-            }
-          },
-        });
-      }
-    };
-  })();
-
-  const _registerFromHTML = function (source, callback) {
-    if ($(source)[0].tagName.toLowerCase() === 'textarea') {
-      _register(source, $(source).val());
-    } else {
-      _register(source, $(source).html());
+  /**
+   * @param {string} source
+   * @param {string} content
+   */
+  save(source, content) {
+    if (!this._cache.has(source)) {
+      this._cache.add(source, this._parser.parse(content, source));
     }
-    if (typeof callback === 'function') {
-      callback();
-    }
-  };
+  }
 
-  const _registerFromString = function (source) {
-    _register(source, source);
-  };
+  /**
+   * @param {string} source
+   * @return {boolean}
+   */
+  has(source) {
+    return this._cache.has(source);
+  }
 
-  const _execute = function(source, bindParams, callback) {
-    if (_templates.has(source)) {
-      if (typeof callback === 'function') {
-        callback(_bind(source, bindParams));
-      } else {
-        return _bind(source, bindParams);
-      }
-    } else if (_isRemoteFile(source)) {
-      if (typeof callback === 'function') {
-        _registerFromRemote(source);
-        _remoteQueue.addTo(source, { bindParams: bindParams, callback: callback });
-      }
-    } else if (_isEmbedded(source)) {
-      _registerFromHTML(source);
-      if (typeof callback === 'function') {
-        callback(_bind(source, bindParams));
-      } else {
-        return _bind(source, bindParams);
-      }
-    } else {
-      _registerFromString(source);
-      if (typeof callback === 'function') {
-        callback(_bind(source, bindParams));
-      } else {
-        return _bind(source, bindParams);
-      }
-    }
-  };
-
-  const _bind = function(source, bindParams) {
-    const evaluator = new Evaluator(_filterManager);
-
+  /**
+   * @param {string} source
+   * @param {Object} param
+   * @return {string}
+   * @throws {Error}
+   */
+  evaluate(source, param) {
     try {
-      return evaluator.evaluate(_templates.get(source), [bindParams]);
+      return this._evaluator.evaluate(this._cache.get(source), [param]);
     } catch (e) {
       throw new Error('template - ' + e.message + ' in source ' + source);
     }
-  };
+  }
 
-  // APIs.
-  that.bind = function(source, bindParams) {
-    return {
-      get: function(callback) {
-        if (typeof callback === 'function') {
-          _execute(source, bindParams, function(output) {
-            callback(output);
-          });
-        } else {
-          return _execute(source, bindParams);
-        }
-      },
-      //appendTo: function(target) {
-      //  _execute(source, bindParams, function(output) {
-      //    $(output).appendTo(target);
-      //  });
-      //},
-      //insertBefore: function(target) {
-      //  _execute(source, bindParams, function(output) {
-      //    $(output).insertBefore(target);
-      //  });
-      //},
-    };
-  };
+  clear() {
+    this._cache.clear();
+  }
+}
 
-  that.addFilter = function(name, func) {
-    _filterManager.register(name, func);
-  };
+class RemoteQueue {
+  /**
+   * @param {AstCache} astCache
+   */
+  constructor(astCache) {
+    this._astCache = astCache;
+    this._queueHash = new QueueHash();
+  }
 
-  that.preFetch = function(source, callback) {
-    const sourceList = (typeof source === 'string') ? [].concat(source) : source;
+  /**
+   * @param {string} source
+   * @param {{param: Object, callback: function}} data
+   */
+  push(source, data) {
+    this._queueHash.addTo(source, {
+      param: data.param,
+      callback: data.callback,
+    });
+  }
 
-    if (Array.isArray(sourceList)) {
-      sourceList.forEach(function(source) {
-        if (_isRemoteFile(source)) {
-          _registerFromRemote(source);
-        } else if (_isEmbedded(source)) {
-          _registerFromHTML(source);
-        } else {
-          _registerFromString(source);
-        }
+  /**
+   * @param {string} source
+   * @throws {Error}
+   */
+  consume(source) {
+    let queue;
+
+    while (this._queueHash.sizeOf(source) > 0) {
+      queue = this._queueHash.getFrom(source);
+      queue.callback(this._astCache.evaluate(source, queue.param));
+    }
+  }
+}
+
+class PrefetchManager {
+  /**
+   * @param {AstCache} astCache
+   */
+  constructor(astCache) {
+    this._jobList = [];
+    this._astCache = astCache;
+  }
+
+  /**
+   * @param {string[]} sourceList
+   * @param {function} callback
+   */
+  add(sourceList, callback) {
+    this._jobList.push({
+      sourceList: sourceList,
+      callback: callback,
+    });
+  }
+
+  notifyFetched() {
+    const undone = [];
+    const finished = [];
+
+    this._jobList.forEach((job) => {
+      const unacquired = job.sourceList.filter((source) => {
+        return !this._astCache.has(source);
       });
 
-      _preFetchJobList.add(sourceList, callback);
+      if (unacquired.length > 0) {
+        undone.push(job);
+      } else {
+        finished.push(job);
+      }
+    });
+
+    this._jobList = undone;
+
+    finished.forEach((job) => {
+      if (typeof job.callback === 'function') {
+        job.callback();
+      }
+    });
+  }
+}
+
+class RemoteManager {
+  /**
+   * @param {AstCache} astCache
+   */
+  constructor(astCache) {
+    this._astCache = astCache;
+    this._prefetchManager = new PrefetchManager(astCache);
+    this._remoteQueue = new RemoteQueue(astCache);
+    this._fetching = new Hash();
+  }
+
+  /**
+   * @param {string} source
+   * @param {Object} data
+   */
+  register(source, data) {
+    if (data.render) {
+      this._remoteQueue.push(source, data.render);
     }
-    return that;
-  };
 
-  that.setRemoteFilePattern = function (arg) {
-    if (typeof arg === 'string') {
-      _testRemoteFile = function (file) {
-        return file.indexOf(arg) === 0;
-      };
-    } else if (typeof arg === 'object' && typeof arg.test === 'function' && (/^\/.+\/$/).test(arg.toString())) {
-      _testRemoteFile = function (file) {
-        return arg.test(file);
-      };
-    }
-    return that;
-  };
-
-  that.getTemplateCacheList = function() {
-    return _templates.getKeys();
-  };
-
-  that.clearTemplateCache = function(source) {
-    if (typeof source === 'string') {
-      _templates.remove(source);
+    if (this._astCache.has(source)) {
+      this._remoteQueue.consume(source);
     } else {
-      _templates.clear();
+      if (this._fetching.has(source)) {
+        return;
+      }
+
+      this._fetching.add(source, true);
+      this._fetchRemoteSource(source, (content) => {
+        if (data.check && typeof data.check.callback === 'function') {
+          data.check.callback(source);
+        }
+
+        this._astCache.save(source, content);
+        this._fetching.remove(source);
+        this._prefetchManager.notifyFetched();
+        this._remoteQueue.consume(source);
+      });
     }
-    return that;
-  };
+  }
 
-  registerPredefinedFilters(_filterManager);
+  /**
+   * @param {string[]} sourceList
+   * @param {function} callback
+   * @param {function} checkCallback
+   */
+  prefetch(sourceList, callback, checkCallback) {
+    this._prefetchManager.add(sourceList, callback);
 
-  return that;
-};
+    sourceList.forEach((source) => {
+      this.register(source, {
+        check: {
+          callback: checkCallback,
+        },
+      });
+    });
+  }
+
+  /**
+   * @param {string} source
+   * @param {function} callback
+   * @private
+   */
+  _fetchRemoteSource(source, callback) {
+    const req = new XMLHttpRequest();
+
+    req.open('GET', source, true);
+    req.onreadystatechange = () => {
+      if (req.readyState !== 4 || req.status !== 200) {
+        return;
+      }
+
+      callback(req.responseText);
+    };
+    req.send();
+  }
+}
+
+class Template {
+  constructor() {
+    this._filterManager = new FilterManager();
+    this._astCache = new AstCache(new Evaluator(this._filterManager));
+    this._remoteManager = new RemoteManager(this._astCache);
+
+    registerPredefinedFilters(this._filterManager);
+  }
+
+  /**
+   * @param {string} source
+   * @param {Object} param
+   * @return {string}
+   * @throws {Error}
+   */
+  render(source, param) {
+    this._astCache.save(source, source);
+
+    return this._astCache.evaluate(source, param);
+  }
+
+  /**
+   * @param {string} source
+   * @param {Object} param
+   * @param {function} callback
+   * @throws {Error}
+   */
+  renderAsync(source, param, callback) {
+    this._remoteManager.register(source, {
+      render: {
+        param: param,
+        callback: callback,
+      },
+    });
+  }
+
+  /**
+   * @param {string|string[]} target
+   * @param {function} callback Called once when all sources fetched.
+   * @param {function} [checkCallback] Called every time when a source fetched.
+   */
+  prefetch(target, callback, checkCallback) {
+    const sourceList = (typeof target === 'string') ? [].concat(target) : target;
+
+    this._remoteManager.prefetch(sourceList, callback, checkCallback);
+  }
+
+  /**
+   * @param {string} name
+   * @param {function} func
+   */
+  addFilter(name, func) {
+    this._filterManager.register(name, func);
+  }
+
+  clearTemplateCache() {
+    this._astCache.clear();
+  }
+}
 
 /**
  * @param {FilterManager} filterManager
@@ -269,6 +310,4 @@ const registerPredefinedFilters = (filterManager) => {
   });
 };
 
-module.exports.init = function () {
-  return template();
-};
+module.exports = Template;

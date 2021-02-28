@@ -60,7 +60,7 @@ QUnit.test('insertBefore - remote source', function (assert) {
   });
 });
 
-QUnit.test('appendTo - embedded source', function (assert) {
+QUnit.test('appendTo - embedded source - textarea', function (assert) {
   const src = '#textarea';
   const target = '#template-textarea';
   const div = $(target);
