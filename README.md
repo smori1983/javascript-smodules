@@ -8,8 +8,10 @@
 
 ### Variable
 
+By default, variable is escaped, unless `raw` is called at the end.
+
 - `{$foo}`
-- `{$foo|h}`
+- `{$foo|raw}`
 
 ### Condition
 
@@ -137,7 +139,7 @@
 ```js
 const template = `
 {if $item.code === 'xxx'}
-  <span>{$item.name|h}</span>
+  <span>{$item.name}</span>
   {if $item.value gt 1000}
   <span>high</span>
   {endif}
@@ -187,12 +189,7 @@ console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
               "item",
               "name"
             ],
-            "filters": [
-              {
-                "name": "h",
-                "args": []
-              }
-            ]
+            "filters": []
           },
           {
             "type": "normal",
@@ -250,10 +247,10 @@ console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
 ```js
 const template = `
 {for $item in $items}
-<div>{$item.name|h}</div>
+<div>{$item.name}</div>
 <ul>
   {for $index, $name in $item.categories}
-  <li>{$index|h}:{$name|h}</li>  
+  <li>{$index}:{$name}</li>  
   {endfor}
 </ul>
 {endfor}
@@ -283,12 +280,7 @@ console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
           "item",
           "name"
         ],
-        "filters": [
-          {
-            "name": "h",
-            "args": []
-          }
-        ]
+        "filters": []
       },
       {
         "type": "normal",
@@ -314,12 +306,7 @@ console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
             "keys": [
               "index"
             ],
-            "filters": [
-              {
-                "name": "h",
-                "args": []
-              }
-            ]
+            "filters": []
           },
           {
             "type": "normal",
@@ -330,12 +317,7 @@ console.log(JSON.stringify(parser.init().parse(template.trim()), null, 2));
             "keys": [
               "name"
             ],
-            "filters": [
-              {
-                "name": "h",
-                "args": []
-              }
-            ]
+            "filters": []
           },
           {
             "type": "normal",
