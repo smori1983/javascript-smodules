@@ -52,6 +52,10 @@ class Evaluator {
       result = this._filterManager.get(filter.name).apply(null, [result].concat(filter.args));
     });
 
+    if (filters.length === 0 || filters[filters.length - 1].name !== 'raw') {
+      result = this._filterManager.get('h').apply(null, [result]);
+    }
+
     return result;
   }
 

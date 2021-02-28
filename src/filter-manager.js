@@ -2,7 +2,9 @@ const Hash = require('./data.hash');
 
 class FilterManager {
   constructor() {
-    this.filters = new Hash();
+    this._filters = new Hash();
+
+    this._registerDefaultFilters();
   }
 
   /**
@@ -11,7 +13,7 @@ class FilterManager {
    */
   register(name, func) {
     if (typeof func === 'function') {
-      this.filters.add(name, func);
+      this._filters.add(name, func);
     }
   }
 
@@ -21,11 +23,33 @@ class FilterManager {
    * @throws {Error}
    */
   get(name) {
-    if (this.filters.has(name)) {
-      return this.filters.get(name);
+    if (this._filters.has(name)) {
+      return this._filters.get(name);
     }
 
     throw new Error('filter "' + name + '" not found');
+  }
+
+  _registerDefaultFilters() {
+    this.register('h', (() => {
+      const list = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '&': '&amp;',
+        '"': '&quot;',
+        "'": '&#039;', // eslint-disable-line quotes
+      };
+
+      return (value) => {
+        return value.toString().replace(/[<>&"']/g, (matched) => {
+          return list[matched];
+        });
+      };
+    })());
+
+    this.register('raw', (value) => {
+      return value.toString();
+    });
   }
 }
 

@@ -87,13 +87,45 @@ QUnit.test('holder block - array index access - not chainable', function (assert
   assert.strictEqual(this.templr.render(src, param), expected);
 });
 
-// QUnit.test('holder block - default filter - h', function (assert) {
-//   const src = '<p>{ $foo | h }</p>';
-//   const param = { foo: '<p>"it\'s mine & that\'s yours"</p>' };
-//   const expected = '<p>&lt;p&gt;&quot;it&#039;s mine &amp; that&#039;s yours&quot;&lt;/p&gt;</p>';
-//
-//   assert.strictEqual(this.templr.render(src, param), expected);
-// });
+QUnit.test('holder block - default filter - h - implicit call', function (assert) {
+  const src = '<p>{ $foo }</p>';
+  const param = { foo: '<strong>"it\'s mine & that\'s yours"</strong>' };
+  const expected = '<p>&lt;strong&gt;&quot;it&#039;s mine &amp; that&#039;s yours&quot;&lt;/strong&gt;</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - default filter - h - explicit call will be escaped twice', function (assert) {
+  const src = '<p>{ $foo | h }</p>';
+  const param = { foo: '<strong>foo</strong>' };
+  const expected = '<p>&amp;lt;strong&amp;gt;foo&amp;lt;/strong&amp;gt;</p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - default filter - raw', function (assert) {
+  const src = '<p>{ $foo | raw }</p>';
+  const param = { foo: '<strong>"it\'s mine & that\'s yours"</strong>' };
+  const expected = '<p><strong>"it\'s mine & that\'s yours"</strong></p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - default filter - h - null', function (assert) {
+  const src = '<p>{ $value }</p>';
+  const param = {value: null};
+  const expected = '<p></p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
+
+QUnit.test('holder block - default filter - raw - null', function (assert) {
+  const src = '<p>{ $value | raw }</p>';
+  const param = {value: null};
+  const expected = '<p></p>';
+
+  assert.strictEqual(this.templr.render(src, param), expected);
+});
 
 // QUnit.test('holder block - default filter - default - template value is undefined', function (assert) {
 //   const src = '<p>{ $foo.bar | default:"piyo" }</p>';

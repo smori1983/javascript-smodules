@@ -273,22 +273,6 @@ class Template {
  * @param {FilterManager} filterManager
  */
 const registerPredefinedFilters = (filterManager) => {
-  filterManager.register('h', (() => {
-    const list = {
-      '<': '&lt;',
-      '>': '&gt;',
-      '&': '&amp;',
-      '"': '&quot;',
-      "'": '&#039;', // eslint-disable-line quotes
-    };
-
-    return (value) => {
-      return value.replace(/[<>&"']/g, (matched) => {
-        return list[matched];
-      });
-    };
-  })());
-
   filterManager.register('default', (value, defaultValue) => {
     return value.length === 0 ? defaultValue : value;
   });
