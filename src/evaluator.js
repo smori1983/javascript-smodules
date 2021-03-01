@@ -94,8 +94,8 @@ class Evaluator {
     let i, len, branch;
     let result = '';
 
-    for (i = 0, len = node.branches.length; i < len; i++) {
-      branch = node.branches[i];
+    for (i = 0, len = node.children.length; i < len; i++) {
+      branch = node.children[i];
 
       if (branch.type === 'if' || branch.type === 'elseif') {
         if (this._evaluateConditionBranch(branch.ctrl.stack, params)) {

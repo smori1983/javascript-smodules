@@ -1175,7 +1175,7 @@ const parser = () => {
 
     return {
       type: 'condition',
-      branches: branches,
+      children: branches,
     };
   }; // parseConditionBlock()
 
