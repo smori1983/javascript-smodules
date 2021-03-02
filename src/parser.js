@@ -127,12 +127,14 @@ const parser = () => {
   };
 
   /**
-   * @return {string}
+   * @return {Object}
    */
-  const eatOpenTag = () => {
+  const parseOpenTag = () => {
     processOpenTag(sourceTextManager);
 
-    return openDelimiter();
+    return {
+      expr: openDelimiter(),
+    };
   };
 
   /**
@@ -160,12 +162,14 @@ const parser = () => {
   };
 
   /**
-   * @return {string}
+   * @return {Object}
    */
-  const eatCloseTag = () => {
+  const parseCloseTag = () => {
     processCloseTag(sourceTextManager);
 
-    return closeDelimiter();
+    return {
+      expr: closeDelimiter(),
+    }
   };
 
   /**
@@ -917,13 +921,16 @@ const parser = () => {
   })(); // parseCondition()
 
   const parseNormalBlock = () => {
+    let node;
     let value = '';
 
     while (eatable()) {
       if (readOpenTag()) {
-        value += eatOpenTag();
+        node = parseOpenTag();
+        value += node.expr;
       } else if (readCloseTag()) {
-        value += eatCloseTag();
+        node = parseCloseTag();
+        value += node.expr;
       } else if (charIs(openDelimiter())) {
         break;
       } else if (charIs(closeDelimiter())) {
@@ -940,6 +947,7 @@ const parser = () => {
   };
 
   const parseLiteralBlock = () => {
+    let node;
     let value = '';
     let closed = false;
     const startLine = getLine();
@@ -949,9 +957,11 @@ const parser = () => {
 
     while (eatable()) {
       if (readOpenTag()) {
-        value += eatOpenTag();
+        node = parseOpenTag();
+        value += node.expr;
       } else if (readCloseTag()) {
-        value += eatCloseTag();
+        node = parseCloseTag();
+        value += node.expr;
       } else if (readEndLiteralTag()) {
         eatEndLiteralTag();
         closed = true;
