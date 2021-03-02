@@ -252,8 +252,15 @@ const parser = () => {
     }
   };
 
-  const eatIfTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseIfTag = () => {
     processIfTag(sourceTextManager);
+
+    return {
+      type: 'if',
+    };
   };
 
   /**
@@ -280,8 +287,15 @@ const parser = () => {
     }
   };
 
-  const eatElseifTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseElseifTag = () => {
     processElseifTag(sourceTextManager);
+
+    return {
+      type: 'elseif',
+    };
   };
 
   /**
@@ -308,8 +322,15 @@ const parser = () => {
     }
   };
 
-  const eatElseTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseElseTag = () => {
     processElseTag(sourceTextManager);
+
+    return {
+      type: 'else',
+    };
   };
 
   /**
@@ -336,8 +357,15 @@ const parser = () => {
     }
   };
 
-  const eatEndIfTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseEndIfTag = () => {
     processEndIfTag(sourceTextManager);
+
+    return {
+      type: 'endif',
+    };
   };
 
   /**
@@ -1154,34 +1182,31 @@ const parser = () => {
     const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
-      let type;
+      let node;
       let ctrl;
 
       if (readIfTag()) {
-        eatIfTag();
-        type = 'if';
+        node = parseIfTag();
       } else if (readElseifTag()) {
-        eatElseifTag();
-        type = 'elseif';
+        node = parseElseifTag();
       } else if (readElseTag()) {
-        eatElseTag();
-        type = 'else';
+        node = parseElseTag();
       } else {
         exception('unknown condition expression');
       }
 
-      if (type === 'if' || type === 'elseif') {
+      if (node.type === 'if' || node.type === 'elseif') {
         ctrl = parseCondition();
         next(closeDelimiter());
       }
 
       branches.push({
-        type: type,
+        type: node.type,
         ctrl: ctrl,
         children: loop([], true),
       });
     }
-    eatEndIfTag();
+    parseEndIfTag();
 
     return {
       type: 'condition',
