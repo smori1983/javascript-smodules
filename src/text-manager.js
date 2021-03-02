@@ -24,8 +24,8 @@ class TextManager {
   /**
    * @return {boolean}
    */
-  eatable() {
-    return this.getPtr() < this._getLen();
+  eof() {
+    return this.getPtr() >= this._getLen();
   }
 
   /**

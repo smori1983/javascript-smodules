@@ -59,8 +59,8 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const eatable = () => {
-    return sourceTextManager.eatable();
+  const eof = () => {
+    return sourceTextManager.eof();
   };
 
   /**
@@ -921,7 +921,7 @@ const parser = () => {
         const history = new ReversePolishNodeHistory();
         let parsed, polish = [], stack = [], stackTop;
 
-        while (eatable()) {
+        while (!eof()) {
           if (charIs(closeDelimiter())) {
             break;
           }
@@ -980,7 +980,7 @@ const parser = () => {
     let node;
     let value = '';
 
-    while (eatable()) {
+    while (!eof()) {
       if (readOpenTag()) {
         node = parseOpenTag();
         value += node.expr;
@@ -1011,7 +1011,7 @@ const parser = () => {
 
     parseLiteralTag();
 
-    while (eatable()) {
+    while (!eof()) {
       if (readOpenTag()) {
         node = parseOpenTag();
         value += node.expr;
@@ -1085,7 +1085,7 @@ const parser = () => {
         if (charIs(':')) {
           next(':');
 
-          while (eatable()) {
+          while (!eof()) {
             skipWhitespace();
 
             if (readValue() === false) {
@@ -1114,7 +1114,7 @@ const parser = () => {
 
         skipWhitespace();
 
-        while (eatable()) {
+        while (!eof()) {
           if (!charIs('|')) {
             break;
           }
@@ -1243,7 +1243,7 @@ const parser = () => {
   }; // parseConditionBlock()
 
   const loop = (result, inBlock) => {
-    while (eatable()) {
+    while (!eof()) {
       if (charIs(openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
