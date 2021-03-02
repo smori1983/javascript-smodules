@@ -133,6 +133,7 @@ const parser = () => {
     processOpenTag(sourceTextManager);
 
     return {
+      type: 'delimiter_open',
       expr: openDelimiter(),
     };
   };
@@ -168,6 +169,7 @@ const parser = () => {
     processCloseTag(sourceTextManager);
 
     return {
+      type: 'delimiter_close',
       expr: closeDelimiter(),
     }
   };
