@@ -196,8 +196,15 @@ const parser = () => {
     }
   };
 
-  const eatLiteralTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseLiteralTag = () => {
     processLiteralTag(sourceTextManager);
+
+    return {
+      type: 'literal_open',
+    }
   };
 
   /**
@@ -224,8 +231,15 @@ const parser = () => {
     }
   };
 
-  const eatEndLiteralTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseEndLiteralTag = () => {
     processEndLiteralTag(sourceTextManager);
+
+    return {
+      type: 'literal_close',
+    };
   };
 
   /**
@@ -995,7 +1009,7 @@ const parser = () => {
     const startLine = getLine();
     const startAt = getAt();
 
-    eatLiteralTag();
+    parseLiteralTag();
 
     while (eatable()) {
       if (readOpenTag()) {
@@ -1005,7 +1019,7 @@ const parser = () => {
         node = parseCloseTag();
         value += node.expr;
       } else if (readEndLiteralTag()) {
-        eatEndLiteralTag();
+        parseEndLiteralTag();
         closed = true;
         break;
       } else {
