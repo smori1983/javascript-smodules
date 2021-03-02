@@ -392,8 +392,15 @@ const parser = () => {
     }
   };
 
-  const eatForTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseForTag = () => {
     processForTag(sourceTextManager);
+
+    return {
+      type: 'for',
+    }
   };
 
   /**
@@ -420,8 +427,15 @@ const parser = () => {
     }
   };
 
-  const eatEndForTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseEndForTag = () => {
     processEndForTag(sourceTextManager);
+
+    return {
+      type: 'endfor',
+    };
   };
 
   /**
@@ -1131,11 +1145,11 @@ const parser = () => {
     };
   })(); // parseHolderBlock()
 
-  const parseForBlock = (() => {
+  const parseForLoopBlock = (() => {
     const parseControlData = () => {
       let k, v, array;
 
-      eatForTag();
+      parseForTag();
 
       v = parseTmpVar();
 
@@ -1168,15 +1182,15 @@ const parser = () => {
       const ctrl = parseControlData();
       const blocks = loop([], true);
 
-      eatEndForTag();
+      parseEndForTag();
 
       return {
-        type: 'for',
+        type: 'for_loop',
         ctrl: ctrl,
         children: blocks,
       };
     };
-  })(); // parseForBlock()
+  })();
 
   const parseConditionBlock = () => {
     const branches = [];
@@ -1224,7 +1238,7 @@ const parser = () => {
         } else if (readIfTag()) {
           result.push(parseConditionBlock());
         } else if (readForTag()) {
-          result.push(parseForBlock());
+          result.push(parseForLoopBlock());
         } else if (readHolderTag()) {
           result.push(parseHolderBlock());
         } else {

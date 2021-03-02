@@ -31,8 +31,8 @@ class Evaluator {
         result += this._applyFilters(this._getValue(node.keys, params), node.filters);
       } else if (node.type === 'condition') {
         result += this._evaluateCondition(node, params);
-      } else if (node.type === 'for') {
-        result += this._evaluateFor(node, params);
+      } else if (node.type === 'for_loop') {
+        result += this._evaluateForLoop(node, params);
       }
     });
 
@@ -200,7 +200,7 @@ class Evaluator {
    * @return {string}
    * @private
    */
-  _evaluateFor(node, params) {
+  _evaluateForLoop(node, params) {
     const collection = this._getValue(node.ctrl.keys, params);
     let result = '';
 
