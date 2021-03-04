@@ -274,7 +274,7 @@ const parser = () => {
   const parseIfTag = () => {
     processIfTag(sourceTextManager);
 
-    const ctrl = parseCondition();
+    const ctrl = parseConditionBody();
     next(closeDelimiter());
     const children = loop([], true);
 
@@ -315,7 +315,7 @@ const parser = () => {
   const parseElseifTag = () => {
     processElseifTag(sourceTextManager);
 
-    const ctrl = parseCondition();
+    const ctrl = parseConditionBody();
     next(closeDelimiter());
     const children = loop([], true);
 
@@ -874,7 +874,7 @@ const parser = () => {
     textManager.next(')');
   };
 
-  const parseCondition = (() => {
+  const parseConditionBody = (() => {
     const getReversePolish = (() => {
       // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
