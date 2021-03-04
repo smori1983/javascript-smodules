@@ -1226,28 +1226,23 @@ const parser = () => {
   const parseConditionBlock = () => {
     const branches = [];
 
-    while (readIfTag() || readElseifTag() || readElseTag()) {
-      let node;
+    branches.push(parseIfTag());
 
-      if (readIfTag()) {
-        node = parseIfTag();
-      } else if (readElseifTag()) {
-        node = parseElseifTag();
-      } else if (readElseTag()) {
-        node = parseElseTag();
-      } else {
-        exception('unknown condition expression');
-      }
-
-      branches.push(node);
+    while (readElseifTag()) {
+      branches.push(parseElseifTag());
     }
+
+    if (readElseTag()) {
+      branches.push(parseElseTag());
+    }
+
     parseEndIfTag();
 
     return {
       type: 'condition',
       children: branches,
     };
-  }; // parseConditionBlock()
+  };
 
   const loop = (result, inBlock) => {
     while (!eof()) {
