@@ -274,8 +274,14 @@ const parser = () => {
   const parseIfTag = () => {
     processIfTag(sourceTextManager);
 
+    const ctrl = parseCondition();
+    next(closeDelimiter());
+    const children = loop([], true);
+
     return {
       type: 'if',
+      ctrl: ctrl,
+      children: children,
     };
   };
 
@@ -309,8 +315,14 @@ const parser = () => {
   const parseElseifTag = () => {
     processElseifTag(sourceTextManager);
 
+    const ctrl = parseCondition();
+    next(closeDelimiter());
+    const children = loop([], true);
+
     return {
       type: 'elseif',
+      ctrl: ctrl,
+      children: children,
     };
   };
 
@@ -344,8 +356,11 @@ const parser = () => {
   const parseElseTag = () => {
     processElseTag(sourceTextManager);
 
+    const children = loop([], true);
+
     return {
       type: 'else',
+      children: children,
     };
   };
 
@@ -1213,7 +1228,6 @@ const parser = () => {
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
       let node;
-      let ctrl;
 
       if (readIfTag()) {
         node = parseIfTag();
@@ -1225,16 +1239,7 @@ const parser = () => {
         exception('unknown condition expression');
       }
 
-      if (node.type === 'if' || node.type === 'elseif') {
-        ctrl = parseCondition();
-        next(closeDelimiter());
-      }
-
-      branches.push({
-        type: node.type,
-        ctrl: ctrl,
-        children: loop([], true),
-      });
+      branches.push(node);
     }
     parseEndIfTag();
 
