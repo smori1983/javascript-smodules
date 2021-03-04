@@ -969,14 +969,14 @@ const parser = () => {
           exception(e.message);
         }
       };
-    })(); // getReversePolish()
+    })();
 
     return () => {
       return {
         stack: getReversePolish(),
       };
     };
-  })(); // parseCondition()
+  })();
 
   const parseNormalBlock = () => {
     let node;
@@ -1139,7 +1139,7 @@ const parser = () => {
           filters: filters,
         };
       };
-    })(); // getFilterSection()
+    })();
 
     return () => {
       let keySection, filterSection;
@@ -1159,7 +1159,7 @@ const parser = () => {
         filters: filterSection.filters,
       };
     };
-  })(); // parseHolderBlock()
+  })();
 
   const parseForLoopBlock = (() => {
     const parseControlData = () => {
@@ -1192,7 +1192,7 @@ const parser = () => {
         tmp_v: v,
         keys: array.keys,
       };
-    }; // parseHeader()
+    };
 
     return () => {
       const ctrl = parseControlData();
