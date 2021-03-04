@@ -85,11 +85,39 @@ class RemoteQueue {
   }
 }
 
+class PrefetchJob {
+  /**
+   * @param {string[]} sourceList
+   * @param {function} callback
+   */
+  constructor(sourceList, callback) {
+    this._sourceList = sourceList;
+    this._callback = callback;
+  }
+
+  /**
+   * @return {string[]}
+   */
+  getSourceList() {
+    return this._sourceList;
+  }
+
+  executeCallback() {
+    if (typeof this._callback === 'function') {
+      this._callback();
+    }
+  }
+}
+
 class PrefetchManager {
   /**
    * @param {AstCache} astCache
    */
   constructor(astCache) {
+    /**
+     * @type {PrefetchJob[]}
+     * @private
+     */
     this._jobList = [];
     this._astCache = astCache;
   }
@@ -99,22 +127,26 @@ class PrefetchManager {
    * @param {function} callback
    */
   add(sourceList, callback) {
-    this._jobList.push({
-      sourceList: sourceList,
-      callback: callback,
-    });
+    this._jobList.push(new PrefetchJob(sourceList, callback));
   }
 
   notifyFetched() {
+    /**
+     * @type {PrefetchJob[]}
+     */
     const undone = [];
+
+    /**
+     * @type {PrefetchJob[]}
+     */
     const finished = [];
 
     this._jobList.forEach((job) => {
-      const unacquired = job.sourceList.filter((source) => {
+      const uncached = job.getSourceList().filter((source) => {
         return !this._astCache.has(source);
       });
 
-      if (unacquired.length > 0) {
+      if (uncached.length > 0) {
         undone.push(job);
       } else {
         finished.push(job);
@@ -124,10 +156,8 @@ class PrefetchManager {
     this._jobList = undone;
 
     finished.forEach((job) => {
-      if (typeof job.callback === 'function') {
-        job.callback();
-      }
-    });
+      job.executeCallback();
+    })
   }
 }
 
