@@ -31,8 +31,8 @@ class Evaluator {
         result += this._applyFilters(this._getValue(node.keys, params), node.filters);
       } else if (node.type === 'condition') {
         result += this._evaluateCondition(node, params);
-      } else if (node.type === 'for') {
-        result += this._evaluateFor(node, params);
+      } else if (node.type === 'for_loop') {
+        result += this._evaluateForLoop(node, params);
       }
     });
 
@@ -94,8 +94,8 @@ class Evaluator {
     let i, len, branch;
     let result = '';
 
-    for (i = 0, len = node.branches.length; i < len; i++) {
-      branch = node.branches[i];
+    for (i = 0, len = node.children.length; i < len; i++) {
+      branch = node.children[i];
 
       if (branch.type === 'if' || branch.type === 'elseif') {
         if (this._evaluateConditionBranch(branch.ctrl.stack, params)) {
@@ -200,7 +200,7 @@ class Evaluator {
    * @return {string}
    * @private
    */
-  _evaluateFor(node, params) {
+  _evaluateForLoop(node, params) {
     const collection = this._getValue(node.ctrl.keys, params);
     let result = '';
 

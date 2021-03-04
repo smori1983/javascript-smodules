@@ -59,8 +59,8 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const eatable = () => {
-    return sourceTextManager.eatable();
+  const eof = () => {
+    return sourceTextManager.eof();
   };
 
   /**
@@ -127,12 +127,15 @@ const parser = () => {
   };
 
   /**
-   * @return {string}
+   * @return {Object}
    */
-  const eatOpenTag = () => {
+  const parseOpenTag = () => {
     processOpenTag(sourceTextManager);
 
-    return openDelimiter();
+    return {
+      type: 'delimiter_open',
+      expr: openDelimiter(),
+    };
   };
 
   /**
@@ -160,12 +163,15 @@ const parser = () => {
   };
 
   /**
-   * @return {string}
+   * @return {Object}
    */
-  const eatCloseTag = () => {
+  const parseCloseTag = () => {
     processCloseTag(sourceTextManager);
 
-    return closeDelimiter();
+    return {
+      type: 'delimiter_close',
+      expr: closeDelimiter(),
+    }
   };
 
   /**
@@ -192,8 +198,15 @@ const parser = () => {
     }
   };
 
-  const eatLiteralTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseLiteralTag = () => {
     processLiteralTag(sourceTextManager);
+
+    return {
+      type: 'literal_open',
+    }
   };
 
   /**
@@ -220,8 +233,15 @@ const parser = () => {
     }
   };
 
-  const eatEndLiteralTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseEndLiteralTag = () => {
     processEndLiteralTag(sourceTextManager);
+
+    return {
+      type: 'literal_close',
+    };
   };
 
   /**
@@ -248,8 +268,15 @@ const parser = () => {
     }
   };
 
-  const eatIfTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseIfTag = () => {
     processIfTag(sourceTextManager);
+
+    return {
+      type: 'if',
+    };
   };
 
   /**
@@ -276,8 +303,15 @@ const parser = () => {
     }
   };
 
-  const eatElseifTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseElseifTag = () => {
     processElseifTag(sourceTextManager);
+
+    return {
+      type: 'elseif',
+    };
   };
 
   /**
@@ -304,8 +338,15 @@ const parser = () => {
     }
   };
 
-  const eatElseTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseElseTag = () => {
     processElseTag(sourceTextManager);
+
+    return {
+      type: 'else',
+    };
   };
 
   /**
@@ -332,8 +373,15 @@ const parser = () => {
     }
   };
 
-  const eatEndIfTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseEndIfTag = () => {
     processEndIfTag(sourceTextManager);
+
+    return {
+      type: 'endif',
+    };
   };
 
   /**
@@ -360,8 +408,15 @@ const parser = () => {
     }
   };
 
-  const eatForTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseForTag = () => {
     processForTag(sourceTextManager);
+
+    return {
+      type: 'for',
+    }
   };
 
   /**
@@ -388,8 +443,15 @@ const parser = () => {
     }
   };
 
-  const eatEndForTag = () => {
+  /**
+   * @return {Object}
+   */
+  const parseEndForTag = () => {
     processEndForTag(sourceTextManager);
+
+    return {
+      type: 'endfor',
+    };
   };
 
   /**
@@ -861,7 +923,7 @@ const parser = () => {
         const history = new ReversePolishNodeHistory();
         let parsed, polish = [], stack = [], stackTop;
 
-        while (eatable()) {
+        while (!eof()) {
           if (charIs(closeDelimiter())) {
             break;
           }
@@ -917,13 +979,16 @@ const parser = () => {
   })(); // parseCondition()
 
   const parseNormalBlock = () => {
+    let node;
     let value = '';
 
-    while (eatable()) {
+    while (!eof()) {
       if (readOpenTag()) {
-        value += eatOpenTag();
+        node = parseOpenTag();
+        value += node.expr;
       } else if (readCloseTag()) {
-        value += eatCloseTag();
+        node = parseCloseTag();
+        value += node.expr;
       } else if (charIs(openDelimiter())) {
         break;
       } else if (charIs(closeDelimiter())) {
@@ -940,20 +1005,23 @@ const parser = () => {
   };
 
   const parseLiteralBlock = () => {
+    let node;
     let value = '';
     let closed = false;
     const startLine = getLine();
     const startAt = getAt();
 
-    eatLiteralTag();
+    parseLiteralTag();
 
-    while (eatable()) {
+    while (!eof()) {
       if (readOpenTag()) {
-        value += eatOpenTag();
+        node = parseOpenTag();
+        value += node.expr;
       } else if (readCloseTag()) {
-        value += eatCloseTag();
+        node = parseCloseTag();
+        value += node.expr;
       } else if (readEndLiteralTag()) {
-        eatEndLiteralTag();
+        parseEndLiteralTag();
         closed = true;
         break;
       } else {
@@ -1019,7 +1087,7 @@ const parser = () => {
         if (charIs(':')) {
           next(':');
 
-          while (eatable()) {
+          while (!eof()) {
             skipWhitespace();
 
             if (readValue() === false) {
@@ -1048,7 +1116,7 @@ const parser = () => {
 
         skipWhitespace();
 
-        while (eatable()) {
+        while (!eof()) {
           if (!charIs('|')) {
             break;
           }
@@ -1093,11 +1161,11 @@ const parser = () => {
     };
   })(); // parseHolderBlock()
 
-  const parseForBlock = (() => {
+  const parseForLoopBlock = (() => {
     const parseControlData = () => {
       let k, v, array;
 
-      eatForTag();
+      parseForTag();
 
       v = parseTmpVar();
 
@@ -1130,57 +1198,54 @@ const parser = () => {
       const ctrl = parseControlData();
       const blocks = loop([], true);
 
-      eatEndForTag();
+      parseEndForTag();
 
       return {
-        type: 'for',
+        type: 'for_loop',
         ctrl: ctrl,
         children: blocks,
       };
     };
-  })(); // parseForBlock()
+  })();
 
   const parseConditionBlock = () => {
     const branches = [];
 
     while (readIfTag() || readElseifTag() || readElseTag()) {
-      let type;
+      let node;
       let ctrl;
 
       if (readIfTag()) {
-        eatIfTag();
-        type = 'if';
+        node = parseIfTag();
       } else if (readElseifTag()) {
-        eatElseifTag();
-        type = 'elseif';
+        node = parseElseifTag();
       } else if (readElseTag()) {
-        eatElseTag();
-        type = 'else';
+        node = parseElseTag();
       } else {
         exception('unknown condition expression');
       }
 
-      if (type === 'if' || type === 'elseif') {
+      if (node.type === 'if' || node.type === 'elseif') {
         ctrl = parseCondition();
         next(closeDelimiter());
       }
 
       branches.push({
-        type: type,
+        type: node.type,
         ctrl: ctrl,
         children: loop([], true),
       });
     }
-    eatEndIfTag();
+    parseEndIfTag();
 
     return {
       type: 'condition',
-      branches: branches,
+      children: branches,
     };
   }; // parseConditionBlock()
 
   const loop = (result, inBlock) => {
-    while (eatable()) {
+    while (!eof()) {
       if (charIs(openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
@@ -1189,7 +1254,7 @@ const parser = () => {
         } else if (readIfTag()) {
           result.push(parseConditionBlock());
         } else if (readForTag()) {
-          result.push(parseForBlock());
+          result.push(parseForLoopBlock());
         } else if (readHolderTag()) {
           result.push(parseHolderBlock());
         } else {
