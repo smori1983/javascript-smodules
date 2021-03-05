@@ -24,25 +24,12 @@ const parser = () => {
   let context;
 
   /**
-   * @return {number}
-   */
-  const getLine = () => {
-    return sourceTextManager.getLine();
-  };
-
-  /**
-   * @return {number}
-   */
-  const getAt = () => {
-    return sourceTextManager.getAt();
-  };
-
-  /**
    * @param {string} message
    * @throws {Error}
    */
   const exception = (message) => {
-    throw new Error('parser - ' + message + ' in source ' + src + ' [' + getLine() + ',' + getAt() + ']');
+    const tm = context.sourceTextManager();
+    throw new Error('parser - ' + message + ' in source ' + src + ' [' + tm.getLine() + ',' + tm.getAt() + ']');
   };
 
   /**
