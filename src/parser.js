@@ -9,11 +9,6 @@ const parser = () => {
   let src;
 
   /**
-   * @type {ParseConfig}
-   */
-  let config;
-
-  /**
    * @type {SourceTextManager}
    */
   let sourceTextManager;
@@ -73,7 +68,7 @@ const parser = () => {
 
     return {
       type: 'delimiter_open',
-      expr: config.openDelimiter(),
+      expr: context.config().openDelimiter(),
     };
   };
 
@@ -110,7 +105,7 @@ const parser = () => {
 
     return {
       type: 'delimiter_close',
-      expr: config.closeDelimiter(),
+      expr: context.config().closeDelimiter(),
     }
   };
 
@@ -1236,7 +1231,7 @@ const parser = () => {
 
 
   that.parse = (content, source) => {
-    config = new ParseConfig();
+    const config = new ParseConfig();
     sourceTextManager = new SourceTextManager(content);
     context = new ParseContext(config, sourceTextManager);
 
