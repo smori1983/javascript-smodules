@@ -1179,8 +1179,6 @@ const parser = () => {
   const parseForLoopBody = () => {
     let k, v, array;
 
-    parseForTag();
-
     v = parseTmpVar();
 
     if (readRegex(/^\s*,\s*/)) {
@@ -1199,7 +1197,6 @@ const parser = () => {
     array = parseVar();
 
     skipWhitespace();
-    next(closeDelimiter());
 
     return {
       tmp_k: k,
@@ -1209,7 +1206,10 @@ const parser = () => {
   };
 
   const parseForLoopBlock = () => {
+    parseForTag();
     const ctrl = parseForLoopBody();
+    next(closeDelimiter());
+
     const blocks = loop([], true);
 
     parseEndForTag();
