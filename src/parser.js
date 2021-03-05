@@ -1210,14 +1210,14 @@ const parser = () => {
     const ctrl = parseForLoopBody();
     next(closeDelimiter());
 
-    const blocks = loop([], true);
+    const children = loop([], true);
 
     parseEndForTag();
 
     return {
       type: 'for_loop',
       ctrl: ctrl,
-      children: blocks,
+      children: children,
     };
   };
 
