@@ -1177,7 +1177,7 @@ const parser = () => {
   })();
 
   const parseForLoopBlock = (() => {
-    const parseControlData = () => {
+    const parseForLoopBody = () => {
       let k, v, array;
 
       parseForTag();
@@ -1210,7 +1210,7 @@ const parser = () => {
     };
 
     return () => {
-      const ctrl = parseControlData();
+      const ctrl = parseForLoopBody();
       const blocks = loop([], true);
 
       parseEndForTag();
