@@ -1,10 +1,16 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
+const ParseConfig = require('./parse-config');
 const SourceTextManager = require('./source-text-manager');
 
 const parser = () => {
   const that = {};
 
   let src;
+
+  /**
+   * @type {ParseConfig}
+   */
+  let config;
 
   /**
    * @type {SourceTextManager}
@@ -103,14 +109,14 @@ const parser = () => {
    * @return {string}
    */
   const openDelimiter = () => {
-    return '{';
+    return config.openDelimiter();
   };
 
   /**
    * @return {string}
    */
   const closeDelimiter = () => {
-    return '}';
+    return config.closeDelimiter();
   };
 
   /**
@@ -1268,6 +1274,7 @@ const parser = () => {
 
 
   that.parse = (content, source) => {
+    config = new ParseConfig();
     sourceTextManager = new SourceTextManager(content);
 
     src = source || '';
