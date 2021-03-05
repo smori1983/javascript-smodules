@@ -274,8 +274,14 @@ const parser = () => {
   const parseIfTag = () => {
     processIfTag(sourceTextManager);
 
+    const ctrl = parseConditionBody();
+    next(closeDelimiter());
+    const children = loop([], true);
+
     return {
       type: 'if',
+      ctrl: ctrl,
+      children: children,
     };
   };
 
@@ -309,8 +315,14 @@ const parser = () => {
   const parseElseifTag = () => {
     processElseifTag(sourceTextManager);
 
+    const ctrl = parseConditionBody();
+    next(closeDelimiter());
+    const children = loop([], true);
+
     return {
       type: 'elseif',
+      ctrl: ctrl,
+      children: children,
     };
   };
 
@@ -344,8 +356,11 @@ const parser = () => {
   const parseElseTag = () => {
     processElseTag(sourceTextManager);
 
+    const children = loop([], true);
+
     return {
       type: 'else',
+      children: children,
     };
   };
 
@@ -859,7 +874,7 @@ const parser = () => {
     textManager.next(')');
   };
 
-  const parseCondition = (() => {
+  const parseConditionBody = (() => {
     const getReversePolish = (() => {
       // 'error' for sentinel.
       /* eslint-disable array-bracket-spacing */
@@ -1211,38 +1226,23 @@ const parser = () => {
   const parseConditionBlock = () => {
     const branches = [];
 
-    while (readIfTag() || readElseifTag() || readElseTag()) {
-      let node;
-      let ctrl;
+    branches.push(parseIfTag());
 
-      if (readIfTag()) {
-        node = parseIfTag();
-      } else if (readElseifTag()) {
-        node = parseElseifTag();
-      } else if (readElseTag()) {
-        node = parseElseTag();
-      } else {
-        exception('unknown condition expression');
-      }
-
-      if (node.type === 'if' || node.type === 'elseif') {
-        ctrl = parseCondition();
-        next(closeDelimiter());
-      }
-
-      branches.push({
-        type: node.type,
-        ctrl: ctrl,
-        children: loop([], true),
-      });
+    while (readElseifTag()) {
+      branches.push(parseElseifTag());
     }
+
+    if (readElseTag()) {
+      branches.push(parseElseTag());
+    }
+
     parseEndIfTag();
 
     return {
       type: 'condition',
       children: branches,
     };
-  }; // parseConditionBlock()
+  };
 
   const loop = (result, inBlock) => {
     while (!eof()) {
