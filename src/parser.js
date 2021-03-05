@@ -1,5 +1,6 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
 const ParseConfig = require('./parse-config');
+const ParseContext = require('./parse-context');
 const SourceTextManager = require('./source-text-manager');
 
 const parser = () => {
@@ -16,6 +17,11 @@ const parser = () => {
    * @type {SourceTextManager}
    */
   let sourceTextManager;
+
+  /**
+   * @type {ParseContext}
+   */
+  let context;
 
   /**
    * @return {string}
@@ -1276,6 +1282,7 @@ const parser = () => {
   that.parse = (content, source) => {
     config = new ParseConfig();
     sourceTextManager = new SourceTextManager(content);
+    context = new ParseContext(config, sourceTextManager);
 
     src = source || '';
 
