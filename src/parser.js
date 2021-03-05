@@ -24,29 +24,6 @@ const parser = () => {
   let context;
 
   /**
-   * @return {string}
-   */
-  const getChar = () => {
-    return sourceTextManager.getChar();
-  };
-
-  /**
-   * @param {string} value
-   * @return {boolean}
-   */
-  const charIs = (value) => {
-    return sourceTextManager.charIs(value);
-  }
-
-  /**
-   * @param {RegExp} regexp
-   * @return {boolean}
-   */
-  const charMatch = (regexp) => {
-    return sourceTextManager.charMatch(regexp);
-  }
-
-  /**
    * @return {number}
    */
   const getLine = () => {
@@ -69,29 +46,6 @@ const parser = () => {
   };
 
   /**
-   * @return {boolean}
-   */
-  const eof = () => {
-    return sourceTextManager.eof();
-  };
-
-  /**
-   * @param expr
-   * @return {string}
-   * @throws {Error}
-   */
-  const next = (expr) => {
-    return sourceTextManager.next(expr);
-  };
-
-  /**
-   * @return {string}
-   */
-  const skipWhitespace = () => {
-    return sourceTextManager.skipWhitespace();
-  };
-
-  /**
    * @param {RegExp} regex
    * @return {boolean}
    * @throws {Error}
@@ -109,20 +63,6 @@ const parser = () => {
     if (readRegex(regex) === false) {
       exception(errorMessage);
     }
-  };
-
-  /**
-   * @return {string}
-   */
-  const openDelimiter = () => {
-    return config.openDelimiter();
-  };
-
-  /**
-   * @return {string}
-   */
-  const closeDelimiter = () => {
-    return config.closeDelimiter();
   };
 
   /**
