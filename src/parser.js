@@ -1176,52 +1176,50 @@ const parser = () => {
     };
   })();
 
-  const parseForLoopBlock = (() => {
-    const parseForLoopBody = () => {
-      let k, v, array;
+  const parseForLoopBody = () => {
+    let k, v, array;
 
-      parseForTag();
+    parseForTag();
 
+    v = parseTmpVar();
+
+    if (readRegex(/^\s*,\s*/)) {
+      skipWhitespace();
+      next(',');
+      skipWhitespace();
+      k = v;
       v = parseTmpVar();
+    }
 
-      if (readRegex(/^\s*,\s*/)) {
-        skipWhitespace();
-        next(',');
-        skipWhitespace();
-        k = v;
-        v = parseTmpVar();
-      }
+    checkRegex(/^\s+in\s+/, 'invalid for expression');
+    skipWhitespace();
+    next('in');
+    skipWhitespace();
 
-      checkRegex(/^\s+in\s+/, 'invalid for expression');
-      skipWhitespace();
-      next('in');
-      skipWhitespace();
+    array = parseVar();
 
-      array = parseVar();
+    skipWhitespace();
+    next(closeDelimiter());
 
-      skipWhitespace();
-      next(closeDelimiter());
-
-      return {
-        tmp_k: k,
-        tmp_v: v,
-        keys: array.keys,
-      };
+    return {
+      tmp_k: k,
+      tmp_v: v,
+      keys: array.keys,
     };
+  };
 
-    return () => {
-      const ctrl = parseForLoopBody();
-      const blocks = loop([], true);
+  const parseForLoopBlock = () => {
+    const ctrl = parseForLoopBody();
+    const blocks = loop([], true);
 
-      parseEndForTag();
+    parseEndForTag();
 
-      return {
-        type: 'for_loop',
-        ctrl: ctrl,
-        children: blocks,
-      };
+    return {
+      type: 'for_loop',
+      ctrl: ctrl,
+      children: blocks,
     };
-  })();
+  };
 
   const parseConditionBlock = () => {
     const branches = [];
