@@ -28,26 +28,6 @@ const parser = () => {
   };
 
   /**
-   * @param {RegExp} regex
-   * @return {boolean}
-   * @throws {Error}
-   */
-  const readRegex = (regex) => {
-    return sourceTextManager.readRegexp(regex);
-  };
-
-  /**
-   * @param {RegExp} regex
-   * @param {string} errorMessage
-   * @throws {Error}
-   */
-  const checkRegex = (regex, errorMessage) => {
-    if (readRegex(regex) === false) {
-      exception(errorMessage);
-    }
-  };
-
-  /**
    * @return {boolean}
    */
   const readOpenTag = () => {
@@ -1148,7 +1128,7 @@ const parser = () => {
       v = parseTmpVar();
     }
 
-    checkRegex(/^\s+in\s+/, 'invalid for expression');
+    tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
     tm.skipWhitespace();
     tm.next('in');
     tm.skipWhitespace();
