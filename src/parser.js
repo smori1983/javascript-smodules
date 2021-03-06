@@ -1068,6 +1068,35 @@ const parser = () => {
     };
   };
 
+  const parseFilters = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
+    const filters = [];
+
+    while (!tm.eof()) {
+      tm.skipWhitespace();
+
+      if (!tm.charIs('|')) {
+        break;
+      }
+
+      tm.next('|');
+      tm.skipWhitespace();
+
+      filters.push(parseFilter());
+
+      if (tm.charIs(config.closeDelimiter())) {
+        break;
+      } else if (!tm.charIs('|')) {
+        throw new Error('syntax error');
+      }
+    }
+
+    return {
+      filters: filters,
+    };
+  };
+
   const parseHolderBlock = (() => {
     const getFilterSection = (() => {
       return () => {
