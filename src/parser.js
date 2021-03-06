@@ -1002,112 +1002,120 @@ const parser = () => {
     tm.readRegexp(/^\$/, true);
   };
 
-  const parseHolderBlock = (() => {
-    const getFilterSection = (() => {
-      const getFilterNameSection = () => {
-        const tm = context.sourceTextManager();
-        let name = '';
-
-        tm.skipWhitespace();
-
-        while (tm.charMatch(/[\w-]/)) {
-          name += tm.next(tm.getChar());
-        }
-
-        if (name === '') {
-          exception('filter name not found');
-        }
-
-        return name;
-      };
-
-      const getFilterArgsSection = () => {
-        const config = context.config();
-        const tm = context.sourceTextManager();
-        const args = [];
-
-        tm.skipWhitespace();
-
-        if (tm.charIs(':')) {
-          tm.next(':');
-
-          while (!tm.eof()) {
-            tm.skipWhitespace();
-
-            if (readValue() === false) {
-              exception('invalid filter args');
-            }
-
-            args.push(parseValue().value);
-
-            tm.skipWhitespace();
-
-            if (tm.charIs(',')) {
-              tm.next(',');
-            } else if (tm.charIs('|') || tm.charIs(config.closeDelimiter())) {
-              break;
-            } else {
-              exception('invalid filter args expression');
-            }
-          }
-        }
-
-        return args;
-      };
-
-      return () => {
-        const config = context.config();
-        const tm = context.sourceTextManager();
-        const filters = [];
-
-        tm.skipWhitespace();
-
-        while (!tm.eof()) {
-          if (!tm.charIs('|')) {
-            break;
-          }
-
-          tm.next('|');
-
-          filters.push({
-            name: getFilterNameSection(),
-            args: getFilterArgsSection(),
-          });
-
-          if (tm.charIs(config.closeDelimiter())) {
-            break;
-          } else if (!tm.charIs('|')) {
-            exception('syntax error');
-          }
-        }
-
-        return {
-          filters: filters,
-        };
-      };
-    })();
-
-    return () => {
-      const config = context.config();
+  const parseFilter = () => {
+    /**
+     * @param {ParseContext} context
+     * @throws {Error}
+     */
+    const nameSection = (context) => {
       const tm = context.sourceTextManager();
-      let keySection, filterSection;
-
-      tm.next(config.openDelimiter());
+      let name = '';
 
       tm.skipWhitespace();
 
-      keySection = parseVar();
-      filterSection = getFilterSection();
+      while (tm.charMatch(/[\w-]/)) {
+        name += tm.next(tm.getChar());
+      }
 
-      tm.next(config.closeDelimiter());
+      if (name === '') {
+        throw new Error('filter name not found');
+      }
 
-      return {
-        type: 'holder',
-        keys: keySection.keys,
-        filters: filterSection.filters,
-      };
+      return name;
     };
-  })();
+
+    /**
+     * @param {ParseContext} context
+     * @throws {Error}
+     */
+    const argumentSection = (context) => {
+      const config = context.config();
+      const tm = context.sourceTextManager();
+      const args = [];
+
+      tm.skipWhitespace();
+
+      if (tm.charIs(':')) {
+        tm.next(':');
+
+        while (!tm.eof()) {
+          tm.skipWhitespace();
+
+          if (readValue() === false) {
+            throw new Error('invalid filter args');
+          }
+
+          args.push(parseValue().value);
+
+          tm.skipWhitespace();
+
+          if (tm.charIs(',')) {
+            tm.next(',');
+          } else if (tm.charIs('|') || tm.charIs(config.closeDelimiter())) {
+            break;
+          } else {
+            throw new Error('invalid filter args expression');
+          }
+        }
+      }
+
+      return args;
+    };
+
+    return {
+      name: nameSection(context),
+      args: argumentSection(context),
+    };
+  };
+
+  const parseFilters = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
+    const filters = [];
+
+    while (!tm.eof()) {
+      tm.skipWhitespace();
+
+      if (!tm.charIs('|')) {
+        break;
+      }
+
+      tm.next('|');
+      tm.skipWhitespace();
+
+      filters.push(parseFilter());
+
+      if (tm.charIs(config.closeDelimiter())) {
+        break;
+      } else if (!tm.charIs('|')) {
+        throw new Error('syntax error');
+      }
+    }
+
+    return {
+      filters: filters,
+    };
+  };
+
+  const parseHolderBlock = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
+
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+
+    const keySection = parseVar();
+    const filterSection = parseFilters();
+
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
+
+    return {
+      type: 'holder',
+      keys: keySection.keys,
+      filters: filterSection.filters,
+    };
+  };
 
   const parseForLoopBody = () => {
     const tm = context.sourceTextManager();
