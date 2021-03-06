@@ -1070,57 +1070,6 @@ const parser = () => {
 
   const parseHolderBlock = (() => {
     const getFilterSection = (() => {
-      const getFilterNameSection = () => {
-        const tm = context.sourceTextManager();
-        let name = '';
-
-        tm.skipWhitespace();
-
-        while (tm.charMatch(/[\w-]/)) {
-          name += tm.next(tm.getChar());
-        }
-
-        if (name === '') {
-          exception('filter name not found');
-        }
-
-        return name;
-      };
-
-      const getFilterArgsSection = () => {
-        const config = context.config();
-        const tm = context.sourceTextManager();
-        const args = [];
-
-        tm.skipWhitespace();
-
-        if (tm.charIs(':')) {
-          tm.next(':');
-
-          while (!tm.eof()) {
-            tm.skipWhitespace();
-
-            if (readValue() === false) {
-              exception('invalid filter args');
-            }
-
-            args.push(parseValue().value);
-
-            tm.skipWhitespace();
-
-            if (tm.charIs(',')) {
-              tm.next(',');
-            } else if (tm.charIs('|') || tm.charIs(config.closeDelimiter())) {
-              break;
-            } else {
-              exception('invalid filter args expression');
-            }
-          }
-        }
-
-        return args;
-      };
-
       return () => {
         const config = context.config();
         const tm = context.sourceTextManager();
@@ -1135,10 +1084,7 @@ const parser = () => {
 
           tm.next('|');
 
-          filters.push({
-            name: getFilterNameSection(),
-            args: getFilterArgsSection(),
-          });
+          filters.push(parseFilter());
 
           if (tm.charIs(config.closeDelimiter())) {
             break;
