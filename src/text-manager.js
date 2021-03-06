@@ -171,6 +171,17 @@ class TextManager {
   }
 
   /**
+   * @param {RegExp} regexp
+   * @param {string} errorMessage
+   * @throws {Error}
+   */
+  checkRegexp(regexp, errorMessage) {
+    if (this.readRegexp(regexp) === false) {
+      throw new Error(errorMessage);
+    }
+  }
+
+  /**
    * @return {string}
    * @private
    */

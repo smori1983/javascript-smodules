@@ -1,5 +1,6 @@
 const ReversePolishNodeHistory = require('./reverse-polish-node-history');
 const ParseConfig = require('./parse-config');
+const ParseContext = require('./parse-context');
 const SourceTextManager = require('./source-text-manager');
 
 const parser = () => {
@@ -8,115 +9,17 @@ const parser = () => {
   let src;
 
   /**
-   * @type {ParseConfig}
+   * @type {ParseContext}
    */
-  let config;
-
-  /**
-   * @type {SourceTextManager}
-   */
-  let sourceTextManager;
-
-  /**
-   * @return {string}
-   */
-  const getChar = () => {
-    return sourceTextManager.getChar();
-  };
-
-  /**
-   * @param {string} value
-   * @return {boolean}
-   */
-  const charIs = (value) => {
-    return sourceTextManager.charIs(value);
-  }
-
-  /**
-   * @param {RegExp} regexp
-   * @return {boolean}
-   */
-  const charMatch = (regexp) => {
-    return sourceTextManager.charMatch(regexp);
-  }
-
-  /**
-   * @return {number}
-   */
-  const getLine = () => {
-    return sourceTextManager.getLine();
-  };
-
-  /**
-   * @return {number}
-   */
-  const getAt = () => {
-    return sourceTextManager.getAt();
-  };
+  let context;
 
   /**
    * @param {string} message
    * @throws {Error}
    */
   const exception = (message) => {
-    throw new Error('parser - ' + message + ' in source ' + src + ' [' + getLine() + ',' + getAt() + ']');
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const eof = () => {
-    return sourceTextManager.eof();
-  };
-
-  /**
-   * @param expr
-   * @return {string}
-   * @throws {Error}
-   */
-  const next = (expr) => {
-    return sourceTextManager.next(expr);
-  };
-
-  /**
-   * @return {string}
-   */
-  const skipWhitespace = () => {
-    return sourceTextManager.skipWhitespace();
-  };
-
-  /**
-   * @param {RegExp} regex
-   * @return {boolean}
-   * @throws {Error}
-   */
-  const readRegex = (regex) => {
-    return sourceTextManager.readRegexp(regex);
-  };
-
-  /**
-   * @param {RegExp} regex
-   * @param {string} errorMessage
-   * @throws {Error}
-   */
-  const checkRegex = (regex, errorMessage) => {
-    if (readRegex(regex) === false) {
-      exception(errorMessage);
-    }
-  };
-
-  /**
-   * @return {string}
-   */
-  const openDelimiter = () => {
-    return config.openDelimiter();
-  };
-
-  /**
-   * @return {string}
-   */
-  const closeDelimiter = () => {
-    return config.closeDelimiter();
+    const tm = context.sourceTextManager();
+    throw new Error('parser - ' + message + ' in source ' + src + ' [' + tm.getLine() + ',' + tm.getAt() + ']');
   };
 
   /**
@@ -124,7 +27,7 @@ const parser = () => {
    */
   const readOpenTag = () => {
     try {
-      processOpenTag(sourceTextManager.lookaheadTextManager());
+      processOpenTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -136,23 +39,24 @@ const parser = () => {
    * @return {Object}
    */
   const parseOpenTag = () => {
-    processOpenTag(sourceTextManager);
+    processOpenTag(context.config(), context.sourceTextManager());
 
     return {
       type: 'delimiter_open',
-      expr: openDelimiter(),
+      expr: context.config().openDelimiter(),
     };
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processOpenTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('open');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processOpenTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('open');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -160,7 +64,7 @@ const parser = () => {
    */
   const readCloseTag = () => {
     try {
-      processCloseTag(sourceTextManager.lookaheadTextManager());
+      processCloseTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -172,23 +76,24 @@ const parser = () => {
    * @return {Object}
    */
   const parseCloseTag = () => {
-    processCloseTag(sourceTextManager);
+    processCloseTag(context.config(), context.sourceTextManager());
 
     return {
       type: 'delimiter_close',
-      expr: closeDelimiter(),
+      expr: context.config().closeDelimiter(),
     }
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processCloseTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('close');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processCloseTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('close');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -196,7 +101,7 @@ const parser = () => {
    */
   const readLiteralTag = () => {
     try {
-      processLiteralTag(sourceTextManager.lookaheadTextManager());
+      processLiteralTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -208,7 +113,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseLiteralTag = () => {
-    processLiteralTag(sourceTextManager);
+    processLiteralTag(context.config(), context.sourceTextManager());
 
     return {
       type: 'literal_open',
@@ -216,14 +121,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processLiteralTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('literal');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processLiteralTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('literal');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -231,7 +137,7 @@ const parser = () => {
    */
   const readEndLiteralTag = () => {
     try {
-      processEndLiteralTag(sourceTextManager.lookaheadTextManager());
+      processEndLiteralTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -243,7 +149,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseEndLiteralTag = () => {
-    processEndLiteralTag(sourceTextManager);
+    processEndLiteralTag(context. config(), context.sourceTextManager());
 
     return {
       type: 'literal_close',
@@ -251,14 +157,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processEndLiteralTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('endliteral');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processEndLiteralTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('endliteral');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -266,7 +173,7 @@ const parser = () => {
    */
   const readIfTag = () => {
     try {
-      processIfTag(sourceTextManager.lookaheadTextManager());
+      processIfTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -278,10 +185,10 @@ const parser = () => {
    * @return {Object}
    */
   const parseIfTag = () => {
-    processIfTag(sourceTextManager);
+    processIfTag(context.config(), context.sourceTextManager());
 
     const ctrl = parseConditionBody();
-    next(closeDelimiter());
+    context.sourceTextManager().next(context.config().closeDelimiter());
     const children = loop([], true);
 
     return {
@@ -292,14 +199,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processIfTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('if');
-    textManager.readRegexp(/^\s+/, true);
-    textManager.skipWhitespace();
+  const processIfTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('if');
+    tm.readRegexp(/^\s+/, true);
+    tm.skipWhitespace();
   };
 
   /**
@@ -307,7 +215,7 @@ const parser = () => {
    */
   const readElseifTag = () => {
     try {
-      processElseifTag(sourceTextManager.lookaheadTextManager());
+      processElseifTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -319,10 +227,10 @@ const parser = () => {
    * @return {Object}
    */
   const parseElseifTag = () => {
-    processElseifTag(sourceTextManager);
+    processElseifTag(context.config(), context.sourceTextManager());
 
     const ctrl = parseConditionBody();
-    next(closeDelimiter());
+    context.sourceTextManager().next(context.config().closeDelimiter());
     const children = loop([], true);
 
     return {
@@ -333,14 +241,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processElseifTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('elseif');
-    textManager.readRegexp(/^\s+/, true);
-    textManager.skipWhitespace();
+  const processElseifTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('elseif');
+    tm.readRegexp(/^\s+/, true);
+    tm.skipWhitespace();
   };
 
   /**
@@ -348,7 +257,7 @@ const parser = () => {
    */
   const readElseTag = () => {
     try {
-      processElseTag(sourceTextManager.lookaheadTextManager());
+      processElseTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -360,7 +269,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseElseTag = () => {
-    processElseTag(sourceTextManager);
+    processElseTag(context.config(), context.sourceTextManager());
 
     const children = loop([], true);
 
@@ -371,14 +280,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processElseTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('else');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processElseTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('else');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -386,7 +296,7 @@ const parser = () => {
    */
   const readEndIfTag = () => {
     try {
-      processEndIfTag(sourceTextManager.lookaheadTextManager());
+      processEndIfTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -398,7 +308,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseEndIfTag = () => {
-    processEndIfTag(sourceTextManager);
+    processEndIfTag(context.config(), context.sourceTextManager());
 
     return {
       type: 'endif',
@@ -406,14 +316,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processEndIfTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('endif');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processEndIfTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('endif');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -421,7 +332,7 @@ const parser = () => {
    */
   const readForTag = () => {
     try {
-      processForTag(sourceTextManager.lookaheadTextManager());
+      processForTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -433,7 +344,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseForTag = () => {
-    processForTag(sourceTextManager);
+    processForTag(context.config(), context.sourceTextManager());
 
     return {
       type: 'for',
@@ -441,14 +352,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processForTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('for');
-    textManager.readRegexp(/^\s+/, true);
-    textManager.skipWhitespace();
+  const processForTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('for');
+    tm.readRegexp(/^\s+/, true);
+    tm.skipWhitespace();
   };
 
   /**
@@ -456,7 +368,7 @@ const parser = () => {
    */
   const readEndForTag = () => {
     try {
-      processEndForTag(sourceTextManager.lookaheadTextManager());
+      processEndForTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -468,7 +380,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseEndForTag = () => {
-    processEndForTag(sourceTextManager);
+    processEndForTag(context.config(), context.sourceTextManager());
 
     return {
       type: 'endfor',
@@ -476,14 +388,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processEndForTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.next('endfor');
-    textManager.skipWhitespace();
-    textManager.next(closeDelimiter());
+  const processEndForTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.next('endfor');
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
   };
 
   /**
@@ -491,22 +404,22 @@ const parser = () => {
    */
   const parseTmpVar = () => {
     try {
-      return processTmpVar(sourceTextManager);
+      return processTmpVar(context.sourceTextManager());
     } catch (e) {
       exception(e.message);
     }
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    * @return {string}
    * @throws {Error}
    */
-  const processTmpVar = (textManager) => {
-    let s = textManager.next('$');
+  const processTmpVar = (tm) => {
+    let s = tm.next('$');
 
-    while (textManager.charMatch(/\w/)) {
-      s += textManager.next(textManager.getChar());
+    while (tm.charMatch(/\w/)) {
+      s += tm.next(tm.getChar());
     }
 
     if (s === '$') {
@@ -521,7 +434,7 @@ const parser = () => {
    */
   const readVar = () => {
     try {
-      processVar(sourceTextManager.lookaheadTextManager());
+      processVar(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -534,7 +447,7 @@ const parser = () => {
    */
   const parseVar = () => {
     try {
-      const parsed = processVar(sourceTextManager);
+      const parsed = processVar(context.sourceTextManager());
 
       return {
         type: 'var',
@@ -546,15 +459,15 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    * @return {string}
    * @throws {Error}
    */
-  const processVar = (textManager) => {
-    let parsed = textManager.next('$');
+  const processVar = (tm) => {
+    let parsed = tm.next('$');
 
-    while (textManager.charMatch(/[\w.]/)) {
-      parsed += textManager.next(textManager.getChar());
+    while (tm.charMatch(/[\w.]/)) {
+      parsed += tm.next(tm.getChar());
     }
 
     if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
@@ -569,7 +482,7 @@ const parser = () => {
    */
   const readNull = () => {
     try {
-      processNull(sourceTextManager.lookaheadTextManager());
+      processNull(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -581,7 +494,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseNull = () => {
-    processNull(sourceTextManager);
+    processNull(context.sourceTextManager());
 
     return {
       type: 'value',
@@ -590,13 +503,13 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    */
-  const processNull = (textManager) => {
+  const processNull = (tm) => {
     const regexp = /^(null)[^\w]/;
-    const matched = textManager.regexpMatched(regexp, 'null should be written');
+    const matched = tm.regexpMatched(regexp, 'null should be written');
 
-    textManager.next(matched[1]);
+    tm.next(matched[1]);
   };
 
   /**
@@ -604,7 +517,7 @@ const parser = () => {
    */
   const readBool = () => {
     try {
-      processBool(sourceTextManager.lookaheadTextManager());
+      processBool(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -616,7 +529,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseBool = () => {
-    const matched = processBool(sourceTextManager);
+    const matched = processBool(context.sourceTextManager());
 
     return {
       type: 'value',
@@ -625,13 +538,13 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    */
-  const processBool = (textManager) => {
+  const processBool = (tm) => {
     const regexp = /^(true|false)[^\w]/;
-    const matched = textManager.regexpMatched(regexp, 'bool should be written');
+    const matched = tm.regexpMatched(regexp, 'bool should be written');
 
-    textManager.next(matched[1]);
+    tm.next(matched[1]);
 
     return matched[1];
   };
@@ -641,7 +554,7 @@ const parser = () => {
    */
   const readString = () => {
     try {
-      processString(sourceTextManager.lookaheadTextManager());
+      processString(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -653,7 +566,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseString = () => {
-    const matched = processString(sourceTextManager);
+    const matched = processString(context.sourceTextManager());
 
     return {
       type: 'value',
@@ -662,14 +575,14 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    * @return {string}
    */
-  const processString = (textManager) => {
+  const processString = (tm) => {
     const regexp = /^(["'])(?:\\\1|\s|\S)*?\1/;
-    const matched = textManager.regexpMatched(regexp, 'string expression not closed');
+    const matched = tm.regexpMatched(regexp, 'string expression not closed');
 
-    textManager.next(matched[0]);
+    tm.next(matched[0]);
 
     return matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]);
   };
@@ -679,7 +592,7 @@ const parser = () => {
    */
   const readNumber = () => {
     try {
-      processNumber(sourceTextManager.lookaheadTextManager());
+      processNumber(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -692,7 +605,7 @@ const parser = () => {
    */
   const parseNumber = () => {
     try {
-      const value = processNumber(sourceTextManager);
+      const value = processNumber(context.sourceTextManager());
 
       return {
         type: 'value',
@@ -704,16 +617,16 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    * @throws {Error}
    */
-  const processNumber = (textManager) => {
+  const processNumber = (tm) => {
     const regexp = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
-    const matched = textManager.regexpMatched(regexp);
+    const matched = tm.regexpMatched(regexp);
     let value;
 
     if (matched && !isNaN(value = +(matched[0]))) {
-      textManager.next(matched[0]);
+      tm.next(matched[0]);
 
       return value;
     } else {
@@ -747,7 +660,7 @@ const parser = () => {
    */
   const readAndOr = () => {
     try {
-      processAndOr(sourceTextManager.lookaheadTextManager());
+      processAndOr(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -759,7 +672,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseAndOr = () => {
-    const matched = processAndOr(sourceTextManager);
+    const matched = processAndOr(context.sourceTextManager());
 
     return {
       type: 'andor',
@@ -768,14 +681,14 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    * @return {string}
    */
-  const processAndOr = (textManager) => {
+  const processAndOr = (tm) => {
     const regexp = /^(and|or)[^\w]/;
-    const matched = textManager.regexpMatched(regexp, '"and" or "or" should be written');
+    const matched = tm.regexpMatched(regexp, '"and" or "or" should be written');
 
-    textManager.next(matched[1]);
+    tm.next(matched[1]);
 
     return matched[1];
   };
@@ -785,7 +698,7 @@ const parser = () => {
    */
   const readComp = () => {
     try {
-      processComp(sourceTextManager.lookaheadTextManager());
+      processComp(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -797,7 +710,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseComp = () => {
-    const matched = processComp(sourceTextManager);
+    const matched = processComp(context.sourceTextManager());
 
     return {
       type: 'comp',
@@ -806,14 +719,14 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    * @return {string}
    */
-  const processComp = (textManager) => {
+  const processComp = (tm) => {
     const regexp = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
-    const matched = textManager.regexpMatched(regexp, 'comparer should be written');
+    const matched = tm.regexpMatched(regexp, 'comparer should be written');
 
-    textManager.next(matched[0]);
+    tm.next(matched[0]);
 
     return matched[0];
   }
@@ -823,7 +736,7 @@ const parser = () => {
    */
   const readRoundBracket = () => {
     try {
-      processRoundBracket(sourceTextManager.lookaheadTextManager());
+      processRoundBracket(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -835,7 +748,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseRoundBracket = () => {
-    processRoundBracket(sourceTextManager);
+    processRoundBracket(context.sourceTextManager());
 
     return {
       type: 'roundBracket',
@@ -843,10 +756,10 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    */
-  const processRoundBracket = (textManager) => {
-    textManager.next('(');
+  const processRoundBracket = (tm) => {
+    tm.next('(');
   };
 
   /**
@@ -854,7 +767,7 @@ const parser = () => {
    */
   const readEndRoundBracket = () => {
     try {
-      processEndRoundBracket(sourceTextManager.lookaheadTextManager());
+      processEndRoundBracket(context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -866,7 +779,7 @@ const parser = () => {
    * @return {Object}
    */
   const parseEndRoundBracket = () => {
-    processEndRoundBracket(sourceTextManager);
+    processEndRoundBracket(context.sourceTextManager());
 
     return {
       type: 'endRoundBracket',
@@ -874,10 +787,10 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {TextManager} tm
    */
-  const processEndRoundBracket = (textManager) => {
-    textManager.next(')');
+  const processEndRoundBracket = (tm) => {
+    tm.next(')');
   };
 
   const parseConditionBody = (() => {
@@ -941,11 +854,13 @@ const parser = () => {
       };
 
       const main = () => {
+        const config = context.config();
+        const tm = context.sourceTextManager();
         const history = new ReversePolishNodeHistory();
         let parsed, polish = [], stack = [], stackTop;
 
-        while (!eof()) {
-          if (charIs(closeDelimiter())) {
+        while (!tm.eof()) {
+          if (tm.charIs(config.closeDelimiter())) {
             break;
           }
 
@@ -971,7 +886,7 @@ const parser = () => {
             stack.push(parsed);
           }
 
-          skipWhitespace();
+          tm.skipWhitespace();
         }
 
         while (stack.length > 0) {
@@ -1000,22 +915,24 @@ const parser = () => {
   })();
 
   const parseNormalBlock = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
     let node;
     let value = '';
 
-    while (!eof()) {
+    while (!tm.eof()) {
       if (readOpenTag()) {
         node = parseOpenTag();
         value += node.expr;
       } else if (readCloseTag()) {
         node = parseCloseTag();
         value += node.expr;
-      } else if (charIs(openDelimiter())) {
+      } else if (tm.charIs(config.openDelimiter())) {
         break;
-      } else if (charIs(closeDelimiter())) {
+      } else if (tm.charIs(config.closeDelimiter())) {
         exception('syntax error');
       } else {
-        value += next(getChar());
+        value += tm.next(tm.getChar());
       }
     }
 
@@ -1026,15 +943,17 @@ const parser = () => {
   };
 
   const parseLiteralBlock = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
     let node;
     let value = '';
     let closed = false;
-    const startLine = getLine();
-    const startAt = getAt();
+    const startLine = tm.getLine();
+    const startAt = tm.getAt();
 
     parseLiteralTag();
 
-    while (!eof()) {
+    while (!tm.eof()) {
       if (readOpenTag()) {
         node = parseOpenTag();
         value += node.expr;
@@ -1046,12 +965,12 @@ const parser = () => {
         closed = true;
         break;
       } else {
-        value += next(getChar());
+        value += tm.next(tm.getChar());
       }
     }
 
     if (closed === false) {
-      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by ' + openDelimiter() + 'endliteral' + closeDelimiter());
+      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by ' + config.openDelimiter() + 'endliteral' + config.closeDelimiter());
     }
 
     return {
@@ -1065,7 +984,7 @@ const parser = () => {
    */
   const readHolderTag = () => {
     try {
-      processHolderTag(sourceTextManager.lookaheadTextManager());
+      processHolderTag(context.config(), context.sourceTextManager().lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -1074,23 +993,25 @@ const parser = () => {
   };
 
   /**
-   * @param {TextManager} textManager
+   * @param {ParseConfig} config
+   * @param {TextManager} tm
    */
-  const processHolderTag = (textManager) => {
-    textManager.next(openDelimiter());
-    textManager.skipWhitespace();
-    textManager.readRegexp(/^\$/, true);
+  const processHolderTag = (config, tm) => {
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
+    tm.readRegexp(/^\$/, true);
   };
 
   const parseHolderBlock = (() => {
     const getFilterSection = (() => {
       const getFilterNameSection = () => {
+        const tm = context.sourceTextManager();
         let name = '';
 
-        skipWhitespace();
+        tm.skipWhitespace();
 
-        while (charMatch(/[\w-]/)) {
-          name += next(getChar());
+        while (tm.charMatch(/[\w-]/)) {
+          name += tm.next(tm.getChar());
         }
 
         if (name === '') {
@@ -1101,15 +1022,17 @@ const parser = () => {
       };
 
       const getFilterArgsSection = () => {
+        const config = context.config();
+        const tm = context.sourceTextManager();
         const args = [];
 
-        skipWhitespace();
+        tm.skipWhitespace();
 
-        if (charIs(':')) {
-          next(':');
+        if (tm.charIs(':')) {
+          tm.next(':');
 
-          while (!eof()) {
-            skipWhitespace();
+          while (!tm.eof()) {
+            tm.skipWhitespace();
 
             if (readValue() === false) {
               exception('invalid filter args');
@@ -1117,11 +1040,11 @@ const parser = () => {
 
             args.push(parseValue().value);
 
-            skipWhitespace();
+            tm.skipWhitespace();
 
-            if (charIs(',')) {
-              next(',');
-            } else if (charIs('|') || charIs(closeDelimiter())) {
+            if (tm.charIs(',')) {
+              tm.next(',');
+            } else if (tm.charIs('|') || tm.charIs(config.closeDelimiter())) {
               break;
             } else {
               exception('invalid filter args expression');
@@ -1133,25 +1056,27 @@ const parser = () => {
       };
 
       return () => {
+        const config = context.config();
+        const tm = context.sourceTextManager();
         const filters = [];
 
-        skipWhitespace();
+        tm.skipWhitespace();
 
-        while (!eof()) {
-          if (!charIs('|')) {
+        while (!tm.eof()) {
+          if (!tm.charIs('|')) {
             break;
           }
 
-          next('|');
+          tm.next('|');
 
           filters.push({
             name: getFilterNameSection(),
             args: getFilterArgsSection(),
           });
 
-          if (charIs(closeDelimiter())) {
+          if (tm.charIs(config.closeDelimiter())) {
             break;
-          } else if (!charIs('|')) {
+          } else if (!tm.charIs('|')) {
             exception('syntax error');
           }
         }
@@ -1163,16 +1088,18 @@ const parser = () => {
     })();
 
     return () => {
+      const config = context.config();
+      const tm = context.sourceTextManager();
       let keySection, filterSection;
 
-      next(openDelimiter());
+      tm.next(config.openDelimiter());
 
-      skipWhitespace();
+      tm.skipWhitespace();
 
       keySection = parseVar();
       filterSection = getFilterSection();
 
-      next(closeDelimiter());
+      tm.next(config.closeDelimiter());
 
       return {
         type: 'holder',
@@ -1183,26 +1110,27 @@ const parser = () => {
   })();
 
   const parseForLoopBody = () => {
+    const tm = context.sourceTextManager();
     let k, v, array;
 
     v = parseTmpVar();
 
-    if (readRegex(/^\s*,\s*/)) {
-      skipWhitespace();
-      next(',');
-      skipWhitespace();
+    if (tm.readRegexp(/^\s*,\s*/)) {
+      tm.skipWhitespace();
+      tm.next(',');
+      tm.skipWhitespace();
       k = v;
       v = parseTmpVar();
     }
 
-    checkRegex(/^\s+in\s+/, 'invalid for expression');
-    skipWhitespace();
-    next('in');
-    skipWhitespace();
+    tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
+    tm.skipWhitespace();
+    tm.next('in');
+    tm.skipWhitespace();
 
     array = parseVar();
 
-    skipWhitespace();
+    tm.skipWhitespace();
 
     return {
       tmp_k: k,
@@ -1212,9 +1140,11 @@ const parser = () => {
   };
 
   const parseForLoopBlock = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
     parseForTag();
     const ctrl = parseForLoopBody();
-    next(closeDelimiter());
+    tm.next(config.closeDelimiter());
 
     const children = loop([], true);
 
@@ -1249,8 +1179,10 @@ const parser = () => {
   };
 
   const loop = (result, inBlock) => {
-    while (!eof()) {
-      if (charIs(openDelimiter())) {
+    const config = context.config();
+    const tm = context.sourceTextManager();
+    while (!tm.eof()) {
+      if (tm.charIs(config.openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
         } else if (readLiteralTag()) {
@@ -1274,8 +1206,9 @@ const parser = () => {
 
 
   that.parse = (content, source) => {
-    config = new ParseConfig();
-    sourceTextManager = new SourceTextManager(content);
+    const config = new ParseConfig();
+    const sourceTextManager = new SourceTextManager(content);
+    context = new ParseContext(config, sourceTextManager);
 
     src = source || '';
 
