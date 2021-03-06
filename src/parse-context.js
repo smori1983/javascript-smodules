@@ -21,6 +21,16 @@ class ParseContext {
   sourceTextManager() {
     return this._stm;
   }
+
+  /**
+   * @param {string} message
+   * @throws {Error}
+   */
+  exception(message) {
+    const tm = this.sourceTextManager();
+
+    throw new Error('parser - ' + message + ' [' + tm.getLine() + ',' + tm.getAt() + ']');
+  }
 }
 
 module.exports = ParseContext;
