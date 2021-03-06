@@ -9,11 +9,6 @@ const parser = () => {
   let src;
 
   /**
-   * @type {SourceTextManager}
-   */
-  let sourceTextManager;
-
-  /**
    * @type {ParseContext}
    */
   let context;
@@ -1212,7 +1207,7 @@ const parser = () => {
 
   that.parse = (content, source) => {
     const config = new ParseConfig();
-    sourceTextManager = new SourceTextManager(content);
+    const sourceTextManager = new SourceTextManager(content);
     context = new ParseContext(config, sourceTextManager);
 
     src = source || '';
