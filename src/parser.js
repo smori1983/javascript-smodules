@@ -1098,36 +1098,6 @@ const parser = () => {
   };
 
   const parseHolderBlock = (() => {
-    const getFilterSection = (() => {
-      return () => {
-        const config = context.config();
-        const tm = context.sourceTextManager();
-        const filters = [];
-
-        tm.skipWhitespace();
-
-        while (!tm.eof()) {
-          if (!tm.charIs('|')) {
-            break;
-          }
-
-          tm.next('|');
-
-          filters.push(parseFilter());
-
-          if (tm.charIs(config.closeDelimiter())) {
-            break;
-          } else if (!tm.charIs('|')) {
-            exception('syntax error');
-          }
-        }
-
-        return {
-          filters: filters,
-        };
-      };
-    })();
-
     return () => {
       const config = context.config();
       const tm = context.sourceTextManager();
@@ -1136,7 +1106,7 @@ const parser = () => {
       tm.skipWhitespace();
 
       const keySection = parseVar();
-      const filterSection = getFilterSection();
+      const filterSection = parseFilters();
 
       tm.next(config.closeDelimiter());
 
