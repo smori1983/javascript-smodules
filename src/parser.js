@@ -1102,14 +1102,12 @@ const parser = () => {
     return () => {
       const config = context.config();
       const tm = context.sourceTextManager();
-      let keySection, filterSection;
 
       tm.next(config.openDelimiter());
-
       tm.skipWhitespace();
 
-      keySection = parseVar();
-      filterSection = getFilterSection();
+      const keySection = parseVar();
+      const filterSection = getFilterSection();
 
       tm.next(config.closeDelimiter());
 
