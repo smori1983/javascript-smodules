@@ -6,21 +6,10 @@ const SourceTextManager = require('./source-text-manager');
 const parser = () => {
   const that = {};
 
-  let src;
-
   /**
    * @type {ParseContext}
    */
   let context;
-
-  /**
-   * @param {string} message
-   * @throws {Error}
-   */
-  const exception = (message) => {
-    const tm = context.sourceTextManager();
-    throw new Error('parser - ' + message + ' in source ' + src + ' [' + tm.getLine() + ',' + tm.getAt() + ']');
-  };
 
   /**
    * @return {boolean}
@@ -406,7 +395,7 @@ const parser = () => {
     try {
       return processTmpVar(context.sourceTextManager());
     } catch (e) {
-      exception(e.message);
+      context.exception(e.message);
     }
   };
 
@@ -454,7 +443,7 @@ const parser = () => {
         keys: parsed.split('.'),
       };
     } catch (e) {
-      exception(e.message);
+      context.exception(e.message);
     }
   };
 
@@ -612,7 +601,7 @@ const parser = () => {
         value: value,
       };
     } catch (e) {
-      exception(e.message);
+      context.exception(e.message);
     }
   };
 
@@ -651,7 +640,7 @@ const parser = () => {
     } else if (readNumber()) {
       return parseNumber();
     } else {
-      exception('value should be written');
+      context.exception('value should be written');
     }
   };
 
@@ -841,7 +830,7 @@ const parser = () => {
           type = transitableTypes[i];
 
           if (type === 'error') {
-            exception('invalid condition expression');
+            throw new Error('invalid condition expression');
           }
 
           if (method[type].read()) {
@@ -899,18 +888,18 @@ const parser = () => {
       };
 
       return () => {
-        try {
-          return main();
-        } catch (e) {
-          exception(e.message);
-        }
+        return main();
       };
     })();
 
     return () => {
-      return {
-        stack: getReversePolish(),
-      };
+      try {
+        return {
+          stack: getReversePolish(),
+        };
+      } catch (e) {
+        context.exception(e.message);
+      }
     };
   })();
 
@@ -930,7 +919,7 @@ const parser = () => {
       } else if (tm.charIs(config.openDelimiter())) {
         break;
       } else if (tm.charIs(config.closeDelimiter())) {
-        exception('syntax error');
+        context.exception('syntax error');
       } else {
         value += tm.next(tm.getChar());
       }
@@ -970,7 +959,7 @@ const parser = () => {
     }
 
     if (closed === false) {
-      exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by ' + config.openDelimiter() + 'endliteral' + config.closeDelimiter());
+      context.exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by ' + config.openDelimiter() + 'endliteral' + config.closeDelimiter());
     }
 
     return {
@@ -1202,7 +1191,7 @@ const parser = () => {
         } else if (readHolderTag()) {
           result.push(parseHolderBlock());
         } else {
-          exception('unknown tag');
+          context.exception('unknown tag');
         }
       } else {
         result.push(parseNormalBlock());
@@ -1217,8 +1206,6 @@ const parser = () => {
     const config = new ParseConfig();
     const sourceTextManager = new SourceTextManager(content);
     context = new ParseContext(config, sourceTextManager);
-
-    src = source || '';
 
     return loop([]);
   };
