@@ -1097,26 +1097,25 @@ const parser = () => {
     };
   };
 
-  const parseHolderBlock = (() => {
-    return () => {
-      const config = context.config();
-      const tm = context.sourceTextManager();
+  const parseHolderBlock = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
 
-      tm.next(config.openDelimiter());
-      tm.skipWhitespace();
+    tm.next(config.openDelimiter());
+    tm.skipWhitespace();
 
-      const keySection = parseVar();
-      const filterSection = parseFilters();
+    const keySection = parseVar();
+    const filterSection = parseFilters();
 
-      tm.next(config.closeDelimiter());
+    tm.skipWhitespace();
+    tm.next(config.closeDelimiter());
 
-      return {
-        type: 'holder',
-        keys: keySection.keys,
-        filters: filterSection.filters,
-      };
+    return {
+      type: 'holder',
+      keys: keySection.keys,
+      filters: filterSection.filters,
     };
-  })();
+  };
 
   const parseForLoopBody = () => {
     const tm = context.sourceTextManager();
