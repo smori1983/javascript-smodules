@@ -316,41 +316,6 @@ const parser = () => {
   };
 
   /**
-   * @return {Object}
-   */
-  const parseTmpVar = () => {
-    try {
-      const expr = processTmpVar(context.sourceTextManager());
-
-      return {
-        type: 'temp_var',
-        expr: expr,
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
-  };
-
-  /**
-   * @param {TextManager} tm
-   * @return {string}
-   * @throws {Error}
-   */
-  const processTmpVar = (tm) => {
-    let s = tm.next('$');
-
-    while (tm.charMatch(/\w/)) {
-      s += tm.next(tm.getChar());
-    }
-
-    if (s === '$') {
-      throw new Error('tmp variable not found');
-    }
-
-    return s.slice(1);
-  };
-
-  /**
    * @return {boolean}
    */
   const readVar = () => {
@@ -1042,14 +1007,14 @@ const parser = () => {
     const tm = context.sourceTextManager();
     let k, v, array;
 
-    v = parseTmpVar().expr;
+    v = context.astNode('temp_var').parse(context).expr;
 
     if (tm.readRegexp(/^\s*,\s*/)) {
       tm.skipWhitespace();
       tm.next(',');
       tm.skipWhitespace();
       k = v;
-      v = parseTmpVar().expr;
+      v = context.astNode('temp_var').parse(context).expr;
     }
 
     tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
