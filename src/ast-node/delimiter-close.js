@@ -5,6 +5,10 @@ class DelimiterClose extends AstNode {
     return 'delimiter_close';
   }
 
+  /**
+   * @param {ParseContext} context
+   * @return {boolean}
+   */
   read(context) {
     try {
       this._process(context.config(), context.sourceTextManager().lookaheadTextManager());
@@ -15,6 +19,10 @@ class DelimiterClose extends AstNode {
     }
   }
 
+  /**
+   * @param {ParseContext} context
+   * @return {{expr: string, type: string}}
+   */
   parse(context) {
     this._process(context.config(), context.sourceTextManager());
 
