@@ -389,11 +389,16 @@ const parser = () => {
   };
 
   /**
-   * @return {string}
+   * @return {Object}
    */
   const parseTmpVar = () => {
     try {
-      return processTmpVar(context.sourceTextManager());
+      const expr = processTmpVar(context.sourceTextManager());
+
+      return {
+        type: 'temp_var',
+        expr: expr,
+      };
     } catch (e) {
       context.exception(e.message);
     }
@@ -1110,14 +1115,14 @@ const parser = () => {
     const tm = context.sourceTextManager();
     let k, v, array;
 
-    v = parseTmpVar();
+    v = parseTmpVar().expr;
 
     if (tm.readRegexp(/^\s*,\s*/)) {
       tm.skipWhitespace();
       tm.next(',');
       tm.skipWhitespace();
       k = v;
-      v = parseTmpVar();
+      v = parseTmpVar().expr;
     }
 
     tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
