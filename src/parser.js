@@ -15,43 +15,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readOpenTag = () => {
-    try {
-      processOpenTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseOpenTag = () => {
-    processOpenTag(context.config(), context.sourceTextManager());
-
-    return {
-      type: 'delimiter_open',
-      expr: context.config().openDelimiter(),
-    };
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processOpenTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.next('open');
-    tm.skipWhitespace();
-    tm.next(config.closeDelimiter());
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readCloseTag = () => {
     try {
       processCloseTag(context.config(), context.sourceTextManager().lookaheadTextManager());
@@ -916,8 +879,8 @@ const parser = () => {
     let value = '';
 
     while (!tm.eof()) {
-      if (readOpenTag()) {
-        node = parseOpenTag();
+      if (context.ast().node('delimiter_open').read(context)) {
+        node = context.ast().node('delimiter_open').parse(context);
         value += node.expr;
       } else if (readCloseTag()) {
         node = parseCloseTag();
@@ -949,8 +912,8 @@ const parser = () => {
     parseLiteralTag();
 
     while (!tm.eof()) {
-      if (readOpenTag()) {
-        node = parseOpenTag();
+      if (context.ast().node('delimiter_open').read(context)) {
+        node = context.ast().node('delimiter_open').parse(context);
         value += node.expr;
       } else if (readCloseTag()) {
         node = parseCloseTag();
