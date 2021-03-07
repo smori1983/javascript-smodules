@@ -319,14 +319,14 @@ const parser = () => {
    * @return {boolean}
    */
   const readVar = () => {
-    return context.astNode('var').read(context);
+    return context.read('var');
   };
 
   /**
    * @return {Object}
    */
   const parseVar = () => {
-    return context.astNode('var').parse(context);
+    return context.parse('var');
   };
 
   /**
@@ -773,11 +773,11 @@ const parser = () => {
     let value = '';
 
     while (!tm.eof()) {
-      if (context.astNode('delimiter_open').read(context)) {
-        node = context.astNode('delimiter_open').parse(context);
+      if (context.read('delimiter_open')) {
+        node = context.parse('delimiter_open');
         value += node.expr;
-      } else if (context.astNode('delimiter_close').read(context)) {
-        node = context.astNode('delimiter_close').parse(context);
+      } else if (context.read('delimiter_close')) {
+        node = context.parse('delimiter_close');
         value += node.expr;
       } else if (tm.charIs(config.openDelimiter())) {
         break;
@@ -806,11 +806,11 @@ const parser = () => {
     parseLiteralTag();
 
     while (!tm.eof()) {
-      if (context.astNode('delimiter_open').read(context)) {
-        node = context.astNode('delimiter_open').parse(context);
+      if (context.read('delimiter_open')) {
+        node = context.parse('delimiter_open');
         value += node.expr;
-      } else if (context.astNode('delimiter_close').read(context)) {
-        node = context.astNode('delimiter_close').parse(context);
+      } else if (context.read('delimiter_close')) {
+        node = context.parse('delimiter_close');
         value += node.expr;
       } else if (readEndLiteralTag()) {
         parseEndLiteralTag();
@@ -956,7 +956,7 @@ const parser = () => {
     tm.next(config.openDelimiter());
     tm.skipWhitespace();
 
-    const keySection = context.astNode('var').parse(context);
+    const keySection = context.parse('var');
     const filterSection = parseFilters();
 
     tm.skipWhitespace();
@@ -973,14 +973,14 @@ const parser = () => {
     const tm = context.sourceTextManager();
     let k, v, array;
 
-    v = context.astNode('temp_var').parse(context).expr;
+    v = context.parse('temp_var').expr;
 
     if (tm.readRegexp(/^\s*,\s*/)) {
       tm.skipWhitespace();
       tm.next(',');
       tm.skipWhitespace();
       k = v;
-      v = context.astNode('temp_var').parse(context).expr;
+      v = context.parse('temp_var').expr;
     }
 
     tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
@@ -988,7 +988,7 @@ const parser = () => {
     tm.next('in');
     tm.skipWhitespace();
 
-    array = context.astNode('var').parse(context);
+    array = context.parse('var');
 
     tm.skipWhitespace();
 

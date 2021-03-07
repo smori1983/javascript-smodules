@@ -40,6 +40,22 @@ class ParseContext {
   }
 
   /**
+   * @param {string} type
+   * @return {boolean}
+   */
+  read(type) {
+    return this.astNode(type).read(this);
+  }
+
+  /**
+   * @param {string} type
+   * @return {AstNodeParseResult}
+   */
+  parse(type) {
+    return this.astNode(type).parse(this);
+  }
+
+  /**
    * @param {string} message
    * @throws {Error}
    */
