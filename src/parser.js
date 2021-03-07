@@ -319,48 +319,14 @@ const parser = () => {
    * @return {boolean}
    */
   const readVar = () => {
-    try {
-      processVar(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return context.astNode('var').read(context);
   };
 
   /**
    * @return {Object}
    */
   const parseVar = () => {
-    try {
-      const parsed = processVar(context.sourceTextManager());
-
-      return {
-        type: 'var',
-        keys: parsed.split('.'),
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
-  };
-
-  /**
-   * @param {TextManager} tm
-   * @return {string}
-   * @throws {Error}
-   */
-  const processVar = (tm) => {
-    let parsed = tm.next('$');
-
-    while (tm.charMatch(/[\w.]/)) {
-      parsed += tm.next(tm.getChar());
-    }
-
-    if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
-      throw new Error('invalid variable expression');
-    }
-
-    return parsed.slice(1);
+    return context.astNode('var').parse(context);
   };
 
   /**
@@ -990,7 +956,7 @@ const parser = () => {
     tm.next(config.openDelimiter());
     tm.skipWhitespace();
 
-    const keySection = parseVar();
+    const keySection = context.astNode('var').parse(context);
     const filterSection = parseFilters();
 
     tm.skipWhitespace();
@@ -1022,7 +988,7 @@ const parser = () => {
     tm.next('in');
     tm.skipWhitespace();
 
-    array = parseVar();
+    array = context.astNode('var').parse(context);
 
     tm.skipWhitespace();
 
