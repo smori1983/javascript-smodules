@@ -7,7 +7,7 @@ class TempVar extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {{expr: string, type: string}}
+   * @return {AstNodeParseResult}
    */
   parse(context) {
     const expr = this._process(context.sourceTextManager());
