@@ -332,41 +332,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readNull = () => {
-    try {
-      processNull(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseNull = () => {
-    processNull(context.sourceTextManager());
-
-    return {
-      type: 'value',
-      value: null,
-    };
-  };
-
-  /**
-   * @param {TextManager} tm
-   */
-  const processNull = (tm) => {
-    const regexp = /^(null)[^\w]/;
-    const matched = tm.regexpMatched(regexp, 'null should be written');
-
-    tm.next(matched[1]);
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readBool = () => {
     try {
       processBool(context.sourceTextManager().lookaheadTextManager());
@@ -490,12 +455,12 @@ const parser = () => {
    * @return {boolean}
    */
   const readValue = () => {
-    return readNull() || readBool() || readString() || readNumber();
+    return context.read('value_null') || readBool() || readString() || readNumber();
   };
 
   const parseValue = () => {
-    if (readNull()) {
-      return parseNull();
+    if (context.read('value_null')) {
+      return context.parse('value_null');
     } else if (readBool()) {
       return parseBool();
     } else if (readString()) {

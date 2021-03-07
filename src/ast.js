@@ -4,6 +4,7 @@ const DelimiterOpen = require('./ast-node/delimiter-open');
 const DelimiterClose = require('./ast-node/delimiter-close');
 const TempVar = require('./ast-node/temp-var');
 const Variable = require('./ast-node/variable');
+const ValueNull = require('./ast-node/value-null');
 
 class Ast {
   constructor() {
@@ -32,6 +33,7 @@ class Ast {
     this._registerNode(new DelimiterClose());
     this._registerNode(new TempVar());
     this._registerNode(new Variable());
+    this._registerNode(new ValueNull());
   }
 
   /**
