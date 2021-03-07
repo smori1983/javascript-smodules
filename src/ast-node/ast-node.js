@@ -1,3 +1,10 @@
+/**
+ * @typedef {Object} AstNodeParseResult
+ * @property {string} type
+ * @property {string} [expr]
+ * @property {string[]} [keys]
+ */
+
 class AstNode {
   /**
    * @return {string}
@@ -16,10 +23,12 @@ class AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {Object}
+   * @return {AstNodeParseResult}
    */
   parse(context) {
-    return {};
+    return {
+      type: '__undefined__',
+    };
   }
 }
 
