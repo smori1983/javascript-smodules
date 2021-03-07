@@ -879,8 +879,8 @@ const parser = () => {
     let value = '';
 
     while (!tm.eof()) {
-      if (context.ast().node('delimiter_open').read(context)) {
-        node = context.ast().node('delimiter_open').parse(context);
+      if (context.astNode('delimiter_open').read(context)) {
+        node = context.astNode('delimiter_open').parse(context);
         value += node.expr;
       } else if (readCloseTag()) {
         node = parseCloseTag();
@@ -912,8 +912,8 @@ const parser = () => {
     parseLiteralTag();
 
     while (!tm.eof()) {
-      if (context.ast().node('delimiter_open').read(context)) {
-        node = context.ast().node('delimiter_open').parse(context);
+      if (context.astNode('delimiter_open').read(context)) {
+        node = context.astNode('delimiter_open').parse(context);
         value += node.expr;
       } else if (readCloseTag()) {
         node = parseCloseTag();

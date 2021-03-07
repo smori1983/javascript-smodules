@@ -32,6 +32,14 @@ class ParseContext {
   }
 
   /**
+   * @param {string} type
+   * @return {AstNode}
+   */
+  astNode(type) {
+    return this.ast().node(type);
+  }
+
+  /**
    * @param {string} message
    * @throws {Error}
    */
