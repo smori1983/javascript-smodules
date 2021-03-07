@@ -1,6 +1,7 @@
 const Hash = require('./data.hash');
 
 const DelimiterOpen = require('./ast-node/delimiter-open');
+const DelimiterClose = require('./ast-node/delimiter-close');
 
 class Ast {
   constructor() {
@@ -26,6 +27,7 @@ class Ast {
    */
   _prepare() {
     this._registerNode(new DelimiterOpen());
+    this._registerNode(new DelimiterClose());
   }
 
   /**
