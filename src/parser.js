@@ -332,43 +332,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readBool = () => {
-    try {
-      processBool(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseBool = () => {
-    const matched = processBool(context.sourceTextManager());
-
-    return {
-      type: 'value',
-      value: matched === 'true',
-    };
-  };
-
-  /**
-   * @param {TextManager} tm
-   */
-  const processBool = (tm) => {
-    const regexp = /^(true|false)[^\w]/;
-    const matched = tm.regexpMatched(regexp, 'bool should be written');
-
-    tm.next(matched[1]);
-
-    return matched[1];
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readString = () => {
     try {
       processString(context.sourceTextManager().lookaheadTextManager());
@@ -455,14 +418,14 @@ const parser = () => {
    * @return {boolean}
    */
   const readValue = () => {
-    return context.read('value_null') || readBool() || readString() || readNumber();
+    return context.read('value_null') || context.read('value_bool') || readString() || readNumber();
   };
 
   const parseValue = () => {
     if (context.read('value_null')) {
       return context.parse('value_null');
-    } else if (readBool()) {
-      return parseBool();
+    } else if (context.read('value_bool')) {
+      return context.parse('value_bool');
     } else if (readString()) {
       return parseString();
     } else if (readNumber()) {
