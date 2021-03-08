@@ -333,21 +333,11 @@ const parser = () => {
    * @return {boolean}
    */
   const readValue = () => {
-    return context.read('value_null') || context.read('value_bool') || context.read('value_string') || context.read('value_number');
+    return context.read('value');
   };
 
   const parseValue = () => {
-    if (context.read('value_null')) {
-      return context.parse('value_null');
-    } else if (context.read('value_bool')) {
-      return context.parse('value_bool');
-    } else if (context.read('value_string')) {
-      return context.parse('value_string');
-    } else if (context.read('value_number')) {
-      return context.parse('value_number');
-    } else {
-      context.exception('value should be written');
-    }
+    return context.parse('value');
   };
 
   /**
@@ -736,11 +726,11 @@ const parser = () => {
         while (!tm.eof()) {
           tm.skipWhitespace();
 
-          if (readValue() === false) {
+          if (context.read('value') === false) {
             throw new Error('invalid filter args');
           }
 
-          args.push(parseValue().value);
+          args.push(context.parse('value').value);
 
           tm.skipWhitespace();
 
