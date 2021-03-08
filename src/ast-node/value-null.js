@@ -27,7 +27,7 @@ class ValueNull extends AstNode {
     this._process(context.sourceTextManager());
 
     return {
-      type: this.type(),
+      type: 'value',
       value: null,
     };
   }
