@@ -332,44 +332,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readString = () => {
-    try {
-      processString(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseString = () => {
-    const matched = processString(context.sourceTextManager());
-
-    return {
-      type: 'value',
-      value: matched,
-    };
-  };
-
-  /**
-   * @param {TextManager} tm
-   * @return {string}
-   */
-  const processString = (tm) => {
-    const regexp = /^(["'])(?:\\\1|\s|\S)*?\1/;
-    const matched = tm.regexpMatched(regexp, 'string expression not closed');
-
-    tm.next(matched[0]);
-
-    return matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]);
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readNumber = () => {
     try {
       processNumber(context.sourceTextManager().lookaheadTextManager());
@@ -418,7 +380,7 @@ const parser = () => {
    * @return {boolean}
    */
   const readValue = () => {
-    return context.read('value_null') || context.read('value_bool') || readString() || readNumber();
+    return context.read('value_null') || context.read('value_bool') || context.read('value_string') || readNumber();
   };
 
   const parseValue = () => {
@@ -426,8 +388,8 @@ const parser = () => {
       return context.parse('value_null');
     } else if (context.read('value_bool')) {
       return context.parse('value_bool');
-    } else if (readString()) {
-      return parseString();
+    } else if (context.read('value_string')) {
+      return context.parse('value_string');
     } else if (readNumber()) {
       return parseNumber();
     } else {
