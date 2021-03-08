@@ -7,6 +7,7 @@ const Variable = require('./ast-node/variable');
 const ValueNull = require('./ast-node/value-null');
 const ValueBool = require('./ast-node/value-bool');
 const ValueString = require('./ast-node/value-string');
+const ValueNumber = require('./ast-node/value-number');
 
 class Ast {
   constructor() {
@@ -38,6 +39,7 @@ class Ast {
     this._registerNode(new ValueNull());
     this._registerNode(new ValueBool());
     this._registerNode(new ValueString());
+    this._registerNode(new ValueNumber());
   }
 
   /**

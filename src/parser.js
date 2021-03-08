@@ -332,55 +332,8 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readNumber = () => {
-    try {
-      processNumber(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseNumber = () => {
-    try {
-      const value = processNumber(context.sourceTextManager());
-
-      return {
-        type: 'value',
-        value: value,
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
-  };
-
-  /**
-   * @param {TextManager} tm
-   * @throws {Error}
-   */
-  const processNumber = (tm) => {
-    const regexp = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
-    const matched = tm.regexpMatched(regexp);
-    let value;
-
-    if (matched && !isNaN(value = +(matched[0]))) {
-      tm.next(matched[0]);
-
-      return value;
-    } else {
-      throw new Error('invalid number expression');
-    }
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readValue = () => {
-    return context.read('value_null') || context.read('value_bool') || context.read('value_string') || readNumber();
+    return context.read('value_null') || context.read('value_bool') || context.read('value_string') || context.read('value_number');
   };
 
   const parseValue = () => {
@@ -390,8 +343,8 @@ const parser = () => {
       return context.parse('value_bool');
     } else if (context.read('value_string')) {
       return context.parse('value_string');
-    } else if (readNumber()) {
-      return parseNumber();
+    } else if (context.read('value_number')) {
+      return context.parse('value_number');
     } else {
       context.exception('value should be written');
     }
