@@ -27,7 +27,7 @@ class ValueBool extends AstNode {
     const matched = this._process(context.sourceTextManager());
 
     return {
-      type: this.type(),
+      type: 'value',
       value: matched === 'true',
     };
   }
