@@ -15,42 +15,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readLiteralTag = () => {
-    try {
-      processLiteralTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseLiteralTag = () => {
-    processLiteralTag(context.config(), context.sourceTextManager());
-
-    return {
-      type: 'literal_open',
-    }
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processLiteralTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.next('literal');
-    tm.skipWhitespace();
-    tm.next(config.closeDelimiter());
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readEndLiteralTag = () => {
     try {
       processEndLiteralTag(context.config(), context.sourceTextManager().lookaheadTextManager());
@@ -636,7 +600,7 @@ const parser = () => {
     const startLine = tm.getLine();
     const startAt = tm.getAt();
 
-    parseLiteralTag();
+    context.parse('literal_open');
 
     while (!tm.eof()) {
       if (context.read('delimiter_open')) {
@@ -878,7 +842,7 @@ const parser = () => {
       if (tm.charIs(config.openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
-        } else if (readLiteralTag()) {
+        } else if (context.read('literal_open')) {
           result.push(parseLiteralBlock());
         } else if (readIfTag()) {
           result.push(parseConditionBlock());
