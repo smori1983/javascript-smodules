@@ -314,31 +314,14 @@ const parser = () => {
    * @return {boolean}
    */
   const readEndRoundBracket = () => {
-    try {
-      processEndRoundBracket(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return context.read('endRoundBracket');
   };
 
   /**
    * @return {Object}
    */
   const parseEndRoundBracket = () => {
-    processEndRoundBracket(context.sourceTextManager());
-
-    return {
-      type: 'endRoundBracket',
-    };
-  };
-
-  /**
-   * @param {TextManager} tm
-   */
-  const processEndRoundBracket = (tm) => {
-    tm.next(')');
+    return context.parse('endRoundBracket');
   };
 
   const parseConditionBody = (() => {

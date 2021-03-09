@@ -15,6 +15,7 @@ const Value = require('./ast-node/value');
 const OperatorLogical = require('./ast-node/operator-logical');
 const OperatorComparison = require('./ast-node/operator-comparison');
 const RoundBracketOpen = require('./ast-node/round-bracket-open');
+const RoundBracketClose = require('./ast-node/round-bracket-close');
 
 class Ast {
   constructor() {
@@ -54,6 +55,7 @@ class Ast {
     this._registerNode(new OperatorLogical());
     this._registerNode(new OperatorComparison());
     this._registerNode(new RoundBracketOpen());
+    this._registerNode(new RoundBracketClose());
   }
 
   /**
