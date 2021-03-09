@@ -555,43 +555,6 @@ const parser = () => {
     };
   };
 
-  const parseLiteralBlock = () => {
-    const config = context.config();
-    const tm = context.sourceTextManager();
-    let node;
-    let value = '';
-    let closed = false;
-    const startLine = tm.getLine();
-    const startAt = tm.getAt();
-
-    context.parse('literal_open');
-
-    while (!tm.eof()) {
-      if (context.read('delimiter_open')) {
-        node = context.parse('delimiter_open');
-        value += node.expr;
-      } else if (context.read('delimiter_close')) {
-        node = context.parse('delimiter_close');
-        value += node.expr;
-      } else if (context.read('literal_close')) {
-        context.parse('literal_close');
-        closed = true;
-        break;
-      } else {
-        value += tm.next(tm.getChar());
-      }
-    }
-
-    if (closed === false) {
-      context.exception('literal block starts at [' + startLine + ', ' + startAt + '] not closed by ' + config.openDelimiter() + 'endliteral' + config.closeDelimiter());
-    }
-
-    return {
-      type: 'literal',
-      value: value,
-    };
-  };
-
   /**
    * @return {boolean}
    */
@@ -806,8 +769,8 @@ const parser = () => {
       if (tm.charIs(config.openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
-        } else if (context.read('literal_open')) {
-          result.push(parseLiteralBlock());
+        } else if (context.read('literal')) {
+          result.push(context.parse('literal'));
         } else if (readIfTag()) {
           result.push(parseConditionBlock());
         } else if (readForTag()) {
