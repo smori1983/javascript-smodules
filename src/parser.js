@@ -243,87 +243,6 @@ const parser = () => {
     tm.next(config.closeDelimiter());
   };
 
-  /**
-   * @return {boolean}
-   */
-  const readVar = () => {
-    return context.read('var');
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseVar = () => {
-    return context.parse('var');
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const readValue = () => {
-    return context.read('value');
-  };
-
-  const parseValue = () => {
-    return context.parse('value');
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const readAndOr = () => {
-    return context.read('andor');
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseAndOr = () => {
-    return context.parse('andor');
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const readComp = () => {
-    return context.read('comp');
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseComp = () => {
-    return context.parse('comp');
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const readRoundBracket = () => {
-    return context.read('roundBracket');
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseRoundBracket = () => {
-    return context.parse('roundBracket');
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const readEndRoundBracket = () => {
-    return context.read('endRoundBracket');
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseEndRoundBracket = () => {
-    return context.parse('endRoundBracket');
-  };
-
   const parseConditionBody = (() => {
     const getReversePolish = (() => {
       // 'error' for sentinel.
@@ -338,15 +257,6 @@ const parser = () => {
         'andor':           ['roundBracket',                    'value', 'var',                  'error'],
       };
       /* eslint-enable */
-
-      const method = {
-        'roundBracket':    { read: readRoundBracket,    parse: parseRoundBracket },
-        'endRoundBracket': { read: readEndRoundBracket, parse: parseEndRoundBracket },
-        'value':           { read: readValue,           parse: parseValue },
-        'var':             { read: readVar,             parse: parseVar },
-        'comp':            { read: readComp,            parse: parseComp },
-        'andor':           { read: readAndOr,           parse: parseAndOr },
-      };
 
       const order = {
         'endRoundBracket': 1,
@@ -375,8 +285,8 @@ const parser = () => {
             throw new Error('invalid condition expression');
           }
 
-          if (method[type].read()) {
-            result = method[type].parse();
+          if (context.read(type)) {
+            result = context.parse(type);
             result.order = getOrder(result);
 
             return result;
