@@ -300,31 +300,14 @@ const parser = () => {
    * @return {boolean}
    */
   const readRoundBracket = () => {
-    try {
-      processRoundBracket(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return context.read('roundBracket');
   };
 
   /**
    * @return {Object}
    */
   const parseRoundBracket = () => {
-    processRoundBracket(context.sourceTextManager());
-
-    return {
-      type: 'roundBracket',
-    };
-  };
-
-  /**
-   * @param {TextManager} tm
-   */
-  const processRoundBracket = (tm) => {
-    tm.next('(');
+    return context.parse('roundBracket');
   };
 
   /**
