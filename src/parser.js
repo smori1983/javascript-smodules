@@ -272,38 +272,14 @@ const parser = () => {
    * @return {boolean}
    */
   const readAndOr = () => {
-    try {
-      processAndOr(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return context.read('andor');
   };
 
   /**
    * @return {Object}
    */
   const parseAndOr = () => {
-    const matched = processAndOr(context.sourceTextManager());
-
-    return {
-      type: 'andor',
-      expr: matched,
-    };
-  };
-
-  /**
-   * @param {TextManager} tm
-   * @return {string}
-   */
-  const processAndOr = (tm) => {
-    const regexp = /^(and|or)[^\w]/;
-    const matched = tm.regexpMatched(regexp, '"and" or "or" should be written');
-
-    tm.next(matched[1]);
-
-    return matched[1];
+    return context.parse('andor');
   };
 
   /**
