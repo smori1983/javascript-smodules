@@ -15,42 +15,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readEndLiteralTag = () => {
-    try {
-      processEndLiteralTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseEndLiteralTag = () => {
-    processEndLiteralTag(context. config(), context.sourceTextManager());
-
-    return {
-      type: 'literal_close',
-    };
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processEndLiteralTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.next('endliteral');
-    tm.skipWhitespace();
-    tm.next(config.closeDelimiter());
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readIfTag = () => {
     try {
       processIfTag(context.config(), context.sourceTextManager().lookaheadTextManager());
@@ -609,8 +573,8 @@ const parser = () => {
       } else if (context.read('delimiter_close')) {
         node = context.parse('delimiter_close');
         value += node.expr;
-      } else if (readEndLiteralTag()) {
-        parseEndLiteralTag();
+      } else if (context.read('literal_close')) {
+        context.parse('literal_close');
         closed = true;
         break;
       } else {
