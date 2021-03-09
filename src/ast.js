@@ -2,6 +2,7 @@ const Hash = require('./data.hash');
 
 const DelimiterOpen = require('./ast-node/delimiter-open');
 const DelimiterClose = require('./ast-node/delimiter-close');
+const Normal = require('./ast-node/normal');
 const LiteralOpen = require('./ast-node/literal-open');
 const Literal = require('./ast-node/literal');
 const LiteralClose = require('./ast-node/literal-close');
@@ -42,6 +43,7 @@ class Ast {
   _prepare() {
     this._registerNode(new DelimiterOpen());
     this._registerNode(new DelimiterClose());
+    this._registerNode(new Normal());
     this._registerNode(new LiteralOpen());
     this._registerNode(new Literal());
     this._registerNode(new LiteralClose());

@@ -445,34 +445,6 @@ const parser = () => {
     };
   })();
 
-  const parseNormalBlock = () => {
-    const config = context.config();
-    const tm = context.sourceTextManager();
-    let node;
-    let value = '';
-
-    while (!tm.eof()) {
-      if (context.read('delimiter_open')) {
-        node = context.parse('delimiter_open');
-        value += node.expr;
-      } else if (context.read('delimiter_close')) {
-        node = context.parse('delimiter_close');
-        value += node.expr;
-      } else if (tm.charIs(config.openDelimiter())) {
-        break;
-      } else if (tm.charIs(config.closeDelimiter())) {
-        context.exception('syntax error');
-      } else {
-        value += tm.next(tm.getChar());
-      }
-    }
-
-    return {
-      type: 'normal',
-      value: value,
-    };
-  };
-
   /**
    * @return {boolean}
    */
@@ -699,7 +671,7 @@ const parser = () => {
           context.exception('unknown tag');
         }
       } else {
-        result.push(parseNormalBlock());
+        result.push(context.parse('normal'));
       }
     }
 
