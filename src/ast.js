@@ -13,6 +13,7 @@ const ValueString = require('./ast-node/value-string');
 const ValueNumber = require('./ast-node/value-number');
 const Value = require('./ast-node/value');
 const OperatorLogical = require('./ast-node/operator-logical');
+const OperatorComparison = require('./ast-node/operator-comparison');
 
 class Ast {
   constructor() {
@@ -50,6 +51,7 @@ class Ast {
     this._registerNode(new ValueNumber());
     this._registerNode(new Value());
     this._registerNode(new OperatorLogical());
+    this._registerNode(new OperatorComparison());
   }
 
   /**

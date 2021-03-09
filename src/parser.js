@@ -286,39 +286,15 @@ const parser = () => {
    * @return {boolean}
    */
   const readComp = () => {
-    try {
-      processComp(context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return context.read('comp');
   };
 
   /**
    * @return {Object}
    */
   const parseComp = () => {
-    const matched = processComp(context.sourceTextManager());
-
-    return {
-      type: 'comp',
-      expr: matched,
-    };
+    return context.parse('comp');
   };
-
-  /**
-   * @param {TextManager} tm
-   * @return {string}
-   */
-  const processComp = (tm) => {
-    const regexp = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
-    const matched = tm.regexpMatched(regexp, 'comparer should be written');
-
-    tm.next(matched[0]);
-
-    return matched[0];
-  }
 
   /**
    * @return {boolean}
