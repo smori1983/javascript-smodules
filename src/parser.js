@@ -1,5 +1,4 @@
 const Ast = require('./ast');
-const ReversePolishNodeHistory = require('./reverse-polish-node-history');
 const ParseConfig = require('./parse-config');
 const ParseContext = require('./parse-context');
 const SourceTextManager = require('./source-text-manager');
@@ -31,7 +30,7 @@ const parser = () => {
   const parseIfTag = () => {
     processIfTag(context.config(), context.sourceTextManager());
 
-    const ctrl = parseConditionBody();
+    const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
     const children = loop([], true);
 
@@ -73,7 +72,7 @@ const parser = () => {
   const parseElseifTag = () => {
     processElseifTag(context.config(), context.sourceTextManager());
 
-    const ctrl = parseConditionBody();
+    const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
     const children = loop([], true);
 
@@ -242,118 +241,6 @@ const parser = () => {
     tm.skipWhitespace();
     tm.next(config.closeDelimiter());
   };
-
-  const parseConditionBody = (() => {
-    const getReversePolish = (() => {
-      // 'error' for sentinel.
-      /* eslint-disable array-bracket-spacing */
-      const state = {
-        'start':           ['roundBracket',                    'value', 'var',                  'error'],
-        'roundBracket':    ['roundBracket',                    'value', 'var',                  'error'],
-        'endRoundBracket': [                'endRoundBracket',                         'andor', 'error'],
-        'value':           [                'endRoundBracket',                 'comp', 'andor', 'error'],
-        'var':             [                'endRoundBracket',                 'comp', 'andor', 'error'],
-        'comp':            [                                   'value', 'var',                  'error'],
-        'andor':           ['roundBracket',                    'value', 'var',                  'error'],
-      };
-      /* eslint-enable */
-
-      const order = {
-        'endRoundBracket': 1,
-        'or':              2,
-        'and':             3,
-        'comp':            4,
-        'value':           5,
-        'var':             5,
-        'roundBracket':    6,
-      };
-
-      const getOrder = (section) => {
-        // parseAndor() returns section.type with 'andor'.
-        // Use section.expr instead.
-        return order[section.type] || order[section.expr];
-      };
-
-      const parse = (sourceType) => {
-        const transitableTypes = state[sourceType];
-        let i, size, type, result;
-
-        for (i = 0, size = transitableTypes.length; i < size; i++) {
-          type = transitableTypes[i];
-
-          if (type === 'error') {
-            throw new Error('invalid condition expression');
-          }
-
-          if (context.read(type)) {
-            result = context.parse(type);
-            result.order = getOrder(result);
-
-            return result;
-          }
-        }
-      };
-
-      const main = () => {
-        const config = context.config();
-        const tm = context.sourceTextManager();
-        const history = new ReversePolishNodeHistory();
-        let parsed, polish = [], stack = [], stackTop;
-
-        while (!tm.eof()) {
-          if (tm.charIs(config.closeDelimiter())) {
-            break;
-          }
-
-          // history has at least 'start' type at the beginning.
-          parsed = parse(history.latest());
-
-          history.add(parsed.type);
-
-          while (stack.length > 0) {
-            stackTop = stack.pop();
-
-            if (parsed.order <= stackTop.order && stackTop.type !== 'roundBracket') {
-              polish.push(stackTop);
-            } else {
-              stack.push(stackTop);
-              break;
-            }
-          }
-
-          if (parsed.type === 'endRoundBracket') {
-            stack.pop();
-          } else {
-            stack.push(parsed);
-          }
-
-          tm.skipWhitespace();
-        }
-
-        while (stack.length > 0) {
-          polish.push(stack.pop());
-        }
-
-        history.finish();
-
-        return polish;
-      };
-
-      return () => {
-        return main();
-      };
-    })();
-
-    return () => {
-      try {
-        return {
-          stack: getReversePolish(),
-        };
-      } catch (e) {
-        context.exception(e.message);
-      }
-    };
-  })();
 
   /**
    * @return {boolean}

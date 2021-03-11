@@ -3,6 +3,7 @@
  * @property {string} type
  * @property {string} [expr]
  * @property {string[]} [keys]
+ * @property {AstNodeParseResult[]} [stack]
  * @property {*} [value]
  */
 
