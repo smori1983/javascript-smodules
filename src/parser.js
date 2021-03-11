@@ -288,7 +288,9 @@ const parser = () => {
       if (tm.charIs(config.openDelimiter())) {
         if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
           break;
-        } else if (context.read('literal')) {
+        }
+
+        if (context.read('literal')) {
           result.push(context.parse('literal'));
         } else if (readIfTag()) {
           result.push(parseConditionBlock());
