@@ -265,35 +265,6 @@ const parser = () => {
     tm.readRegexp(/^\$/, true);
   };
 
-  const parseFilters = () => {
-    const config = context.config();
-    const tm = context.sourceTextManager();
-    const filters = [];
-
-    while (!tm.eof()) {
-      tm.skipWhitespace();
-
-      if (!tm.charIs('|')) {
-        break;
-      }
-
-      tm.next('|');
-      tm.skipWhitespace();
-
-      filters.push(context.parse('filter'));
-
-      if (tm.charIs(config.closeDelimiter())) {
-        break;
-      } else if (!tm.charIs('|')) {
-        throw new Error('syntax error');
-      }
-    }
-
-    return {
-      filters: filters,
-    };
-  };
-
   const parseHolderBlock = () => {
     const config = context.config();
     const tm = context.sourceTextManager();
@@ -302,7 +273,7 @@ const parser = () => {
     tm.skipWhitespace();
 
     const keySection = context.parse('var');
-    const filterSection = parseFilters();
+    const filterSection = context.parse('filter_chain');
 
     tm.skipWhitespace();
     tm.next(config.closeDelimiter());
