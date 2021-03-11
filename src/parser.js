@@ -242,49 +242,6 @@ const parser = () => {
     tm.next(config.closeDelimiter());
   };
 
-  /**
-   * @return {boolean}
-   */
-  const readHolderTag = () => {
-    try {
-      processHolderTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processHolderTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.readRegexp(/^\$/, true);
-  };
-
-  const parseHolderBlock = () => {
-    const config = context.config();
-    const tm = context.sourceTextManager();
-
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-
-    const keySection = context.parse('var');
-    const filterSection = context.parse('filter_chain');
-
-    tm.skipWhitespace();
-    tm.next(config.closeDelimiter());
-
-    return {
-      type: 'holder',
-      keys: keySection.keys,
-      filters: filterSection.filters,
-    };
-  };
-
   const parseForLoopBlock = () => {
     const config = context.config();
     const tm = context.sourceTextManager();
@@ -337,8 +294,8 @@ const parser = () => {
           result.push(parseConditionBlock());
         } else if (readForTag()) {
           result.push(parseForLoopBlock());
-        } else if (readHolderTag()) {
-          result.push(parseHolderBlock());
+        } else if (context.read('holder')) {
+          result.push(context.parse('holder'));
         } else {
           context.exception('unknown tag');
         }
