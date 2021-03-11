@@ -265,72 +265,6 @@ const parser = () => {
     tm.readRegexp(/^\$/, true);
   };
 
-  const parseFilter = () => {
-    /**
-     * @param {ParseContext} context
-     * @throws {Error}
-     */
-    const nameSection = (context) => {
-      const tm = context.sourceTextManager();
-      let name = '';
-
-      tm.skipWhitespace();
-
-      while (tm.charMatch(/[\w-]/)) {
-        name += tm.next(tm.getChar());
-      }
-
-      if (name === '') {
-        throw new Error('filter name not found');
-      }
-
-      return name;
-    };
-
-    /**
-     * @param {ParseContext} context
-     * @throws {Error}
-     */
-    const argumentSection = (context) => {
-      const config = context.config();
-      const tm = context.sourceTextManager();
-      const args = [];
-
-      tm.skipWhitespace();
-
-      if (tm.charIs(':')) {
-        tm.next(':');
-
-        while (!tm.eof()) {
-          tm.skipWhitespace();
-
-          if (context.read('value') === false) {
-            throw new Error('invalid filter args');
-          }
-
-          args.push(context.parse('value').value);
-
-          tm.skipWhitespace();
-
-          if (tm.charIs(',')) {
-            tm.next(',');
-          } else if (tm.charIs('|') || tm.charIs(config.closeDelimiter())) {
-            break;
-          } else {
-            throw new Error('invalid filter args expression');
-          }
-        }
-      }
-
-      return args;
-    };
-
-    return {
-      name: nameSection(context),
-      args: argumentSection(context),
-    };
-  };
-
   const parseFilters = () => {
     const config = context.config();
     const tm = context.sourceTextManager();
@@ -346,7 +280,7 @@ const parser = () => {
       tm.next('|');
       tm.skipWhitespace();
 
-      filters.push(parseFilter());
+      filters.push(context.parse('filter'));
 
       if (tm.charIs(config.closeDelimiter())) {
         break;

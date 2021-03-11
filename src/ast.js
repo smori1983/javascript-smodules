@@ -6,6 +6,7 @@ const Normal = require('./ast-node/normal');
 const LiteralOpen = require('./ast-node/literal-open');
 const Literal = require('./ast-node/literal');
 const LiteralClose = require('./ast-node/literal-close');
+const Filter = require('./ast-node/filter');
 const TempVar = require('./ast-node/temp-var');
 const Variable = require('./ast-node/variable');
 const ValueNull = require('./ast-node/value-null');
@@ -49,6 +50,7 @@ class Ast {
     this._registerNode(new LiteralOpen());
     this._registerNode(new Literal());
     this._registerNode(new LiteralClose());
+    this._registerNode(new Filter());
     this._registerNode(new TempVar());
     this._registerNode(new Variable());
     this._registerNode(new ValueNull());
