@@ -1,4 +1,4 @@
-class ReversePolishNodeHistory {
+class ConditionReversePolishHistory {
   constructor() {
     this._history = ['start'];
   }
@@ -84,4 +84,4 @@ class ReversePolishNodeHistory {
   }
 }
 
-module.exports = ReversePolishNodeHistory;
+module.exports = ConditionReversePolishHistory;
