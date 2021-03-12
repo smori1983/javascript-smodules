@@ -2,10 +2,12 @@ class ParseContext {
   /**
    * @param {ParseConfig} config
    * @param {SourceTextManager} stm
+   * @param {Ast} ast
    */
-  constructor(config, stm) {
+  constructor(config, stm, ast) {
     this._config = config;
     this._stm = stm;
+    this._ast = ast;
   }
 
   /**
@@ -20,6 +22,37 @@ class ParseContext {
    */
   sourceTextManager() {
     return this._stm;
+  }
+
+  /**
+   * @return {Ast}
+   */
+  ast() {
+    return this._ast;
+  }
+
+  /**
+   * @param {string} type
+   * @return {AstNode}
+   */
+  astNode(type) {
+    return this.ast().node(type);
+  }
+
+  /**
+   * @param {string} type
+   * @return {boolean}
+   */
+  read(type) {
+    return this.astNode(type).read(this);
+  }
+
+  /**
+   * @param {string} type
+   * @return {AstNodeParseResult}
+   */
+  parse(type) {
+    return this.astNode(type).parse(this);
   }
 
   /**

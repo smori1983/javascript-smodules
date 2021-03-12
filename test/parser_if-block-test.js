@@ -6,6 +6,78 @@ QUnit.module('parser', {
   },
 });
 
+QUnit.test('if block - compare - null', function (assert) {
+  const src =
+    '{ if $foo === null }' +
+    '<p>foo</p>' +
+    '{ endif }';
+  const result = this.parser.parse(src);
+
+  const stack = result[0].children[0].ctrl.stack;
+
+  assert.strictEqual(stack.length, 3);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'foo');
+  assert.strictEqual(stack[1].type, 'value');
+  assert.strictEqual(stack[1].value, null);
+  assert.strictEqual(stack[2].type, 'comp');
+  assert.strictEqual(stack[2].expr, '===');
+});
+
+QUnit.test('if block - compare - bool', function (assert) {
+  const src =
+    '{ if $foo === true }' +
+    '<p>foo</p>' +
+    '{ endif }';
+  const result = this.parser.parse(src);
+
+  const stack = result[0].children[0].ctrl.stack;
+
+  assert.strictEqual(stack.length, 3);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'foo');
+  assert.strictEqual(stack[1].type, 'value');
+  assert.strictEqual(stack[1].value, true);
+  assert.strictEqual(stack[2].type, 'comp');
+  assert.strictEqual(stack[2].expr, '===');
+});
+
+QUnit.test('if block - compare - string', function (assert) {
+  const src =
+    '{ if $foo === "foo" }' +
+    '<p>foo</p>' +
+    '{ endif }';
+  const result = this.parser.parse(src);
+
+  const stack = result[0].children[0].ctrl.stack;
+
+  assert.strictEqual(stack.length, 3);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'foo');
+  assert.strictEqual(stack[1].type, 'value');
+  assert.strictEqual(stack[1].value, 'foo');
+  assert.strictEqual(stack[2].type, 'comp');
+  assert.strictEqual(stack[2].expr, '===');
+});
+
+QUnit.test('if block - compare - number', function (assert) {
+  const src =
+    '{ if $foo === 1.23 }' +
+    '<p>foo</p>' +
+    '{ endif }';
+  const result = this.parser.parse(src);
+
+  const stack = result[0].children[0].ctrl.stack;
+
+  assert.strictEqual(stack.length, 3);
+  assert.strictEqual(stack[0].type, 'var');
+  assert.strictEqual(stack[0].keys.join('.'), 'foo');
+  assert.strictEqual(stack[1].type, 'value');
+  assert.strictEqual(stack[1].value, 1.23);
+  assert.strictEqual(stack[2].type, 'comp');
+  assert.strictEqual(stack[2].expr, '===');
+});
+
 QUnit.test('if block - if elseif else', function (assert) {
   let section;
 
