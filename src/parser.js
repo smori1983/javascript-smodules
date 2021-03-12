@@ -137,12 +137,13 @@ const parser = () => {
   const loop = (result, inBlock) => {
     const config = context.config();
     const tm = context.sourceTextManager();
-    while (!tm.eof()) {
-      if (tm.charIs(config.openDelimiter())) {
-        if (inBlock && (context.read('elseif') || context.read('else') || context.read('endif') || context.read('endfor'))) {
-          break;
-        }
 
+    while (!tm.eof()) {
+      if (inBlock && (context.read('elseif') || context.read('else') || context.read('endif') || context.read('endfor'))) {
+        break;
+      }
+
+      if (tm.charIs(config.openDelimiter())) {
         if (context.read('literal')) {
           result.push(context.parse('literal'));
         } else if (context.read('if')) {
