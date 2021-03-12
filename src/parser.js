@@ -19,7 +19,7 @@ const parser = () => {
 
     const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
-    const children = loopInBlock();
+    const children = loopInBlock().children;
 
     return {
       type: 'if',
@@ -48,7 +48,7 @@ const parser = () => {
 
     const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
-    const children = loopInBlock();
+    const children = loopInBlock().children;
 
     return {
       type: 'elseif',
@@ -75,7 +75,7 @@ const parser = () => {
   const parseElseTag = () => {
     processElseTag(context.config(), context.sourceTextManager());
 
-    const children = loopInBlock();
+    const children = loopInBlock().children;
 
     return {
       type: 'else',
@@ -102,7 +102,7 @@ const parser = () => {
     const ctrl = context.parse('for_loop_body');
     tm.next(config.closeDelimiter());
 
-    const children = loopInBlock();
+    const children = loopInBlock().children;
 
     context.parse('endfor');
 
@@ -134,19 +134,28 @@ const parser = () => {
     };
   };
 
+  /**
+   * @return {AstNodeParseResult}
+   */
   const loop = () => {
-    const result = [];
+    const children = [];
     const tm = context.sourceTextManager();
 
     while (!tm.eof()) {
-      result.push(main());
+      children.push(main());
     }
 
-    return result;
+    return {
+      type: 'main',
+      children: children,
+    };
   };
 
+  /**
+   * @return {AstNodeParseResult}
+   */
   const loopInBlock = () => {
-    const result = [];
+    const children = [];
     const tm = context.sourceTextManager();
 
     while (!tm.eof()) {
@@ -154,10 +163,13 @@ const parser = () => {
         break;
       }
 
-      result.push(main());
+      children.push(main());
     }
 
-    return result;
+    return {
+      type: 'main_in_block',
+      children: children,
+    };
   };
 
   const main = () => {
@@ -188,7 +200,7 @@ const parser = () => {
     const ast = new Ast();
     context = new ParseContext(config, sourceTextManager, ast);
 
-    return loop();
+    return loop().children;
   };
 
   return that;

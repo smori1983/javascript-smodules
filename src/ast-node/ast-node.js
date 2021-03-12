@@ -5,6 +5,7 @@
  * @property {string[]} [keys]
  * @property {AstNodeParseResult[]} [stack]
  * @property {*} [value]
+ * @property {AstNodeParseResult[]} [children]
  */
 
 class AstNode {
