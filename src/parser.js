@@ -137,42 +137,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readForTag = () => {
-    try {
-      processForTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseForTag = () => {
-    processForTag(context.config(), context.sourceTextManager());
-
-    return {
-      type: 'for',
-    }
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processForTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.next('for');
-    tm.readRegexp(/^\s+/, true);
-    tm.skipWhitespace();
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readEndForTag = () => {
     try {
       processEndForTag(context.config(), context.sourceTextManager().lookaheadTextManager());
@@ -209,7 +173,7 @@ const parser = () => {
   const parseForLoopBlock = () => {
     const config = context.config();
     const tm = context.sourceTextManager();
-    parseForTag();
+    context.parse('for');
     const ctrl = context.parse('for_loop_body');
     tm.next(config.closeDelimiter());
 
@@ -258,7 +222,7 @@ const parser = () => {
           result.push(context.parse('literal'));
         } else if (readIfTag()) {
           result.push(parseConditionBlock());
-        } else if (readForTag()) {
+        } else if (context.read('for')) {
           result.push(parseForLoopBlock());
         } else if (context.read('holder')) {
           result.push(context.parse('holder'));

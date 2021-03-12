@@ -22,6 +22,7 @@ const RoundBracketOpen = require('./ast-node/round-bracket-open');
 const RoundBracketClose = require('./ast-node/round-bracket-close');
 const ConditionEndif = require('./ast-node/condition-endif');
 const ConditionBody = require('./ast-node/condition-body');
+const ForLoopOpen = require('./ast-node/for-loop-open');
 const ForLoopBody = require('./ast-node/for-loop-body');
 
 class Ast {
@@ -69,6 +70,7 @@ class Ast {
     this._registerNode(new RoundBracketClose());
     this._registerNode(new ConditionEndif());
     this._registerNode(new ConditionBody());
+    this._registerNode(new ForLoopOpen());
     this._registerNode(new ForLoopBody());
   }
 
