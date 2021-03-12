@@ -1,7 +1,7 @@
 const Evaluator = require('./evaluator');
 const FilterManager = require('./filter-manager');
 const Hash = require('./data.hash');
-const parser = require('./parser');
+const Parser = require('./parser');
 
 class Templr {
   constructor() {
@@ -9,7 +9,7 @@ class Templr {
 
     this._filterManager = new FilterManager();
     this._evaluator = new Evaluator(this._filterManager);
-    this._parser = parser.init();
+    this._parser = new Parser();
   }
 
   /**
