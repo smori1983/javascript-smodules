@@ -12,19 +12,6 @@ const parser = () => {
   let context;
 
   /**
-   * @return {boolean}
-   */
-  const readIfTag = () => {
-    try {
-      processIfTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
    * @return {Object}
    */
   const parseIfTag = () => {
@@ -54,19 +41,6 @@ const parser = () => {
   };
 
   /**
-   * @return {boolean}
-   */
-  const readElseifTag = () => {
-    try {
-      processElseifTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
    * @return {Object}
    */
   const parseElseifTag = () => {
@@ -93,19 +67,6 @@ const parser = () => {
     tm.next('elseif');
     tm.readRegexp(/^\s+/, true);
     tm.skipWhitespace();
-  };
-
-  /**
-   * @return {boolean}
-   */
-  const readElseTag = () => {
-    try {
-      processElseTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
   };
 
   /**
@@ -157,11 +118,11 @@ const parser = () => {
 
     branches.push(parseIfTag());
 
-    while (readElseifTag()) {
+    while (context.read('elseif')) {
       branches.push(parseElseifTag());
     }
 
-    if (readElseTag()) {
+    if (context.read('else')) {
       branches.push(parseElseTag());
     }
 
@@ -178,13 +139,13 @@ const parser = () => {
     const tm = context.sourceTextManager();
     while (!tm.eof()) {
       if (tm.charIs(config.openDelimiter())) {
-        if (inBlock && (readElseifTag() || readElseTag() || context.read('endif') || context.read('endfor'))) {
+        if (inBlock && (context.read('elseif') || context.read('else') || context.read('endif') || context.read('endfor'))) {
           break;
         }
 
         if (context.read('literal')) {
           result.push(context.parse('literal'));
-        } else if (readIfTag()) {
+        } else if (context.read('if')) {
           result.push(parseConditionBlock());
         } else if (context.read('for')) {
           result.push(parseForLoopBlock());
