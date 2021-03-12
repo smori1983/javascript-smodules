@@ -25,6 +25,13 @@ class ParseContext {
   }
 
   /**
+   * @return {LookaheadTextManager}
+   */
+  lookaheadTextManager() {
+    return this.sourceTextManager().lookaheadTextManager();
+  }
+
+  /**
    * @return {Ast}
    */
   ast() {

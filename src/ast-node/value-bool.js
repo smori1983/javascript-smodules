@@ -11,7 +11,7 @@ class ValueBool extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.sourceTextManager().lookaheadTextManager());
+      this._process(context.lookaheadTextManager());
 
       return true;
     } catch (e) {
