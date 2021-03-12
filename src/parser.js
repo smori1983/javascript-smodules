@@ -6,16 +6,11 @@ const SourceTextManager = require('./source-text-manager');
 const parser = () => {
   const that = {};
 
-  /**
-   * @type {ParseContext}
-   */
-  let context;
-
   that.parse = (content, source) => {
     const config = new ParseConfig();
     const sourceTextManager = new SourceTextManager(content);
     const ast = new Ast();
-    context = new ParseContext(config, sourceTextManager, ast);
+    const context = new ParseContext(config, sourceTextManager, ast);
 
     return context.parse('main').children;
   };
