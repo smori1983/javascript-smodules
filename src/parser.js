@@ -19,7 +19,7 @@ const parser = () => {
 
     const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
-    const children = loop([], true);
+    const children = loopInBlock();
 
     return {
       type: 'if',
@@ -48,7 +48,7 @@ const parser = () => {
 
     const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
-    const children = loop([], true);
+    const children = loopInBlock();
 
     return {
       type: 'elseif',
@@ -75,7 +75,7 @@ const parser = () => {
   const parseElseTag = () => {
     processElseTag(context.config(), context.sourceTextManager());
 
-    const children = loop([], true);
+    const children = loopInBlock();
 
     return {
       type: 'else',
@@ -102,7 +102,7 @@ const parser = () => {
     const ctrl = context.parse('for_loop_body');
     tm.next(config.closeDelimiter());
 
-    const children = loop([], true);
+    const children = loopInBlock();
 
     context.parse('endfor');
 
@@ -134,33 +134,51 @@ const parser = () => {
     };
   };
 
-  const loop = (result, inBlock) => {
-    const config = context.config();
+  const loop = () => {
+    const result = [];
     const tm = context.sourceTextManager();
 
     while (!tm.eof()) {
-      if (inBlock && (context.read('elseif') || context.read('else') || context.read('endif') || context.read('endfor'))) {
-        break;
-      }
-
-      if (tm.charIs(config.openDelimiter())) {
-        if (context.read('literal')) {
-          result.push(context.parse('literal'));
-        } else if (context.read('if')) {
-          result.push(parseConditionBlock());
-        } else if (context.read('for')) {
-          result.push(parseForLoopBlock());
-        } else if (context.read('holder')) {
-          result.push(context.parse('holder'));
-        } else {
-          context.exception('unknown tag');
-        }
-      } else {
-        result.push(context.parse('normal'));
-      }
+      result.push(main());
     }
 
     return result;
+  };
+
+  const loopInBlock = () => {
+    const result = [];
+    const tm = context.sourceTextManager();
+
+    while (!tm.eof()) {
+      if (context.read('elseif') || context.read('else') || context.read('endif') || context.read('endfor')) {
+        break;
+      }
+
+      result.push(main());
+    }
+
+    return result;
+  };
+
+  const main = () => {
+    const config = context.config();
+    const tm = context.sourceTextManager();
+
+    if (tm.charIs(config.openDelimiter())) {
+      if (context.read('literal')) {
+        return context.parse('literal');
+      } else if (context.read('if')) {
+        return parseConditionBlock();
+      } else if (context.read('for')) {
+        return parseForLoopBlock();
+      } else if (context.read('holder')) {
+        return context.parse('holder');
+      } else {
+        context.exception('unknown tag');
+      }
+    } else {
+      return context.parse('normal');
+    }
   };
 
 
@@ -170,7 +188,7 @@ const parser = () => {
     const ast = new Ast();
     context = new ParseContext(config, sourceTextManager, ast);
 
-    return loop([]);
+    return loop();
   };
 
   return that;
