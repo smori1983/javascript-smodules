@@ -137,42 +137,6 @@ const parser = () => {
   /**
    * @return {boolean}
    */
-  const readEndIfTag = () => {
-    try {
-      processEndIfTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseEndIfTag = () => {
-    processEndIfTag(context.config(), context.sourceTextManager());
-
-    return {
-      type: 'endif',
-    };
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processEndIfTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.next('endif');
-    tm.skipWhitespace();
-    tm.next(config.closeDelimiter());
-  };
-
-  /**
-   * @return {boolean}
-   */
   const readForTag = () => {
     try {
       processForTag(context.config(), context.sourceTextManager().lookaheadTextManager());
@@ -273,7 +237,7 @@ const parser = () => {
       branches.push(parseElseTag());
     }
 
-    parseEndIfTag();
+    context.parse('endif');
 
     return {
       type: 'condition',
@@ -286,7 +250,7 @@ const parser = () => {
     const tm = context.sourceTextManager();
     while (!tm.eof()) {
       if (tm.charIs(config.openDelimiter())) {
-        if (inBlock && (readElseifTag() || readElseTag() || readEndIfTag() || readEndForTag())) {
+        if (inBlock && (readElseifTag() || readElseTag() || context.read('endif') || readEndForTag())) {
           break;
         }
 
