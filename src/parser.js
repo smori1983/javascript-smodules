@@ -134,42 +134,6 @@ const parser = () => {
     tm.next(config.closeDelimiter());
   };
 
-  /**
-   * @return {boolean}
-   */
-  const readEndForTag = () => {
-    try {
-      processEndForTag(context.config(), context.sourceTextManager().lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  /**
-   * @return {Object}
-   */
-  const parseEndForTag = () => {
-    processEndForTag(context.config(), context.sourceTextManager());
-
-    return {
-      type: 'endfor',
-    };
-  };
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   */
-  const processEndForTag = (config, tm) => {
-    tm.next(config.openDelimiter());
-    tm.skipWhitespace();
-    tm.next('endfor');
-    tm.skipWhitespace();
-    tm.next(config.closeDelimiter());
-  };
-
   const parseForLoopBlock = () => {
     const config = context.config();
     const tm = context.sourceTextManager();
@@ -179,7 +143,7 @@ const parser = () => {
 
     const children = loop([], true);
 
-    parseEndForTag();
+    context.parse('endfor');
 
     return {
       type: 'for_loop',
@@ -214,7 +178,7 @@ const parser = () => {
     const tm = context.sourceTextManager();
     while (!tm.eof()) {
       if (tm.charIs(config.openDelimiter())) {
-        if (inBlock && (readElseifTag() || readElseTag() || context.read('endif') || readEndForTag())) {
+        if (inBlock && (readElseifTag() || readElseTag() || context.read('endif') || context.read('endfor'))) {
           break;
         }
 
