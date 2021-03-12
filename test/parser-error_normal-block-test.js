@@ -1,8 +1,8 @@
-const parser = require('../src/parser');
+const Parser = require('../src/parser');
 
 QUnit.module('parser - error', {
   beforeEach: function () {
-    this.parser = parser.init();
+    this.parser = new Parser();
   },
 });
 

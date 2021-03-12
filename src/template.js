@@ -2,14 +2,14 @@ const Evaluator = require('./evaluator');
 const FilterManager = require('./filter-manager');
 const Hash = require('./data.hash');
 const QueueHash = require('./data.queueHash');
-const parser = require('./parser');
+const Parser = require('./parser');
 
 class AstCache {
   /**
    * @param {Evaluator} evaluator
    */
   constructor(evaluator) {
-    this._parser = parser.init();
+    this._parser = new Parser();
     this._evaluator = evaluator;
     this._cache = new Hash();
   }
