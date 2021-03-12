@@ -37,7 +37,7 @@ class Normal extends AstNode {
     }
 
     return {
-      type: 'normal',
+      type: this.type(),
       value: value,
     };
   }
