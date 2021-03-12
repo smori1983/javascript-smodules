@@ -1,5 +1,7 @@
 const Hash = require('./data.hash');
 
+const Main = require('./ast-node/main');
+const MainInBlock = require('./ast-node/main-in-block');
 const DelimiterOpen = require('./ast-node/delimiter-open');
 const DelimiterClose = require('./ast-node/delimiter-close');
 const Normal = require('./ast-node/normal');
@@ -20,11 +22,13 @@ const OperatorLogical = require('./ast-node/operator-logical');
 const OperatorComparison = require('./ast-node/operator-comparison');
 const RoundBracketOpen = require('./ast-node/round-bracket-open');
 const RoundBracketClose = require('./ast-node/round-bracket-close');
+const Condition = require('./ast-node/condition');
 const ConditionIf = require('./ast-node/condition-if');
 const ConditionElseif = require('./ast-node/condition-elseif');
 const ConditionElse = require('./ast-node/condition-else');
 const ConditionEndif = require('./ast-node/condition-endif');
 const ConditionBody = require('./ast-node/condition-body');
+const ForLoop = require('./ast-node/for-loop');
 const ForLoopOpen = require('./ast-node/for-loop-open');
 const ForLoopClose = require('./ast-node/for-loop-close');
 const ForLoopBody = require('./ast-node/for-loop-body');
@@ -52,6 +56,8 @@ class Ast {
    * @private
    */
   _prepare() {
+    this._registerNode(new Main());
+    this._registerNode(new MainInBlock());
     this._registerNode(new DelimiterOpen());
     this._registerNode(new DelimiterClose());
     this._registerNode(new Normal());
@@ -72,11 +78,13 @@ class Ast {
     this._registerNode(new OperatorComparison());
     this._registerNode(new RoundBracketOpen());
     this._registerNode(new RoundBracketClose());
+    this._registerNode(new Condition());
     this._registerNode(new ConditionIf());
     this._registerNode(new ConditionElseif());
     this._registerNode(new ConditionElse());
     this._registerNode(new ConditionEndif());
     this._registerNode(new ConditionBody());
+    this._registerNode(new ForLoop());
     this._registerNode(new ForLoopOpen());
     this._registerNode(new ForLoopClose());
     this._registerNode(new ForLoopBody());

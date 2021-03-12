@@ -24,6 +24,14 @@ class ConditionElse extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
+    this._process(context.config(), context.sourceTextManager());
+
+    const children = context.parse('main_in_block').children;
+
+    return {
+      type: this.type(),
+      children: children,
+    };
   }
 
   /**
