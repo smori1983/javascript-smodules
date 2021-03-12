@@ -11,7 +11,7 @@ class Holder extends AstNode {
    */
   read(context) {
     const config = context.config();
-    const tm = context.sourceTextManager().lookaheadTextManager();
+    const tm = context.lookaheadTextManager();
 
     try {
       tm.next(config.openDelimiter());

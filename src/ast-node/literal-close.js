@@ -11,7 +11,7 @@ class LiteralClose extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.config(), context.sourceTextManager().lookaheadTextManager());
+      this._process(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
