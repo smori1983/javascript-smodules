@@ -34,7 +34,6 @@ class Variable extends AstNode {
     } catch (e) {
       context.exception(e.message);
     }
-    return super.parse(context);
   }
 
   /**
