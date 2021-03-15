@@ -2,7 +2,7 @@ const AstNode = require('./ast-node');
 
 class RoundBracketOpen extends AstNode {
   type() {
-    return 'roundBracket';
+    return 'round_bracket_open';
   }
 
   /**
