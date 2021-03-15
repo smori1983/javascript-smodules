@@ -57,7 +57,7 @@ class ConditionReversePolishHistory {
     this._history.forEach((type) => {
       if (type === 'round_bracket_open') {
         balance++;
-      } else if (type === 'endRoundBracket') {
+      } else if (type === 'round_bracket_close') {
         balance--;
       }
     });
