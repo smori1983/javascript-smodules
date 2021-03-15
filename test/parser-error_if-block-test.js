@@ -70,7 +70,7 @@ QUnit.test('if block - conditions - error - round bracket balance', function (as
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - lack of endRoundBracket', function (assert) {
+QUnit.test('if block - conditions - error - lack of round_bracket_close', function (assert) {
   const src = '{if ( $foo }<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -78,7 +78,7 @@ QUnit.test('if block - conditions - error - lack of endRoundBracket', function (
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - lack of roundBracket', function (assert) {
+QUnit.test('if block - conditions - error - lack of round_bracket_open', function (assert) {
   const src = '{if ( $foo ) ) }<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -86,7 +86,7 @@ QUnit.test('if block - conditions - error - lack of roundBracket', function (ass
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - roundBracket -> endRoundBracket', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_open -> round_bracket_close', function (assert) {
   const src = '{if () }<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -94,7 +94,7 @@ QUnit.test('if block - conditions - error - roundBracket -> endRoundBracket', fu
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - roundBracket -> comp', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_open -> comp', function (assert) {
   const src = '{if ( === $foo )}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -102,7 +102,7 @@ QUnit.test('if block - conditions - error - roundBracket -> comp', function (ass
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - roundBracket -> andor', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_open -> andor', function (assert) {
   const src = '{if ( and $foo )}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -110,7 +110,7 @@ QUnit.test('if block - conditions - error - roundBracket -> andor', function (as
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - endRoundBracket -> roundBracket', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_close -> round_bracket_open', function (assert) {
   const src = '{if ( $foo ) ( $bar )}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -118,7 +118,7 @@ QUnit.test('if block - conditions - error - endRoundBracket -> roundBracket', fu
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - endRoundBracket -> value', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_close -> value', function (assert) {
   const src = '{if ( $foo ) 10 === $bar}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -126,7 +126,7 @@ QUnit.test('if block - conditions - error - endRoundBracket -> value', function 
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - endRoundBracket -> var', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_close -> var', function (assert) {
   const src = '{if ( $foo ) $bar gte 10}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -134,7 +134,7 @@ QUnit.test('if block - conditions - error - endRoundBracket -> var', function (a
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - endRoundBracket -> comp', function (assert) {
+QUnit.test('if block - conditions - error - round_bracket_close -> comp', function (assert) {
   const src = '{if ( $foo ) === $bar}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -142,7 +142,7 @@ QUnit.test('if block - conditions - error - endRoundBracket -> comp', function (
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - value -> roundBracket', function (assert) {
+QUnit.test('if block - conditions - error - value -> round_bracket_open', function (assert) {
   const src = '{if 10 ( $foo === 1 )}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -166,7 +166,7 @@ QUnit.test('if block - conditions - error - value -> var', function (assert) {
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - var -> roundBracket', function (assert) {
+QUnit.test('if block - conditions - error - var -> round_bracket_open', function (assert) {
   const src = '{if $foo ( $bar === 1 )}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -190,7 +190,7 @@ QUnit.test('if block - conditions - error - var -> var', function (assert) {
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - comp -> roundBracket', function (assert) {
+QUnit.test('if block - conditions - error - comp -> round_bracket_open', function (assert) {
   const src = '{if $foo lte ( $bar ) }<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -198,7 +198,7 @@ QUnit.test('if block - conditions - error - comp -> roundBracket', function (ass
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - comp -> endRoundBracket', function (assert) {
+QUnit.test('if block - conditions - error - comp -> round_bracket_close', function (assert) {
   const src = '{if ( $foo gte ) $bar}<p>ok</p>{endif}';
 
   assert.throws(function () {
@@ -238,7 +238,7 @@ QUnit.test('if block - conditions - error - comp -> var -> comp', function (asse
   }, Error);
 });
 
-QUnit.test('if block - conditions - error - andor -> endRoundBracket', function (assert) {
+QUnit.test('if block - conditions - error - andor -> round_bracket_close', function (assert) {
   const src = '{if ( $foo or ) $bar}<p>ok</p>{endif}';
 
   assert.throws(function () {
