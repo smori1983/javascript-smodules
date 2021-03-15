@@ -8,6 +8,9 @@
  * @property {AstNodeParseResult[]} [children]
  */
 
+/**
+ * Base class for AST nodes.
+ */
 class AstNode {
   /**
    * @return {string}

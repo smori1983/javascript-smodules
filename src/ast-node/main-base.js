@@ -1,5 +1,8 @@
 const AstNode = require('./ast-node');
 
+/**
+ * Base class for main parsers.
+ */
 class MainBase extends AstNode {
   /**
    * @param {ParseContext} context
