@@ -105,12 +105,19 @@ class ConditionReversePolish {
   /**
    * @param node
    * @return {number}
+   * @throws {Error}
    * @private
    */
   _getOrder(node) {
     // <andor> returns 'andor' for type.
     // Use 'expr' instead.
-    return this._order[node.type] || this._order[node.expr];
+    const order = this._order[node.type] || this._order[node.expr];
+
+    if (typeof order === 'undefined') {
+      throw new Error('unknown node: ' + node);
+    }
+
+    return order;
   }
 }
 
