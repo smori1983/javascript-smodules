@@ -5,24 +5,24 @@ class ConditionReversePolish {
     // 'error' for sentinel.
     /* eslint-disable array-bracket-spacing */
     this._state = {
-      'start':           ['roundBracket',                    'value', 'var',                  'error'],
-      'roundBracket':    ['roundBracket',                    'value', 'var',                  'error'],
-      'endRoundBracket': [                'endRoundBracket',                         'andor', 'error'],
-      'value':           [                'endRoundBracket',                 'comp', 'andor', 'error'],
-      'var':             [                'endRoundBracket',                 'comp', 'andor', 'error'],
-      'comp':            [                                   'value', 'var',                  'error'],
-      'andor':           ['roundBracket',                    'value', 'var',                  'error'],
+      'start':               ['round_bracket_open',                        'value', 'var',                  'error'],
+      'round_bracket_open':  ['round_bracket_open',                        'value', 'var',                  'error'],
+      'round_bracket_close': [                      'round_bracket_close',                         'andor', 'error'],
+      'value':               [                      'round_bracket_close',                 'comp', 'andor', 'error'],
+      'var':                 [                      'round_bracket_close',                 'comp', 'andor', 'error'],
+      'comp':                [                                             'value', 'var',                  'error'],
+      'andor':               ['round_bracket_open',                        'value', 'var',                  'error'],
     };
     /* eslint-enable */
 
     this._order = {
-      'endRoundBracket': 1,
-      'or':              2,
-      'and':             3,
-      'comp':            4,
-      'value':           5,
-      'var':             5,
-      'roundBracket':    6,
+      'round_bracket_close': 1,
+      'or':                  2,
+      'and':                 3,
+      'comp':                4,
+      'value':               5,
+      'var':                 5,
+      'round_bracket_open':  6,
     };
   }
 
@@ -50,7 +50,7 @@ class ConditionReversePolish {
       while (stack.length > 0) {
         stackTop = stack.pop();
 
-        if (next.order <= stackTop.order && stackTop.type !== 'roundBracket') {
+        if (next.order <= stackTop.order && stackTop.type !== 'round_bracket_open') {
           polish.push(stackTop);
         } else {
           stack.push(stackTop);
@@ -58,7 +58,7 @@ class ConditionReversePolish {
         }
       }
 
-      if (next.type === 'endRoundBracket') {
+      if (next.type === 'round_bracket_close') {
         stack.pop();
       } else {
         stack.push(next);
@@ -105,12 +105,19 @@ class ConditionReversePolish {
   /**
    * @param node
    * @return {number}
+   * @throws {Error}
    * @private
    */
   _getOrder(node) {
     // <andor> returns 'andor' for type.
     // Use 'expr' instead.
-    return this._order[node.type] || this._order[node.expr];
+    const order = this._order[node.type] || this._order[node.expr];
+
+    if (typeof order === 'undefined') {
+      throw new Error('unknown node: ' + node);
+    }
+
+    return order;
   }
 }
 

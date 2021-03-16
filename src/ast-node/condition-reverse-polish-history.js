@@ -55,9 +55,9 @@ class ConditionReversePolishHistory {
     let balance = 0;
 
     this._history.forEach((type) => {
-      if (type === 'roundBracket') {
+      if (type === 'round_bracket_open') {
         balance++;
-      } else if (type === 'endRoundBracket') {
+      } else if (type === 'round_bracket_close') {
         balance--;
       }
     });
