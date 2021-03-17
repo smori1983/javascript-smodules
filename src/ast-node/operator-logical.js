@@ -11,7 +11,7 @@ class OperatorLogical extends AstNode {
    */
   read(context) {
     try {
-      this._consume(context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class OperatorLogical extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._consume(context.sourceTextManager());
+    const matched = this._consume(context.config(), context.sourceTextManager());
 
     return {
       type: this.type(),
@@ -33,11 +33,12 @@ class OperatorLogical extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
    * @return {string}
    * @private
    */
-  _consume(tm) {
+  _consume(config, tm) {
     const regexp = /^(and|or)[^\w]/;
     const matched = tm.regexpMatched(regexp, '"and" or "or" should be written');
 

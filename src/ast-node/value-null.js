@@ -11,7 +11,7 @@ class ValueNull extends AstNode {
    */
   read(context) {
     try {
-      this._consume(context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class ValueNull extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._consume(context.sourceTextManager());
+    this._consume(context.config(), context.sourceTextManager());
 
     return {
       type: 'value',
@@ -33,10 +33,11 @@ class ValueNull extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
    * @private
    */
-  _consume(tm) {
+  _consume(config, tm) {
     const regexp = /^(null)[^\w]/;
     const matched = tm.regexpMatched(regexp, 'null should be written');
 

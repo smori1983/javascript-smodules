@@ -11,7 +11,7 @@ class ValueNumber extends AstNode {
    */
   read(context) {
     try {
-      this._consume(context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -25,7 +25,7 @@ class ValueNumber extends AstNode {
    */
   parse(context) {
     try {
-      const value = this._consume(context.sourceTextManager());
+      const value = this._consume(context.config(), context.sourceTextManager());
 
       return {
         type: 'value',
@@ -37,11 +37,12 @@ class ValueNumber extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
    * @return {string}
    * @private
    */
-  _consume(tm) {
+  _consume(config, tm) {
     const regexp = /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/;
     const matched = tm.regexpMatched(regexp);
     let value;

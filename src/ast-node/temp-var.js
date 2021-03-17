@@ -18,7 +18,7 @@ class TempVar extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const expr = this._consume(context.sourceTextManager());
+    const expr = this._consume(context.config(), context.sourceTextManager());
 
     try {
       return {
@@ -31,10 +31,11 @@ class TempVar extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
    * @private
    */
-  _consume(tm) {
+  _consume(config, tm) {
     const s = tm.next('$') + tm.consumeWhile(/\w/);
 
     if (s === '$') {
