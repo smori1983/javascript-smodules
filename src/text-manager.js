@@ -43,6 +43,8 @@ class TextManager {
   }
 
   /**
+   * Check current character is same with the argument.
+   *
    * @param {string} value
    * @return {boolean}
    */
@@ -51,6 +53,8 @@ class TextManager {
   }
 
   /**
+   * Check current character matches the regular expression.
+   *
    * @param {RegExp} regexp
    * @return {boolean}
    */
@@ -81,6 +85,8 @@ class TextManager {
   }
 
   /**
+   * Consume current character when it is same with the argument.
+   *
    * @param {string} expr
    * @throws {Error}
    */
