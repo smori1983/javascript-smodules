@@ -127,13 +127,13 @@ class TextManager {
    * @return {string}
    */
   whitespace() {
-    let skipped = '';
+    let consumed = '';
 
     while (this.charMatch(/\s/)) {
-      skipped = this.next(this.getChar());
+      consumed = this.next(this.getChar());
     }
 
-    return skipped;
+    return consumed;
   }
 
   /**
