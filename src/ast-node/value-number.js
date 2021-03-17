@@ -24,16 +24,12 @@ class ValueNumber extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    try {
-      const value = this._consume(context.config(), context.sourceTextManager());
+    const value = this._consume(context.config(), context.sourceTextManager());
 
-      return {
-        type: 'value',
-        value: value,
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
+    return {
+      type: 'value',
+      value: value,
+    };
   }
 
   /**
