@@ -130,7 +130,7 @@ class TextManager {
     let consumed = '';
 
     while (this.charMatch(/\s/)) {
-      consumed = this.next(this.getChar());
+      consumed += this.next(this.getChar());
     }
 
     return consumed;
