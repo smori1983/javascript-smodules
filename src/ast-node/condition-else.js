@@ -41,9 +41,9 @@ class ConditionElse extends AstNode {
    */
   _process(config, tm) {
     tm.next(config.openDelimiter());
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next('else');
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next(config.closeDelimiter());
   }
 }

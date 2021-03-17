@@ -15,7 +15,7 @@ class Holder extends AstNode {
 
     try {
       tm.next(config.openDelimiter());
-      tm.skipWhitespace();
+      tm.whitespace();
       tm.readRegexp(/^\$/, true);
 
       return true;
@@ -33,12 +33,12 @@ class Holder extends AstNode {
     const tm = context.sourceTextManager();
 
     tm.next(config.openDelimiter());
-    tm.skipWhitespace();
+    tm.whitespace();
 
     const keySection = context.parse('var');
     const filterSection = context.parse('filter_chain');
 
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next(config.closeDelimiter());
 
     return {

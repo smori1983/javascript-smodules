@@ -64,7 +64,7 @@ class ConditionReversePolish {
         stack.push(next);
       }
 
-      tm.skipWhitespace();
+      tm.whitespace();
     }
 
     while (stack.length > 0) {

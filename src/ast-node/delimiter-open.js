@@ -39,9 +39,9 @@ class DelimiterOpen extends AstNode {
    */
   _process(config, tm) {
     tm.next(config.openDelimiter());
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next('open');
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next(config.closeDelimiter());
   }
 }

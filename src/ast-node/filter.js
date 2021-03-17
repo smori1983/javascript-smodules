@@ -33,7 +33,7 @@ class Filter extends AstNode {
     const tm = context.sourceTextManager();
     let name = '';
 
-    tm.skipWhitespace();
+    tm.whitespace();
 
     while (tm.charMatch(/[\w-]/)) {
       name += tm.next(tm.getChar());
@@ -55,13 +55,13 @@ class Filter extends AstNode {
     const tm = context.sourceTextManager();
     const args = [];
 
-    tm.skipWhitespace();
+    tm.whitespace();
 
     if (tm.charIs(':')) {
       tm.next(':');
 
       while (!tm.eof()) {
-        tm.skipWhitespace();
+        tm.whitespace();
 
         if (context.read('value') === false) {
           throw new Error('invalid filter args');
@@ -69,7 +69,7 @@ class Filter extends AstNode {
 
         args.push(context.parse('value').value);
 
-        tm.skipWhitespace();
+        tm.whitespace();
 
         if (tm.charIs(',')) {
           tm.next(',');

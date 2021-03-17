@@ -120,7 +120,7 @@ class TextManager {
   /**
    * @return {string}
    */
-  skipWhitespace() {
+  whitespace() {
     let skipped = '';
 
     while (this.charMatch(/\s/)) {
