@@ -11,7 +11,7 @@ class OperatorComparison extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.lookaheadTextManager());
+      this._consume(context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class OperatorComparison extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._process(context.sourceTextManager());
+    const matched = this._consume(context.sourceTextManager());
 
     return {
       type: this.type(),
@@ -37,7 +37,7 @@ class OperatorComparison extends AstNode {
    * @return {string}
    * @private
    */
-  _process(tm) {
+  _consume(tm) {
     const regexp = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
     const matched = tm.regexpMatched(regexp, 'comparer should be written');
 

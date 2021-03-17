@@ -11,7 +11,7 @@ class ValueBool extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.lookaheadTextManager());
+      this._consume(context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class ValueBool extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._process(context.sourceTextManager());
+    const matched = this._consume(context.sourceTextManager());
 
     return {
       type: 'value',
@@ -36,7 +36,7 @@ class ValueBool extends AstNode {
    * @param {TextManager} tm
    * @private
    */
-  _process(tm) {
+  _consume(tm) {
     const regexp = /^(true|false)[^\w]/;
     const matched = tm.regexpMatched(regexp, 'bool should be written');
 

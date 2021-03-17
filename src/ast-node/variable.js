@@ -11,7 +11,7 @@ class Variable extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.lookaheadTextManager());
+      this._consume(context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -25,7 +25,7 @@ class Variable extends AstNode {
    */
   parse(context) {
     try {
-      const parsed = this._process(context.sourceTextManager());
+      const parsed = this._consume(context.sourceTextManager());
 
       return {
         type: this.type(),
@@ -42,7 +42,7 @@ class Variable extends AstNode {
    * @throws {Error}
    * @private
    */
-  _process(tm) {
+  _consume(tm) {
     const parsed = tm.next('$') + tm.consumeWhile(/[\w.]/);
 
     if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
