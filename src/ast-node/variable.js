@@ -24,16 +24,12 @@ class Variable extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    try {
-      const parsed = this._consume(context.config(), context.sourceTextManager());
+    const parsed = this._consume(context.config(), context.sourceTextManager());
 
-      return {
-        type: this.type(),
-        keys: parsed.split('.'),
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
+    return {
+      type: this.type(),
+      keys: parsed.split('.'),
+    };
   }
 
   /**
