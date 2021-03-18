@@ -43,11 +43,7 @@ class Variable extends AstNode {
    * @private
    */
   _process(tm) {
-    let parsed = tm.next('$');
-
-    while (tm.charMatch(/[\w.]/)) {
-      parsed += tm.next(tm.getChar());
-    }
+    const parsed = tm.next('$') + tm.consumeWhile(/[\w.]/);
 
     if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
       throw new Error('invalid variable expression');

@@ -194,6 +194,20 @@ class TextManager {
   _getText() {
     return this._sourceText.slice(this.getPtr());
   }
+
+  /**
+   * @param {RegExp} regexp
+   * @return {string}
+   */
+  consumeWhile(regexp) {
+    let result = '';
+
+    while (this.charMatch(regexp)) {
+      result += this.next(this.getChar());
+    }
+
+    return result;
+  }
 }
 
 module.exports = TextManager;

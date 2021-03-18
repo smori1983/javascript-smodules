@@ -35,11 +35,7 @@ class TempVar extends AstNode {
    * @private
    */
   _process(tm) {
-    let s = tm.next('$');
-
-    while (tm.charMatch(/\w/)) {
-      s += tm.next(tm.getChar());
-    }
+    const s = tm.next('$') + tm.consumeWhile(/\w/);
 
     if (s === '$') {
       throw new Error('tmp variable not found');
