@@ -28,6 +28,7 @@
     "node-qunit-puppeteer": "^2.0.3",
     "qunit": "2.13.0",
     "reload": "^3.1.1",
+    "rimraf": "^3.0.2",
     "style-loader": "^2.0.0",
     "watch": "^1.0.2",
     "webpack": "^5.26.3",
