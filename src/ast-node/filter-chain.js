@@ -23,14 +23,14 @@ class FilterChain extends AstNode {
     const filters = [];
 
     while (!tm.eof()) {
-      tm.skipWhitespace();
+      tm.whitespace();
 
       if (!tm.charIs('|')) {
         break;
       }
 
       tm.next('|');
-      tm.skipWhitespace();
+      tm.whitespace();
 
       filters.push(context.parse('filter'));
 

@@ -38,10 +38,10 @@ class ForLoopOpen extends AstNode {
    */
   _process(config, tm) {
     tm.next(config.openDelimiter());
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next('for');
     tm.readRegexp(/^\s+/, true);
-    tm.skipWhitespace();
+    tm.whitespace();
   }
 }
 

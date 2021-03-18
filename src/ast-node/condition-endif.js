@@ -38,9 +38,9 @@ class ConditionEndif extends AstNote {
    */
   _process(config, tm) {
     tm.next(config.openDelimiter());
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next('endif');
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next(config.closeDelimiter());
   }
 }

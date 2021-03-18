@@ -38,9 +38,9 @@ class LiteralOpen extends AstNode {
    */
   _process(config, tm) {
     tm.next(config.openDelimiter());
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next('literal');
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next(config.closeDelimiter());
   }
 }

@@ -24,21 +24,21 @@ class ForLoopBody extends AstNode {
     v = context.parse('temp_var').expr;
 
     if (tm.readRegexp(/^\s*,\s*/)) {
-      tm.skipWhitespace();
+      tm.whitespace();
       tm.next(',');
-      tm.skipWhitespace();
+      tm.whitespace();
       k = v;
       v = context.parse('temp_var').expr;
     }
 
     tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
-    tm.skipWhitespace();
+    tm.whitespace();
     tm.next('in');
-    tm.skipWhitespace();
+    tm.whitespace();
 
     array = context.parse('var');
 
-    tm.skipWhitespace();
+    tm.whitespace();
 
     return {
       type: this.type(),
