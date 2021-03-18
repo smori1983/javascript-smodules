@@ -10,7 +10,13 @@ class TempVar extends AstNode {
    * @return {boolean}
    */
   read(context) {
-    return true;
+    try {
+      this._consume(context.config(), context.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /**
