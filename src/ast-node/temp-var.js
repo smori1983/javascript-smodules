@@ -24,9 +24,9 @@ class TempVar extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const expr = this._consume(context.config(), context.sourceTextManager());
-
     try {
+      const expr = this._consume(context.config(), context.sourceTextManager());
+
       return {
         type: this.type(),
         expr: expr,
@@ -39,6 +39,7 @@ class TempVar extends AstNode {
   /**
    * @param {ParseConfig} config
    * @param {TextManager} tm
+   * @return {string}
    * @private
    */
   _consume(config, tm) {
