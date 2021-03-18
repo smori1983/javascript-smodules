@@ -4,7 +4,9 @@
   "version": "0.3.0",
   "scripts": {
     "build": "webpack",
+    "build:clean": "rimraf dist/",
     "build:test:browser": "webpack --config webpack.test_browser.config.js",
+    "build:test:browser:clean": "rimraf test_browser/public/index.js",
     "build:test:browser:watch": "webpack --config webpack.test_browser.config.js --watch",
     "test:cli": "qunit test",
     "test:cli:watch": "watch 'npm run test:cli' src/ test/ --interval=1 --ignoreDotFiles",
