@@ -137,6 +137,13 @@ class TextManager {
   }
 
   /**
+   * @throws {Error}
+   */
+  ensureWhitespace() {
+    this.readRegexp(/^\s+/, true);
+  }
+
+  /**
    * @param {string} expr
    * @return {boolean}
    */

@@ -46,7 +46,7 @@ class ConditionElseif extends AstNode {
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('elseif');
-    tm.readRegexp(/^\s+/, true);
+    tm.ensureWhitespace();
     tm.whitespace();
   }
 }
