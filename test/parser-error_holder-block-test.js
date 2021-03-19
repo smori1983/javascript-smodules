@@ -54,8 +54,24 @@ QUnit.test('holder block - no filters - error - continuous dots', function (asse
   }, /invalid variable expression/);
 });
 
-QUnit.test('holder block - filter - error - tag not closed', function (assert) {
+QUnit.test('holder block - filter - error - tag not closed 1', function (assert) {
   const src = '{ $foo | filter';
+
+  assert.throws(function () {
+    this.parser.parse(src);
+  }, /syntax error/);
+});
+
+QUnit.test('holder block - filter - error - tag not closed 2', function (assert) {
+  const src = '{ $foo | filter1 | filter2 | filter3';
+
+  assert.throws(function () {
+    this.parser.parse(src);
+  }, /syntax error/);
+});
+
+QUnit.test('holder block - filter - error - tag not closed 3', function (assert) {
+  const src = '{if true }{ $foo | filter1 {endif}';
 
   assert.throws(function () {
     this.parser.parse(src);

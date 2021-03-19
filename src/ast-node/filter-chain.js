@@ -36,8 +36,6 @@ class FilterChain extends AstNode {
 
       if (tm.charIs(config.closeDelimiter())) {
         break;
-      } else if (!tm.charIs('|')) {
-        throw new Error('syntax error');
       }
     }
 
