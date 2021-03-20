@@ -161,7 +161,7 @@ class TextManager {
     const result = regexp.test(this._getText());
 
     if (result === false && throwError === true) {
-      throw new Error();
+      throw new Error('syntax error');
     }
 
     return result;
