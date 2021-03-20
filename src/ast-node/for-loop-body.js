@@ -31,9 +31,10 @@ class ForLoopBody extends AstNode {
       v = context.parse('temp_var').expr;
     }
 
-    tm.checkRegexp(/^\s+in\s+/, 'invalid for expression');
+    tm.ensureWhitespace();
     tm.whitespace();
     tm.next('in');
+    tm.ensureWhitespace();
     tm.whitespace();
 
     array = context.parse('var');
