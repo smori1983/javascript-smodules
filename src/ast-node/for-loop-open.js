@@ -24,10 +24,18 @@ class ForLoopOpen extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
+    const config = context.config();
+    const tm = context.sourceTextManager();
+
     this._consume(context.config(), context.sourceTextManager());
+    tm.whitespace();
+    const ctrl = context.parse('for_loop_body');
+    tm.whitespace();
+    tm.next(config.closeDelimiter());
 
     return {
       type: this.type(),
+      ctrl: ctrl,
     }
   }
 

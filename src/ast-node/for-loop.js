@@ -18,17 +18,8 @@ class ForLoop extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const config = context.config();
-    const tm = context.sourceTextManager();
-
-    context.parse('for');
-    tm.whitespace();
-    const ctrl = context.parse('for_loop_body');
-    tm.whitespace();
-    tm.next(config.closeDelimiter());
-
+    const ctrl = context.parse('for').ctrl;
     const children = context.parse('main_in_block').children;
-
     context.parse('endfor');
 
     return {

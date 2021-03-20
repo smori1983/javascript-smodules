@@ -4,6 +4,7 @@
  * @property {string} [expr]
  * @property {string[]} [keys]
  * @property {AstNodeParseResult[]} [stack]
+ * @property {Object} [ctrl]
  * @property {*} [value]
  * @property {AstNodeParseResult[]} [children]
  */
