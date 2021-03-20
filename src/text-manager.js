@@ -137,6 +137,13 @@ class TextManager {
   }
 
   /**
+   * @throws {Error}
+   */
+  ensureWhitespace() {
+    this.readRegexp(/^\s+/, true);
+  }
+
+  /**
    * @param {string} expr
    * @return {boolean}
    */
@@ -154,7 +161,7 @@ class TextManager {
     const result = regexp.test(this._getText());
 
     if (result === false && throwError === true) {
-      throw new Error();
+      throw new Error('syntax error');
     }
 
     return result;
@@ -193,6 +200,20 @@ class TextManager {
    */
   _getText() {
     return this._sourceText.slice(this.getPtr());
+  }
+
+  /**
+   * @param {RegExp} regexp
+   * @return {string}
+   */
+  consumeWhile(regexp) {
+    let result = '';
+
+    while (this.charMatch(regexp)) {
+      result += this.next(this.getChar());
+    }
+
+    return result;
   }
 }
 

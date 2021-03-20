@@ -40,7 +40,7 @@ class ForLoopOpen extends AstNode {
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('for');
-    tm.readRegexp(/^\s+/, true);
+    tm.ensureWhitespace();
     tm.whitespace();
   }
 }

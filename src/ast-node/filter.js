@@ -31,13 +31,10 @@ class Filter extends AstNode {
    */
   _nameSection(context) {
     const tm = context.sourceTextManager();
-    let name = '';
 
     tm.whitespace();
 
-    while (tm.charMatch(/[\w-]/)) {
-      name += tm.next(tm.getChar());
-    }
+    const name = tm.consumeWhile(/[\w-]/);
 
     if (name === '') {
       throw new Error('filter name not found');
