@@ -11,7 +11,7 @@ class ValueString extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class ValueString extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._process(context.sourceTextManager());
+    const matched = this._consume(context.config(), context.sourceTextManager());
 
     return {
       type: 'value',
@@ -33,11 +33,12 @@ class ValueString extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
    * @return {string}
    * @private
    */
-  _process(tm) {
+  _consume(config, tm) {
     const regexp = /^(["'])(?:\\\1|\s|\S)*?\1/;
     const matched = tm.regexpMatched(regexp, 'string expression not closed');
 

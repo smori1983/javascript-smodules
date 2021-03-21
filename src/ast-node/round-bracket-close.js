@@ -11,7 +11,7 @@ class RoundBracketClose extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class RoundBracketClose extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const parsed = this._process(context.sourceTextManager());
+    const parsed = this._consume(context.config(), context.sourceTextManager());
 
     return {
       type: this.type(),
@@ -33,11 +33,12 @@ class RoundBracketClose extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
    * @return {string}
    * @private
    */
-  _process(tm) {
+  _consume(config, tm) {
     return tm.next(')');
   }
 }

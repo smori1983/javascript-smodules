@@ -11,7 +11,7 @@ class ForLoopOpen extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.config(), context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,10 +24,18 @@ class ForLoopOpen extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._process(context.config(), context.sourceTextManager());
+    const config = context.config();
+    const tm = context.sourceTextManager();
+
+    this._consume(context.config(), context.sourceTextManager());
+    tm.whitespace();
+    const ctrl = context.parse('for_loop_body');
+    tm.whitespace();
+    tm.next(config.closeDelimiter());
 
     return {
       type: this.type(),
+      ctrl: ctrl,
     }
   }
 
@@ -36,7 +44,7 @@ class ForLoopOpen extends AstNode {
    * @param {TextManager} tm
    * @private
    */
-  _process(config, tm) {
+  _consume(config, tm) {
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('for');

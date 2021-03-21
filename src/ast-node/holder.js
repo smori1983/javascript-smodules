@@ -16,7 +16,7 @@ class Holder extends AstNode {
     try {
       tm.next(config.openDelimiter());
       tm.whitespace();
-      tm.readRegexp(/^\$/, true);
+      tm.next('$');
 
       return true;
     } catch (e) {

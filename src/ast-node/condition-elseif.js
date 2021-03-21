@@ -11,7 +11,7 @@ class ConditionElseif extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.config(), context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class ConditionElseif extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._process(context.config(), context.sourceTextManager());
+    this._consume(context.config(), context.sourceTextManager());
 
     const ctrl = context.parse('condition_body');
     context.sourceTextManager().next(context.config().closeDelimiter());
@@ -42,7 +42,7 @@ class ConditionElseif extends AstNode {
    * @param {TextManager} tm
    * @private
    */
-  _process(config, tm) {
+  _consume(config, tm) {
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('elseif');

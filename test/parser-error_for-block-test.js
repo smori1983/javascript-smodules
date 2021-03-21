@@ -27,7 +27,7 @@ QUnit.test('for block - error - lack of comma', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - lack of value argument', function (assert) {
@@ -51,7 +51,7 @@ QUnit.test('for block - error - lack of in 1', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - lack of in 2', function (assert) {
@@ -59,7 +59,7 @@ QUnit.test('for block - error - lack of in 2', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - lack of haystack', function (assert) {
@@ -67,7 +67,7 @@ QUnit.test('for block - error - lack of haystack', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - too many elements 1', function (assert) {
@@ -75,7 +75,7 @@ QUnit.test('for block - error - too many elements 1', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - too many elements 2', function (assert) {
@@ -107,7 +107,7 @@ QUnit.test('for block - error - no space around in 1', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - no space around in 2', function (assert) {
@@ -115,7 +115,7 @@ QUnit.test('for block - error - no space around in 2', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - no space around in 3', function (assert) {
@@ -123,7 +123,7 @@ QUnit.test('for block - error - no space around in 3', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });
 
 QUnit.test('for block - error - no space around in 4', function (assert) {
@@ -131,5 +131,5 @@ QUnit.test('for block - error - no space around in 4', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid for expression/);
+  }, /syntax error/);
 });

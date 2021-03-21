@@ -22,22 +22,16 @@ class FilterChain extends AstNode {
     const tm = context.sourceTextManager();
     const filters = [];
 
-    while (!tm.eof()) {
-      tm.whitespace();
+    tm.whitespace();
 
-      if (!tm.charIs('|')) {
-        break;
-      }
-
+    while (tm.charIs('|')) {
       tm.next('|');
       tm.whitespace();
-
       filters.push(context.parse('filter'));
+      tm.whitespace();
 
       if (tm.charIs(config.closeDelimiter())) {
         break;
-      } else if (!tm.charIs('|')) {
-        throw new Error('syntax error');
       }
     }
 

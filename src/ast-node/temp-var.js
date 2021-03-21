@@ -10,7 +10,13 @@ class TempVar extends AstNode {
    * @return {boolean}
    */
   read(context) {
-    return true;
+    try {
+      this._consume(context.config(), context.lookaheadTextManager());
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /**
@@ -18,9 +24,9 @@ class TempVar extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const expr = this._process(context.sourceTextManager());
-
     try {
+      const expr = this._consume(context.config(), context.sourceTextManager());
+
       return {
         type: this.type(),
         expr: expr,
@@ -31,10 +37,12 @@ class TempVar extends AstNode {
   }
 
   /**
+   * @param {ParseConfig} config
    * @param {TextManager} tm
+   * @return {string}
    * @private
    */
-  _process(tm) {
+  _consume(config, tm) {
     const s = tm.next('$') + tm.consumeWhile(/\w/);
 
     if (s === '$') {

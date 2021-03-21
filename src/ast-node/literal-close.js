@@ -11,7 +11,7 @@ class LiteralClose extends AstNode {
    */
   read(context) {
     try {
-      this._process(context.config(), context.lookaheadTextManager());
+      this._consume(context.config(), context.lookaheadTextManager());
 
       return true;
     } catch (e) {
@@ -24,7 +24,7 @@ class LiteralClose extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._process(context.config(), context.sourceTextManager());
+    this._consume(context.config(), context.sourceTextManager());
 
     return {
       type: this.type(),
@@ -36,7 +36,7 @@ class LiteralClose extends AstNode {
    * @param {TextManager} tm
    * @private
    */
-  _process(config, tm) {
+  _consume(config, tm) {
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('endliteral');
