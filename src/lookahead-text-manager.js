@@ -10,6 +10,18 @@ class LookaheadTextManager extends TextManager {
   constructor(sourceText, ptr, line, at) {
     super(sourceText, ptr, line, at);
   }
+
+  /**
+   * @return {LookaheadTextManager}
+   */
+  lookaheadTextManager() {
+    return new LookaheadTextManager(
+      this.getSourceText(),
+      this.getPtr(),
+      this.getLine(),
+      this.getAt()
+    );
+  }
 }
 
 module.exports = LookaheadTextManager;

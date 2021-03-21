@@ -1,7 +1,7 @@
 class ParseContext {
   /**
    * @param {ParseConfig} config
-   * @param {SourceTextManager} stm
+   * @param {TextManager} stm
    * @param {Ast} ast
    */
   constructor(config, stm, ast) {
@@ -18,7 +18,7 @@ class ParseContext {
   }
 
   /**
-   * @return {SourceTextManager}
+   * @return {TextManager}
    */
   sourceTextManager() {
     return this._stm;
@@ -51,7 +51,19 @@ class ParseContext {
    * @return {boolean}
    */
   read(type) {
-    return this.astNode(type).read(this);
+    const lookaheadContext = new ParseContext(
+      this.config(),
+      this.lookaheadTextManager(),
+      this.ast()
+    );
+
+    try {
+      this.astNode(type).parse(lookaheadContext);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /**
