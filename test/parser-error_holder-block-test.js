@@ -11,7 +11,7 @@ QUnit.test('holder block - no $ mark', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /unknown tag/);
+  }, Error);
 });
 
 QUnit.test('holder block - no filters - error - tag not closed', function (assert) {
@@ -19,7 +19,7 @@ QUnit.test('holder block - no filters - error - tag not closed', function (asser
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - no filters - error - space between $ and property name', function (assert) {
@@ -27,7 +27,7 @@ QUnit.test('holder block - no filters - error - space between $ and property nam
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid variable expression/);
+  }, Error);
 });
 
 QUnit.test('holder block - no filters - error - dot between $ and property name', function (assert) {
@@ -35,7 +35,7 @@ QUnit.test('holder block - no filters - error - dot between $ and property name'
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid variable expression/);
+  }, Error);
 });
 
 QUnit.test('holder block - no filters - error - dot after property name', function (assert) {
@@ -43,7 +43,7 @@ QUnit.test('holder block - no filters - error - dot after property name', functi
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid variable expression/);
+  }, Error);
 });
 
 QUnit.test('holder block - no filters - error - continuous dots', function (assert) {
@@ -51,7 +51,7 @@ QUnit.test('holder block - no filters - error - continuous dots', function (asse
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid variable expression/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - tag not closed 1', function (assert) {
@@ -59,7 +59,7 @@ QUnit.test('holder block - filter - error - tag not closed 1', function (assert)
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - tag not closed 2', function (assert) {
@@ -67,7 +67,7 @@ QUnit.test('holder block - filter - error - tag not closed 2', function (assert)
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - tag not closed 3', function (assert) {
@@ -75,7 +75,7 @@ QUnit.test('holder block - filter - error - tag not closed 3', function (assert)
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - filter name has space', function (assert) {
@@ -83,7 +83,7 @@ QUnit.test('holder block - filter - error - filter name has space', function (as
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - filter name has symbol', function (assert) {
@@ -91,7 +91,7 @@ QUnit.test('holder block - filter - error - filter name has symbol', function (a
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - no pipe', function (assert) {
@@ -99,7 +99,7 @@ QUnit.test('holder block - filter - error - no pipe', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /syntax error/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - no filter name before colon', function (assert) {
@@ -107,7 +107,7 @@ QUnit.test('holder block - filter - error - no filter name before colon', functi
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /filter name not found/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - no filter args after colon', function (assert) {
@@ -115,7 +115,7 @@ QUnit.test('holder block - filter - error - no filter args after colon', functio
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter - error - colon only', function (assert) {
@@ -123,7 +123,7 @@ QUnit.test('holder block - filter - error - colon only', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /filter name not found/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - error - tag not closed', function (assert) {
@@ -131,7 +131,7 @@ QUnit.test('holder block - filter with args - error - tag not closed', function 
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args expression/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - error - args not separated', function (assert) {
@@ -139,7 +139,7 @@ QUnit.test('holder block - filter with args - error - args not separated', funct
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args expression/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - error - NULL', function (assert) {
@@ -147,7 +147,7 @@ QUnit.test('holder block - filter with args - error - NULL', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - error - TRUE', function (assert) {
@@ -155,7 +155,7 @@ QUnit.test('holder block - filter with args - error - TRUE', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - error - FALSE', function (assert) {
@@ -163,7 +163,7 @@ QUnit.test('holder block - filter with args - error - FALSE', function (assert) 
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote 1', function (assert) {
@@ -171,7 +171,7 @@ QUnit.test('holder block - filter with args - string - error - quote 1', functio
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote 2', function (assert) {
@@ -179,7 +179,7 @@ QUnit.test('holder block - filter with args - string - error - quote 2', functio
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote char 1', function (assert) {
@@ -187,7 +187,7 @@ QUnit.test('holder block - filter with args - string - error - quote char 1', fu
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
 
 QUnit.test('holder block - filter with args - string - error - quote char 2', function (assert) {
@@ -195,5 +195,5 @@ QUnit.test('holder block - filter with args - string - error - quote char 2', fu
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /invalid filter args/);
+  }, Error);
 });
