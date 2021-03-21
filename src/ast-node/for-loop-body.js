@@ -31,11 +31,9 @@ class ForLoopBody extends AstNode {
       v = context.parse('temp_var').expr;
     }
 
-    tm.ensureWhitespace();
-    tm.whitespace();
+    tm.whitespaceRequired();
     tm.next('in');
-    tm.ensureWhitespace();
-    tm.whitespace();
+    tm.whitespaceRequired();
 
     const array = context.parse('var');
 
