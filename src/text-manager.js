@@ -137,10 +137,15 @@ class TextManager {
   }
 
   /**
+   * Require at least 1 whitespace then parse.
+   *
+   * @return {string}
    * @throws {Error}
    */
-  ensureWhitespace() {
+  whitespaceRequired() {
     this.readRegexp(/^\s+/, true);
+
+    return this.whitespace();
   }
 
   /**
