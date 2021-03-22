@@ -7,43 +7,20 @@ class ValueBool extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    try {
-      this._consume(context.config(), context.lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._consume(context.config(), context.sourceTextManager());
+    const tm = context.sourceTextManager();
+    const regexp = /^(true|false)[^\w]/;
+
+    tm.whitespace();
+    const matched = tm.regexpMatched(regexp, 'bool should be written');
+    tm.next(matched[1]);
 
     return {
       type: 'value',
-      value: matched === 'true',
+      value: matched[1] === 'true',
     };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @private
-   */
-  _consume(config, tm) {
-    const regexp = /^(true|false)[^\w]/;
-    const matched = tm.regexpMatched(regexp, 'bool should be written');
-
-    tm.next(matched[1]);
-
-    return matched[1];
   }
 }
 

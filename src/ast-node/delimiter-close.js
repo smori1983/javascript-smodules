@@ -7,42 +7,23 @@ class DelimiterClose extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    try {
-      this._consume(context.config(), context.lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._consume(context.config(), context.sourceTextManager());
+    const config = context.config();
+    const tm = context.sourceTextManager();
 
-    return {
-      type: this.type(),
-      expr: context.config().closeDelimiter(),
-    };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @private
-   */
-  _consume(config, tm) {
+    tm.whitespace();
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('close');
     tm.whitespace();
     tm.next(config.closeDelimiter());
+
+    return {
+      type: this.type(),
+      expr: context.config().closeDelimiter(),
+    };
   }
 }
 

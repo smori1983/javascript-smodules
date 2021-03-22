@@ -7,17 +7,6 @@ class Value extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    return context.read('value_null')
-        || context.read('value_bool')
-        || context.read('value_string')
-        || context.read('value_number');
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {

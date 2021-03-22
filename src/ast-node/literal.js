@@ -7,38 +7,31 @@ class Literal extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    return context.read('literal_open');
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
     const config = context.config();
     const tm = context.sourceTextManager();
-    let value = '';
-    let closed = false;
     const startLine = tm.getLine();
     const startAt = tm.getAt();
+    let value = '';
+    let closed = false;
 
     context.parse('literal_open');
 
     while (!tm.eof()) {
-      if (context.read('delimiter_open')) {
-        value += context.parse('delimiter_open').expr;
-      } else if (context.read('delimiter_close')) {
-        value += context.parse('delimiter_close').expr;
-      } else if (context.read('literal_close')) {
-        context.parse('literal_close');
-        closed = true;
-        break;
-      } else {
-        value += tm.next(tm.getChar());
+      if (tm.charIs(config.openDelimiter())) {
+        if (context.read('delimiter_open')) {
+          value += context.parse('delimiter_open').expr;
+        } else if (context.read('delimiter_close')) {
+          value += context.parse('delimiter_close').expr;
+        } else if (context.read('literal_close')) {
+          context.parse('literal_close');
+          closed = true;
+          break;
+        }
       }
+      value += tm.next(tm.getChar());
     }
 
     if (closed === false) {

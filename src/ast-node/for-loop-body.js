@@ -7,44 +7,18 @@ class ForLoopBody extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    return true;
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const tm = context.sourceTextManager();
-    let k, v;
-
-    v = context.parse('temp_var').expr;
-
-    if (tm.readRegexp(/^\s*,\s*/)) {
-      tm.whitespace();
-      tm.next(',');
-      tm.whitespace();
-      k = v;
-      v = context.parse('temp_var').expr;
+    if (context.read('for_loop_body_with_value')) {
+      return context.parse('for_loop_body_with_value');
     }
 
-    tm.whitespaceRequired();
-    tm.next('in');
-    tm.whitespaceRequired();
+    if (context.read('for_loop_body_with_key_and_value')) {
+      return context.parse('for_loop_body_with_key_and_value');
+    }
 
-    const array = context.parse('var');
-
-    tm.whitespace();
-
-    return {
-      type: this.type(),
-      tmp_k: k,
-      tmp_v: v,
-      keys: array.keys,
-    };
+    throw new Error('syntax error');
   }
 }
 

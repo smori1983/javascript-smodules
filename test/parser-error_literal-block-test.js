@@ -11,7 +11,7 @@ QUnit.test('literal block - error - only open tag', function (assert) {
 
   assert.throws(function () {
     this.parser.parse(src);
-  }, /not closed by {endliteral}/);
+  }, Error);
 });
 
 QUnit.test('literal block - error - only close tag', function (assert) {

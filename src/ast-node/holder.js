@@ -7,31 +7,13 @@ class Holder extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    const config = context.config();
-    const tm = context.lookaheadTextManager();
-
-    try {
-      tm.next(config.openDelimiter());
-      tm.whitespace();
-      tm.next('$');
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
     const config = context.config();
     const tm = context.sourceTextManager();
 
+    tm.whitespace();
     tm.next(config.openDelimiter());
     tm.whitespace();
 

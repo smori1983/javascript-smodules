@@ -7,41 +7,20 @@ class ValueNull extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    try {
-      this._consume(context.config(), context.lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._consume(context.config(), context.sourceTextManager());
+    const tm = context.sourceTextManager();
+    const regexp = /^(null)[^\w]/;
+
+    tm.whitespace();
+    const matched = tm.regexpMatched(regexp, 'null should be written');
+    tm.next(matched[1]);
 
     return {
       type: 'value',
       value: null,
     };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @private
-   */
-  _consume(config, tm) {
-    const regexp = /^(null)[^\w]/;
-    const matched = tm.regexpMatched(regexp, 'null should be written');
-
-    tm.next(matched[1]);
   }
 }
 

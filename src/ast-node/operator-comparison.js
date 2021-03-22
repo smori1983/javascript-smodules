@@ -7,44 +7,20 @@ class OperatorComparison extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    try {
-      this._consume(context.config(), context.lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._consume(context.config(), context.sourceTextManager());
+    const tm = context.sourceTextManager();
+    const regexp = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
+
+    tm.whitespace();
+    const matched = tm.regexpMatched(regexp, 'comparer should be written');
+    tm.next(matched[0]);
 
     return {
       type: this.type(),
-      expr: matched,
+      expr: matched[0],
     };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @return {string}
-   * @private
-   */
-  _consume(config, tm) {
-    const regexp = /^(?:lte|lt|gte|gt|===|==|!==|!=)/;
-    const matched = tm.regexpMatched(regexp, 'comparer should be written');
-
-    tm.next(matched[0]);
-
-    return matched[0];
   }
 }
 

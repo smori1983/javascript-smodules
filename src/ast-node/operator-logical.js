@@ -7,44 +7,20 @@ class OperatorLogical extends AstNode {
 
   /**
    * @param {ParseContext} context
-   * @return {boolean}
-   */
-  read(context) {
-    try {
-      this._consume(context.config(), context.lookaheadTextManager());
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param {ParseContext} context
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._consume(context.config(), context.sourceTextManager());
+    const tm = context.sourceTextManager();
+    const regexp = /^(and|or)[^\w]/;
+
+    tm.whitespace();
+    const matched = tm.regexpMatched(regexp, '"and" or "or" should be written');
+    tm.next(matched[1]);
 
     return {
       type: this.type(),
-      expr: matched,
+      expr: matched[1],
     };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @return {string}
-   * @private
-   */
-  _consume(config, tm) {
-    const regexp = /^(and|or)[^\w]/;
-    const matched = tm.regexpMatched(regexp, '"and" or "or" should be written');
-
-    tm.next(matched[1]);
-
-    return matched[1];
   }
 }
 
