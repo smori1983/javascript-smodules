@@ -13,6 +13,7 @@ class Holder extends AstNode {
     const config = context.config();
     const tm = context.sourceTextManager();
 
+    tm.whitespace();
     tm.next(config.openDelimiter());
     tm.whitespace();
 
