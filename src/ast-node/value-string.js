@@ -10,27 +10,17 @@ class ValueString extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const matched = this._consume(context.config(), context.sourceTextManager());
+    const tm = context.sourceTextManager();
+    const regexp = /^(["'])(?:\\\1|\s|\S)*?\1/;
+
+    tm.whitespace();
+    const matched = tm.regexpMatched(regexp, 'string expression not closed');
+    tm.next(matched[0]);
 
     return {
       type: 'value',
-      value: matched,
+      value: matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]),
     };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @return {string}
-   * @private
-   */
-  _consume(config, tm) {
-    const regexp = /^(["'])(?:\\\1|\s|\S)*?\1/;
-    const matched = tm.regexpMatched(regexp, 'string expression not closed');
-
-    tm.next(matched[0]);
-
-    return matched[0].slice(1, -1).replace('\\' + matched[1], matched[1]);
   }
 }
 
