@@ -20,17 +20,18 @@ class Literal extends AstNode {
     context.parse('literal_open');
 
     while (!tm.eof()) {
-      if (context.read('delimiter_open')) {
-        value += context.parse('delimiter_open').expr;
-      } else if (context.read('delimiter_close')) {
-        value += context.parse('delimiter_close').expr;
-      } else if (context.read('literal_close')) {
-        context.parse('literal_close');
-        closed = true;
-        break;
-      } else {
-        value += tm.next(tm.getChar());
+      if (tm.charIs(config.openDelimiter())) {
+        if (context.read('delimiter_open')) {
+          value += context.parse('delimiter_open').expr;
+        } else if (context.read('delimiter_close')) {
+          value += context.parse('delimiter_close').expr;
+        } else if (context.read('literal_close')) {
+          context.parse('literal_close');
+          closed = true;
+          break;
+        }
       }
+      value += tm.next(tm.getChar());
     }
 
     if (closed === false) {
