@@ -21,13 +21,13 @@ class ForLoopBodyWithKeyAndValue extends AstNode {
     tm.whitespaceRequired();
     tm.next('in');
     tm.whitespaceRequired();
-    const array = context.parse('var');
+    const keys = context.parse('var').keys;
 
     return {
       type: this.type(),
       tmp_k: k,
       tmp_v: v,
-      keys: array.keys,
+      keys: keys,
     };
   }
 }
