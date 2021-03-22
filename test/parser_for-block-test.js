@@ -16,7 +16,7 @@ QUnit.test('for block - only value part in dummy variable', function (assert) {
   const block = result[0];
 
   assert.strictEqual(block.type, 'for_loop');
-  assert.strictEqual(typeof block.ctrl.tmp_k, 'undefined');
+  assert.strictEqual(block.ctrl.tmp_k, null);
   assert.strictEqual(block.ctrl.tmp_v, 'item');
   assert.strictEqual(block.ctrl.keys.join('.'), 'items');
   assert.strictEqual(block.children.length, 3);

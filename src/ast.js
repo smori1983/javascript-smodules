@@ -32,6 +32,8 @@ const ForLoop = require('./ast-node/for-loop');
 const ForLoopOpen = require('./ast-node/for-loop-open');
 const ForLoopClose = require('./ast-node/for-loop-close');
 const ForLoopBody = require('./ast-node/for-loop-body');
+const ForLoopBodyWithValue = require('./ast-node/for-loop-body-with-value');
+const ForLoopBodyWithKeyAndValue = require('./ast-node/for-loop-body-with-key-and-value');
 
 class Ast {
   constructor() {
@@ -88,6 +90,8 @@ class Ast {
     this._registerNode(new ForLoopOpen());
     this._registerNode(new ForLoopClose());
     this._registerNode(new ForLoopBody());
+    this._registerNode(new ForLoopBodyWithValue());
+    this._registerNode(new ForLoopBodyWithKeyAndValue());
   }
 
   /**
