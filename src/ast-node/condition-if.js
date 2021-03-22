@@ -10,10 +10,17 @@ class ConditionIf extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._consume(context.config(), context.sourceTextManager());
+    const config = context.config();
+    const tm = context.sourceTextManager();
 
+    tm.whitespace();
+    tm.next(config.openDelimiter());
+    tm.whitespace();
+    tm.next('if');
+    tm.whitespaceRequired();
     const ctrl = context.parse('condition_body');
-    context.sourceTextManager().next(context.config().closeDelimiter());
+    tm.whitespace();
+    tm.next(context.config().closeDelimiter());
     const children = context.parse('main_in_block').children;
 
     return {
@@ -21,18 +28,6 @@ class ConditionIf extends AstNode {
       ctrl: ctrl,
       children: children,
     };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @private
-   */
-  _consume(config, tm) {
-    tm.next(config.openDelimiter());
-    tm.whitespace();
-    tm.next('if');
-    tm.whitespaceRequired();
   }
 }
 
