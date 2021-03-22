@@ -12,10 +12,10 @@ class Literal extends AstNode {
   parse(context) {
     const config = context.config();
     const tm = context.sourceTextManager();
-    let value = '';
-    let closed = false;
     const startLine = tm.getLine();
     const startAt = tm.getAt();
+    let value = '';
+    let closed = false;
 
     context.parse('literal_open');
 
