@@ -51,11 +51,7 @@ class ParseContext {
    * @return {boolean}
    */
   read(type) {
-    const lookaheadContext = new ParseContext(
-      this.config(),
-      this.lookaheadTextManager(),
-      this.ast()
-    );
+    const lookaheadContext = new ParseContext(this.config(), this.lookaheadTextManager(), this.ast());
 
     try {
       this.astNode(type).parse(lookaheadContext);
