@@ -10,32 +10,19 @@ class TempVar extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    try {
-      const expr = this._consume(context.config(), context.sourceTextManager());
+    const tm = context.sourceTextManager();
 
-      return {
-        type: this.type(),
-        expr: expr,
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @return {string}
-   * @private
-   */
-  _consume(config, tm) {
+    tm.whitespace();
     const s = tm.next('$') + tm.consumeWhile(/\w/);
 
     if (s === '$') {
       throw new Error('tmp variable not found');
     }
 
-    return s.slice(1);
+    return {
+      type: this.type(),
+      expr: s.slice(1),
+    };
   }
 }
 
