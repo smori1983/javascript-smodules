@@ -10,24 +10,19 @@ class ForLoopClose extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    this._consume(context.config(), context.sourceTextManager());
+    const config = context.config();
+    const tm = context.sourceTextManager();
 
-    return {
-      type: this.type(),
-    };
-  }
-
-  /**
-   * @param {ParseConfig} config
-   * @param {TextManager} tm
-   * @private
-   */
-  _consume(config, tm) {
+    tm.whitespace();
     tm.next(config.openDelimiter());
     tm.whitespace();
     tm.next('endfor');
     tm.whitespace();
     tm.next(config.closeDelimiter());
+
+    return {
+      type: this.type(),
+    };
   }
 }
 
