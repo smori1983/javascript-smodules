@@ -1,3 +1,5 @@
+const ParseConfig = require('./parse-config');
+
 class TextManager {
   /**
    * @param {string} sourceText
@@ -6,6 +8,8 @@ class TextManager {
    * @param {number} at
    */
   constructor(sourceText, ptr, line, at) {
+    this._config = new ParseConfig();
+
     this._sourceText = sourceText;
     this._ptr = ptr;
     this._ch = sourceText.charAt(ptr);
@@ -219,6 +223,20 @@ class TextManager {
     }
 
     return result;
+  }
+
+  /**
+   * @return {string}
+   */
+  consumeOpenDelimiter() {
+    return this.next(this._config.openDelimiter());
+  }
+
+  /**
+   * @return {string}
+   */
+  consumeCloseDelimiter() {
+    return this.next(this._config.closeDelimiter());
   }
 }
 
