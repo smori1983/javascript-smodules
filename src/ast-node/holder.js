@@ -10,18 +10,17 @@ class Holder extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const config = context.config();
     const tm = context.sourceTextManager();
 
     tm.whitespace();
-    tm.next(config.openDelimiter());
+    tm.consumeOpenDelimiter();
     tm.whitespace();
 
     const keySection = context.parse('var');
     const filterSection = context.parse('filter_chain');
 
     tm.whitespace();
-    tm.next(config.closeDelimiter());
+    tm.consumeCloseDelimiter();
 
     return {
       type: this.type(),

@@ -10,15 +10,14 @@ class DelimiterOpen extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    const config = context.config();
     const tm = context.sourceTextManager();
 
     tm.whitespace();
-    tm.next(config.openDelimiter());
+    tm.consumeOpenDelimiter();
     tm.whitespace();
     tm.next('open');
     tm.whitespace();
-    tm.next(config.closeDelimiter());
+    tm.consumeCloseDelimiter();
 
     return {
       type: this.type(),
