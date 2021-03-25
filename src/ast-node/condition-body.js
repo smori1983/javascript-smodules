@@ -16,14 +16,10 @@ class ConditionBody extends AstNode {
    * @return {AstNodeParseResult}
    */
   parse(context) {
-    try {
-      return {
-        type: this.type(),
-        stack: this._reversePolish.parse(context),
-      };
-    } catch (e) {
-      context.exception(e.message);
-    }
+    return {
+      type: this.type(),
+      stack: this._reversePolish.parse(context),
+    };
   }
 }
 

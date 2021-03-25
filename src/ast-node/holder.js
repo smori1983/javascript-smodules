@@ -16,16 +16,16 @@ class Holder extends AstNode {
     tm.consumeOpenDelimiter();
     tm.whitespace();
 
-    const keySection = context.parse('var');
-    const filterSection = context.parse('filter_chain');
+    const keys = context.parse('var').keys;
+    const filters = context.parse('filter_chain').filters;
 
     tm.whitespace();
     tm.consumeCloseDelimiter();
 
     return {
       type: this.type(),
-      keys: keySection.keys,
-      filters: filterSection.filters,
+      keys: keys,
+      filters: filters,
     };
   }
 }

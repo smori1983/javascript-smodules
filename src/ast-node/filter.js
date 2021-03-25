@@ -51,13 +51,7 @@ class Filter extends AstNode {
 
       while (!tm.eof()) {
         tm.whitespace();
-
-        if (context.read('value') === false) {
-          throw new Error('invalid filter args');
-        }
-
         args.push(context.parse('value').value);
-
         tm.whitespace();
 
         if (tm.charIs(',')) {

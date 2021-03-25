@@ -19,7 +19,7 @@ class ConditionElseif extends AstNode {
     tm.whitespaceRequired();
     const ctrl = context.parse('condition_body');
     tm.whitespace();
-    tm.next(context.config().closeDelimiter());
+    tm.consumeCloseDelimiter();
     const children = context.parse('main_in_block').children;
 
     return {
