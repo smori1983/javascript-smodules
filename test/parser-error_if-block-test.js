@@ -34,6 +34,10 @@ QUnit.test('if elseif else - 5', (assert) => {
   parseError(assert, '{if $foo}<p>foo</p>{if $bar}<p>bar</p>{endif}');
 });
 
+QUnit.test('order of statement', (assert) => {
+  parseError(assert, '{if $value1}<p>1</p>{else}<p>2</p>{elseif $value2}<p>3</p>{endif}');
+});
+
 QUnit.test('condition - no space 1', (assert) => {
   parseError(assert, '{if$foo }<p>ok</p>{endif}');
 });
