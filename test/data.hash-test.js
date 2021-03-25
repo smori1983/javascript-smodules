@@ -7,14 +7,14 @@ QUnit.module('data.hash', {
 });
 
 QUnit.test('add', function (assert) {
-  this.hash.add('hoge', 'test');
+  this.hash.add('key1', 'value1');
 
-  assert.strictEqual(this.hash.has('hoge'), true);
-  assert.strictEqual(this.hash.get('hoge'), 'test');
+  assert.strictEqual(this.hash.has('key1'), true);
+  assert.strictEqual(this.hash.get('key1'), 'value1');
 
-  this.hash.add('hoge', 'hogehoge');
+  this.hash.add('key1', 'value2');
 
-  assert.strictEqual(this.hash.get('hoge'), 'hogehoge');
+  assert.strictEqual(this.hash.get('key1'), 'value2');
 });
 
 QUnit.test('remove', function (assert) {

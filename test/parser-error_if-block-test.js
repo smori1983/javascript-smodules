@@ -7,7 +7,7 @@ QUnit.module('parser - error', {
 });
 
 QUnit.test('if block - if elseif else - error 1', function (assert) {
-  const src = '{if $foo}<p>hoge</p>';
+  const src = '{if $foo}<p>foo</p>';
 
   assert.throws(function () {
     this.parser.parse(src);
@@ -15,7 +15,7 @@ QUnit.test('if block - if elseif else - error 1', function (assert) {
 });
 
 QUnit.test('if block - if elseif else - error 2', function (assert) {
-  const src = '{elseif $foo}<p>hoge</p>{endif}';
+  const src = '{elseif $foo}<p>foo</p>{endif}';
 
   assert.throws(function () {
     this.parser.parse(src);
@@ -23,7 +23,7 @@ QUnit.test('if block - if elseif else - error 2', function (assert) {
 });
 
 QUnit.test('if block - if elseif else - error 3', function (assert) {
-  const src = '{else}<p>hoge</p>{endif}';
+  const src = '{else}<p>foo</p>{endif}';
 
   assert.throws(function () {
     this.parser.parse(src);

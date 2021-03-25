@@ -123,8 +123,8 @@ QUnit.test('if block - if elseif else', function (assert) {
 
 QUnit.test('if block - condition - simple', function (assert) {
   const src =
-    '{ if $foo === "hoge" }' +
-    '<p>hoge</p>' +
+    '{ if $foo === "value1" }' +
+    '<p>ok</p>' +
     '{ endif }';
   const result = this.parser.parse(src);
 
@@ -134,15 +134,15 @@ QUnit.test('if block - condition - simple', function (assert) {
   assert.strictEqual(stack[0].type, 'var');
   assert.strictEqual(stack[0].keys.join('.'), 'foo');
   assert.strictEqual(stack[1].type, 'value');
-  assert.strictEqual(stack[1].value, 'hoge');
+  assert.strictEqual(stack[1].value, 'value1');
   assert.strictEqual(stack[2].type, 'comp');
   assert.strictEqual(stack[2].expr, '===');
 });
 
 QUnit.test('if block - condition - redundant round brackets', function (assert) {
   const src =
-    '{ if ( ( ( $foo === "hoge" ) ) ) }' +
-    '<p>hoge</p>' +
+    '{ if ( ( ( $foo === "1" ) ) ) }' +
+    '<p>OK</p>' +
     '{ endif }';
   const result = this.parser.parse(src);
 
@@ -152,7 +152,7 @@ QUnit.test('if block - condition - redundant round brackets', function (assert) 
   assert.strictEqual(stack[0].type, 'var');
   assert.strictEqual(stack[0].keys.join('.'), 'foo');
   assert.strictEqual(stack[1].type, 'value');
-  assert.strictEqual(stack[1].value, 'hoge');
+  assert.strictEqual(stack[1].value, '1');
   assert.strictEqual(stack[2].type, 'comp');
   assert.strictEqual(stack[2].expr, '===');
 });

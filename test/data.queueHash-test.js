@@ -40,7 +40,7 @@ QUnit.test('check keys', function (assert) {
 });
 
 QUnit.test('using non-existent key', function (assert) {
-  assert.strictEqual(this.qh.has('hoge'), false);
-  assert.strictEqual(this.qh.sizeOf('hoge'), 0);
-  assert.strictEqual(typeof this.qh.popFrom('hoge'), 'undefined');
+  assert.strictEqual(this.qh.has('unknown'), false);
+  assert.strictEqual(this.qh.sizeOf('unknown'), 0);
+  assert.strictEqual(typeof this.qh.popFrom('unknown'), 'undefined');
 });
