@@ -2,7 +2,7 @@ const SourceTextManager = require('../src/source-text-manager');
 
 QUnit.module('LookaheadTextManager');
 
-QUnit.test('getSourceText()', function (assert) {
+QUnit.test('getSourceText()', (assert) => {
   const source = '123456789';
   const sourceTextManager = new SourceTextManager(source);
 
@@ -14,7 +14,7 @@ QUnit.test('getSourceText()', function (assert) {
   assert.strictEqual(lookaheadTextManager.getSourceText(), source);
 });
 
-QUnit.test('getPtr() - 1', function (assert) {
+QUnit.test('getPtr() - 1', (assert) => {
   const source = '123456789';
   const sourceTextManager = new SourceTextManager(source);
 
@@ -26,7 +26,7 @@ QUnit.test('getPtr() - 1', function (assert) {
   assert.strictEqual(lookaheadTextManager.getPtr(), 0);
 });
 
-QUnit.test('getPtr() - 2', function (assert) {
+QUnit.test('getPtr() - 2', (assert) => {
   const source = '123456789';
   const sourceTextManager = new SourceTextManager(source);
 
@@ -38,7 +38,7 @@ QUnit.test('getPtr() - 2', function (assert) {
   assert.strictEqual(lookaheadTextManager.getPtr(), 3);
 });
 
-QUnit.test('getPtr() - 3', function (assert) {
+QUnit.test('getPtr() - 3', (assert) => {
   const source = '123456789';
   const sourceTextManager = new SourceTextManager(source);
 
@@ -52,7 +52,7 @@ QUnit.test('getPtr() - 3', function (assert) {
   assert.strictEqual(lookaheadTextManager.getPtr(), 6);
 });
 
-QUnit.test('getChar()', function (assert) {
+QUnit.test('getChar()', (assert) => {
   const source = '123456789';
   const sourceTextManager = new SourceTextManager(source);
 

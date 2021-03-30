@@ -1,135 +1,79 @@
 const Parser = require('../src/parser');
 
-QUnit.module('parser - error', {
-  beforeEach: function () {
-    this.parser = new Parser();
-  },
+/**
+ * @param {Assert} assert
+ * @param {string} text
+ */
+const parseError = (assert, text) => {
+  const parser = new Parser();
+
+  assert.throws(() => {
+    parser.parse(text);
+  }, Error);
+};
+
+QUnit.module('parser - for - error');
+
+QUnit.test('lack of index argument', (assert) => {
+  parseError(assert, '{for , $item in $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - lack of index argument', function (assert) {
-  const src = '{for , $item in $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('invalid index argument', (assert) => {
+  parseError(assert, '{for $, $item in $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - invalid index argument', function (assert) {
-  const src = '{for $, $item in $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('lack of comma', (assert) => {
+  parseError(assert, '{for $idx $item in $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - lack of comma', function (assert) {
-  const src = '{for $idx $item in $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('lack of value argument', (assert) => {
+  parseError(assert, '{for $idx , in $items}<p>{$idx}</p>{endfor}');
 });
 
-QUnit.test('for block - error - lack of value argument', function (assert) {
-  const src = '{for $idx , in $items}<p>{$idx}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('invalid value argument', (assert) => {
+  parseError(assert, '{for $idx , $ in $items}<p>{$idx}</p>{endfor}');
 });
 
-QUnit.test('for block - error - invalid value argument', function (assert) {
-  const src = '{for $idx , $ in $items}<p>{$idx}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('lack of in 1', (assert) => {
+  parseError(assert, '{for $item $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - lack of in 1', function (assert) {
-  const src = '{for $item $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('lack of in 2', (assert) => {
+  parseError(assert, '{for $idx , $item $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - lack of in 2', function (assert) {
-  const src = '{for $idx , $item $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('lack of haystack', (assert) => {
+  parseError(assert, '{for $idx , $item in}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - lack of haystack', function (assert) {
-  const src = '{for $idx , $item in}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('too many elements 1', (assert) => {
+  parseError(assert, '{for $idx , $item , $foo in $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - too many elements 1', function (assert) {
-  const src = '{for $idx , $item , $foo in $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('too many elements 2', (assert) => {
+  parseError(assert, '{for $idx , $item in $items1 , $items2}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - too many elements 2', function (assert) {
-  const src = '{for $idx , $item in $items1 , $items2}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('too many elements 3', (assert) => {
+  parseError(assert, '{for $idx , $item in $items1 $items2}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - too many elements 3', function (assert) {
-  const src = '{for $idx , $item in $items1 $items2}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('no space after for', (assert) => {
+  parseError(assert, '{for$item in $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - no space after for', function (assert) {
-  const src = '{for$item in $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('no space around in 1', (assert) => {
+  parseError(assert, '{for $itemin $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - no space around in 1', function (assert) {
-  const src = '{for $itemin $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('no space around in 2', (assert) => {
+  parseError(assert, '{for $item in$items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - no space around in 2', function (assert) {
-  const src = '{for $item in$items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('no space around in 3', (assert) => {
+  parseError(assert, '{for $idx, $itemin $items}<p>{$item}</p>{endfor}');
 });
 
-QUnit.test('for block - error - no space around in 3', function (assert) {
-  const src = '{for $idx, $itemin $items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
-});
-
-QUnit.test('for block - error - no space around in 4', function (assert) {
-  const src = '{for $idx, $item in$items}<p>{$item}</p>{endfor}';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('no space around in 4', (assert) => {
+  parseError(assert, '{for $idx, $item in$items}<p>{$item}</p>{endfor}');
 });

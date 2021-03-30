@@ -1,14 +1,20 @@
 const Parser = require('../src/parser');
 
-QUnit.module('parser', {
-  beforeEach: function () {
-    this.parser = new Parser();
-  },
-});
+/**
+ * @param {string} text
+ * @return {AstNodeParseResult[]}
+ */
+const parse = (text) => {
+  const parser = new Parser();
 
-QUnit.test('holder block - no filters', function (assert) {
-  const src = '{ $foo.bar }';
-  const result = this.parser.parse(src);
+  return parser.parse(text);
+};
+
+QUnit.module('parser - holder');
+
+QUnit.test('no filters', (assert) => {
+  const text = '{ $foo.bar }';
+  const result = parse(text);
 
   assert.strictEqual(result.length, 1);
   assert.strictEqual(result[0].type, 'holder');
@@ -18,9 +24,9 @@ QUnit.test('holder block - no filters', function (assert) {
   assert.strictEqual(result[0].filters.length, 0);
 });
 
-QUnit.test('holder block - filters with no args', function (assert) {
-  const src = '{ $foo | filter1 | filter2 }';
-  const result = this.parser.parse(src);
+QUnit.test('filters with no args', (assert) => {
+  const text = '{ $foo | filter1 | filter2 }';
+  const result = parse(text);
 
   const filter1 = result[0].filters[0];
   const filter2 = result[0].filters[1];
@@ -31,9 +37,9 @@ QUnit.test('holder block - filters with no args', function (assert) {
   assert.strictEqual(filter2.args.length, 0);
 });
 
-QUnit.test('holder block - filter with args - null, true and false', function (assert) {
-  const src = '{ $foo | filter : null, true, false }';
-  const result = this.parser.parse(src);
+QUnit.test('filter with args - null, true and false', (assert) => {
+  const text = '{ $foo | filter : null, true, false }';
+  const result = parse(text);
 
   const filter = result[0].filters[0];
 
@@ -42,9 +48,9 @@ QUnit.test('holder block - filter with args - null, true and false', function (a
   assert.strictEqual(filter.args[2], false);
 });
 
-QUnit.test('holder block - filter with args - string', function (assert) {
-  const src = '{ $foo | filter : "test", "{delimiter}", "it\'s string" }';
-  const result = this.parser.parse(src);
+QUnit.test('filter with args - string', (assert) => {
+  const text = '{ $foo | filter : "test", "{delimiter}", "it\'s string" }';
+  const result = parse(text);
 
   const filter = result[0].filters[0];
 
@@ -53,9 +59,9 @@ QUnit.test('holder block - filter with args - string', function (assert) {
   assert.strictEqual(filter.args[2], 'it\'s string');
 });
 
-QUnit.test('holder block - filter with args - number', function (assert) {
-  const src = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }';
-  const result = this.parser.parse(src);
+QUnit.test('filter with args - number', (assert) => {
+  const text = '{ $foo | filter : 0, 10, -99, 12.3, -0.123, 1e+1, 1e1, 10e-1 }';
+  const result = parse(text);
 
   const filter = result[0].filters[0];
 

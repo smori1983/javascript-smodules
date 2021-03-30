@@ -1,14 +1,20 @@
 const Parser = require('../src/parser');
 
-QUnit.module('parser', {
-  beforeEach: function () {
-    this.parser = new Parser();
-  },
-});
+/**
+ * @param {string} text
+ * @return {AstNodeParseResult[]}
+ */
+const parse = (text) => {
+  const parser = new Parser();
 
-QUnit.test('literal block', function (assert) {
-  const src = '<div>{literal}{foo} {open}bar{close} {open}endliteral{close} function() {};{endliteral}</div>';
-  const result = this.parser.parse(src);
+  return parser.parse(text);
+};
+
+QUnit.module('parser - literal',);
+
+QUnit.test('1', (assert) => {
+  const text = '<div>{literal}{foo} {open}bar{close} {open}endliteral{close} function() {};{endliteral}</div>';
+  const result = parse(text);
 
   assert.strictEqual(result.length, 3);
   assert.strictEqual(result[0].type, 'normal');

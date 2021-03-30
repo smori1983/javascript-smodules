@@ -1,17 +1,23 @@
 const Parser = require('../src/parser');
 
-QUnit.module('parser', {
-  beforeEach: function () {
-    this.parser = new Parser();
-  },
-});
+/**
+ * @param {string} text
+ * @return {AstNodeParseResult[]}
+ */
+const parse = (text) => {
+  const parser = new Parser();
 
-QUnit.test('for block - only value part in dummy variable', function (assert) {
-  const src =
+  return parser.parse(text);
+};
+
+QUnit.module('parser - for');
+
+QUnit.test('only value part in dummy variable', (assert) => {
+  const text =
     '{ for $item in $items }' +
     '<p>{ $item | h }</p>' +
     '{ endfor }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const block = result[0];
 
@@ -22,12 +28,12 @@ QUnit.test('for block - only value part in dummy variable', function (assert) {
   assert.strictEqual(block.children.length, 3);
 });
 
-QUnit.test('for block - use index in dummy variable', function (assert) {
-  const src =
+QUnit.test('use index in dummy variable', (assert) => {
+  const text =
     '{ for $idx, $item in $items }' +
     '<p>{ $item | h }</p>' +
     '{ endfor }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const block = result[0];
 
@@ -38,12 +44,12 @@ QUnit.test('for block - use index in dummy variable', function (assert) {
   assert.strictEqual(block.children.length, 3);
 });
 
-QUnit.test('for block - use index in dummy variable - space before comma', function (assert) {
-  const src =
+QUnit.test('use index in dummy variable - space before comma', (assert) => {
+  const text =
     '{ for $idx , $item in $items }' +
     '<p>{ $item | h }</p>' +
     '{ endfor }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const block = result[0];
 
@@ -54,12 +60,12 @@ QUnit.test('for block - use index in dummy variable - space before comma', funct
   assert.strictEqual(block.children.length, 3);
 });
 
-QUnit.test('for block - variable chain in haystack', function (assert) {
-  const src =
+QUnit.test('variable chain in haystack', (assert) => {
+  const text =
     '{ for $item in $items.key1.key2 }' +
     '<p>{ $item | h }</p>' +
     '{ endfor }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const block = result[0];
 

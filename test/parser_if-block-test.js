@@ -1,17 +1,23 @@
 const Parser = require('../src/parser');
 
-QUnit.module('parser', {
-  beforeEach: function () {
-    this.parser = new Parser();
-  },
-});
+/**
+ * @param {string} text
+ * @return {AstNodeParseResult[]}
+ */
+const parse = (text) => {
+  const parser = new Parser();
 
-QUnit.test('if block - compare - null', function (assert) {
-  const src =
+  return parser.parse(text);
+};
+
+QUnit.module('parser - if');
+
+QUnit.test('compare - null', (assert) => {
+  const text =
     '{ if $foo === null }' +
     '<p>foo</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -24,12 +30,12 @@ QUnit.test('if block - compare - null', function (assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - compare - bool', function (assert) {
-  const src =
+QUnit.test('compare - bool', (assert) => {
+  const text =
     '{ if $foo === true }' +
     '<p>foo</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -42,12 +48,12 @@ QUnit.test('if block - compare - bool', function (assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - compare - string', function (assert) {
-  const src =
+QUnit.test('compare - string', (assert) => {
+  const text =
     '{ if $foo === "foo" }' +
     '<p>foo</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -60,12 +66,12 @@ QUnit.test('if block - compare - string', function (assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - compare - number', function (assert) {
-  const src =
+QUnit.test('compare - number', (assert) => {
+  const text =
     '{ if $foo === 1.23 }' +
     '<p>foo</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -78,10 +84,10 @@ QUnit.test('if block - compare - number', function (assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - if elseif else', function (assert) {
+QUnit.test('if elseif else', (assert) => {
   let section;
 
-  const src =
+  const text =
     '{ if $value1 }' +
     '<div>value1</div>' +
     '{ elseif $value2 }' +
@@ -91,7 +97,7 @@ QUnit.test('if block - if elseif else', function (assert) {
     '{ else }' +
     '<div>value4</div>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   assert.strictEqual(result[0].type, 'condition');
   assert.strictEqual(result[0].children.length, 4);
@@ -121,12 +127,12 @@ QUnit.test('if block - if elseif else', function (assert) {
   assert.strictEqual(section.children[0].value, '<div>value4</div>');
 });
 
-QUnit.test('if block - condition - simple', function (assert) {
-  const src =
+QUnit.test('condition - simple', (assert) => {
+  const text =
     '{ if $foo === "value1" }' +
     '<p>ok</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -139,12 +145,12 @@ QUnit.test('if block - condition - simple', function (assert) {
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - condition - redundant round brackets', function (assert) {
-  const src =
+QUnit.test('condition - redundant round brackets', (assert) => {
+  const text =
     '{ if ( ( ( $foo === "1" ) ) ) }' +
     '<p>OK</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -157,12 +163,12 @@ QUnit.test('if block - condition - redundant round brackets', function (assert) 
   assert.strictEqual(stack[2].expr, '===');
 });
 
-QUnit.test('if block - condition - complicated', function (assert) {
-  const src =
+QUnit.test('condition - complicated', (assert) => {
+  const text =
     '{ if $val1 gt 10 and $val2 gte -1 or $val3 lt 1.0 and $val4 lte -1.0 }' +
     '<p>ok</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -199,12 +205,12 @@ QUnit.test('if block - condition - complicated', function (assert) {
   assert.strictEqual(stack[14].expr, 'or');
 });
 
-QUnit.test('if block - condition - inversion of lval and rval', function (assert) {
-  const src =
+QUnit.test('condition - inversion of lval and rval', (assert) => {
+  const text =
     '{ if 10 !== $price }' +
     '<p>ok</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -217,12 +223,12 @@ QUnit.test('if block - condition - inversion of lval and rval', function (assert
   assert.strictEqual(stack[2].expr, '!==');
 });
 
-QUnit.test('if block - condition - priority of and/or', function (assert) {
-  const src =
+QUnit.test('condition - priority of and/or', (assert) => {
+  const text =
     '{ if ( $var1 or $var2 ) and $var3 }' +
     '<p>ok</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -239,12 +245,12 @@ QUnit.test('if block - condition - priority of and/or', function (assert) {
   assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('if block - and chain', function (assert) {
-  const src =
+QUnit.test('and chain', (assert) => {
+  const text =
     '{ if $var1 and $var2 and $var3 }' +
     '<p>ok</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
@@ -261,12 +267,12 @@ QUnit.test('if block - and chain', function (assert) {
   assert.strictEqual(stack[4].expr, 'and');
 });
 
-QUnit.test('if block - or chain', function (assert) {
-  const src =
+QUnit.test('or chain', (assert) => {
+  const text =
     '{ if $var1 or $var2 or $var3 }' +
     '<p>ok</p>' +
     '{ endif }';
-  const result = this.parser.parse(src);
+  const result = parse(text);
 
   const stack = result[0].children[0].ctrl.stack;
 
