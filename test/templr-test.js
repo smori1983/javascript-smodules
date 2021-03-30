@@ -1,28 +1,33 @@
 const Templr = require('../src/templr');
 
-QUnit.module('templr', {
-  beforeEach: function () {
-    this.templr = new Templr();
-  },
-});
+/**
+ * @param {string} source
+ * @param {Object} param
+ * @return {string}
+ */
+const render = (source, param) => {
+  return new Templr().render(source, param);
+};
 
-QUnit.test('normal block', function (assert) {
+QUnit.module('templr');
+
+QUnit.test('normal block', (assert) => {
   const src = '<p>{open}ok{close}</p>';
   const param = {};
   const expected = '<p>{ok}</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('literal block', function (assert) {
+QUnit.test('literal block', (assert) => {
   const src = '{literal}<p>{literal} {open}endliteral{close}</p>{endliteral}';
   const param = {};
   const expected = '<p>{literal} {endliteral}</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - simple', function (assert) {
+QUnit.test('if block - simple', (assert) => {
   const src =
     '{ if $foo }' +
     '<p>yes</p>' +
@@ -32,10 +37,10 @@ QUnit.test('if block - simple', function (assert) {
   const param = {foo: true};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - and', function (assert) {
+QUnit.test('if block - logical operator - and', (assert) => {
   const src =
     '{ if $foo and $bar }' +
     '<p>yes</p>' +
@@ -45,10 +50,10 @@ QUnit.test('if block - logical operator - and', function (assert) {
   const param = {foo: true, bar: false};
   const expected = '<p>no</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - and chain 1', function (assert) {
+QUnit.test('if block - logical operator - and chain 1', (assert) => {
   const src =
     '{ if $foo and $bar and $baz }' +
     '<p>yes</p>' +
@@ -58,10 +63,10 @@ QUnit.test('if block - logical operator - and chain 1', function (assert) {
   const param = {foo: true, bar: true, baz: true};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - and chain 2', function (assert) {
+QUnit.test('if block - logical operator - and chain 2', (assert) => {
   const src =
     '{ if $foo and $bar and $baz }' +
     '<p>yes</p>' +
@@ -71,10 +76,10 @@ QUnit.test('if block - logical operator - and chain 2', function (assert) {
   const param = {foo: false, bar: true, baz: true};
   const expected = '<p>no</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - and chain 3', function (assert) {
+QUnit.test('if block - logical operator - and chain 3', (assert) => {
   const src =
     '{ if $foo and $bar and $baz }' +
     '<p>yes</p>' +
@@ -84,10 +89,10 @@ QUnit.test('if block - logical operator - and chain 3', function (assert) {
   const param = {foo: true, bar: false, baz: true};
   const expected = '<p>no</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - and chain 4', function (assert) {
+QUnit.test('if block - logical operator - and chain 4', (assert) => {
   const src =
     '{ if $foo and $bar and $baz }' +
     '<p>yes</p>' +
@@ -97,10 +102,10 @@ QUnit.test('if block - logical operator - and chain 4', function (assert) {
   const param = {foo: true, bar: true, baz: false};
   const expected = '<p>no</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - or', function (assert) {
+QUnit.test('if block - logical operator - or', (assert) => {
   const src =
     '{ if $foo or $bar }' +
     '<p>yes</p>' +
@@ -110,10 +115,10 @@ QUnit.test('if block - logical operator - or', function (assert) {
   const param = {foo: true, bar: false};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - or chain 1', function (assert) {
+QUnit.test('if block - logical operator - or chain 1', (assert) => {
   const src =
     '{ if $foo or $bar or $baz }' +
     '<p>yes</p>' +
@@ -123,10 +128,10 @@ QUnit.test('if block - logical operator - or chain 1', function (assert) {
   const param = {foo: true, bar: true, baz: true};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - or chain 2', function (assert) {
+QUnit.test('if block - logical operator - or chain 2', (assert) => {
   const src =
     '{ if $foo or $bar or $baz }' +
     '<p>yes</p>' +
@@ -136,10 +141,10 @@ QUnit.test('if block - logical operator - or chain 2', function (assert) {
   const param = {foo: false, bar: true, baz: true};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - or chain 3', function (assert) {
+QUnit.test('if block - logical operator - or chain 3', (assert) => {
   const src =
     '{ if $foo or $bar or $baz }' +
     '<p>yes</p>' +
@@ -149,10 +154,10 @@ QUnit.test('if block - logical operator - or chain 3', function (assert) {
   const param = {foo: true, bar: false, baz: true};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - or chain 4', function (assert) {
+QUnit.test('if block - logical operator - or chain 4', (assert) => {
   const src =
     '{ if $foo or $bar or $baz }' +
     '<p>yes</p>' +
@@ -162,10 +167,10 @@ QUnit.test('if block - logical operator - or chain 4', function (assert) {
   const param = {foo: true, bar: true, baz: false};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - logical operator - combination', function (assert) {
+QUnit.test('if block - logical operator - combination', (assert) => {
   const src =
     '{ if $foo and ( $bar or $baz ) }' +
     '<p>yes</p>' +
@@ -175,10 +180,10 @@ QUnit.test('if block - logical operator - combination', function (assert) {
   const param = {foo: true, bar: false, baz: true};
   const expected = '<p>yes</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - comparative operator', function (assert) {
+QUnit.test('if block - comparative operator', (assert) => {
   const src =
     '{ if $price gte 100 }' +
     '<p>high</p>' +
@@ -190,10 +195,10 @@ QUnit.test('if block - comparative operator', function (assert) {
   const param = {price: 50};
   const expected = '<p>middle</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - comparative operator - "===" and "=="', function (assert) {
+QUnit.test('if block - comparative operator - "===" and "=="', (assert) => {
   const src =
     '{ if $foo === 1 }' +
     '<p>one</p>' +
@@ -204,10 +209,10 @@ QUnit.test('if block - comparative operator - "===" and "=="', function (assert)
   const param = {foo: true};
   const expected = '<p>two</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - property chainable', function (assert) {
+QUnit.test('if block - property chainable', (assert) => {
   const src =
     '{ if $data1.key and $data2.key }' +
     '<p>OK</p>' +
@@ -218,10 +223,10 @@ QUnit.test('if block - property chainable', function (assert) {
   };
   const expected = '<p>OK</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - property not chainable - and 1', function (assert) {
+QUnit.test('if block - property not chainable - and 1', (assert) => {
   const src =
     '{ if $data1.key1 and $data2.key2 }' +
     '<p>OK</p>' +
@@ -232,10 +237,10 @@ QUnit.test('if block - property not chainable - and 1', function (assert) {
   };
   const expected = '';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - property not chainable - and 2', function (assert) {
+QUnit.test('if block - property not chainable - and 2', (assert) => {
   const src =
     '{ if $data1.key1 and $data2.key2 }' +
     '<p>OK</p>' +
@@ -246,10 +251,10 @@ QUnit.test('if block - property not chainable - and 2', function (assert) {
   };
   const expected = '';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - property not chainable - or 1', function (assert) {
+QUnit.test('if block - property not chainable - or 1', (assert) => {
   const src =
     '{ if $data1.key1 or $data2.key2 }' +
     '<p>OK</p>' +
@@ -260,10 +265,10 @@ QUnit.test('if block - property not chainable - or 1', function (assert) {
   };
   const expected = '<p>OK</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - property not chainable - or 2', function (assert) {
+QUnit.test('if block - property not chainable - or 2', (assert) => {
   const src =
     '{ if $data1.key1 or $data2.key2 }' +
     '<p>OK</p>' +
@@ -274,10 +279,10 @@ QUnit.test('if block - property not chainable - or 2', function (assert) {
   };
   const expected = '<p>OK</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('if block - nested - for', function (assert) {
+QUnit.test('if block - nested - for', (assert) => {
   const src =
     '{ if $data1.status }' +
     '{ for $item in $data1.items }' +
@@ -292,10 +297,10 @@ QUnit.test('if block - nested - for', function (assert) {
   };
   const expected = '<p>a</p><p>b</p><p>c</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block', function (assert) {
+QUnit.test('for block', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<p>{ $item }</p>' +
@@ -303,10 +308,10 @@ QUnit.test('for block', function (assert) {
   const param = {items: ['one', 'two', 'three']};
   const expected = '<p>one</p><p>two</p><p>three</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - use index', function (assert) {
+QUnit.test('for block - use index', (assert) => {
   const src =
     '{ for $idx,$item in $items }' +
     '<p>{ $idx }-{ $item }</p>' +
@@ -314,10 +319,10 @@ QUnit.test('for block - use index', function (assert) {
   const param = {items: ['one', 'two']};
   const expected = '<p>0-one</p><p>1-two</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - nested', function (assert) {
+QUnit.test('for block - nested', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<ul>' +
@@ -338,10 +343,10 @@ QUnit.test('for block - nested', function (assert) {
     '<ul><li>3</li><li>4</li></ul>' +
     '<ul><li>5</li><li>6</li></ul>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - nested - if', function (assert) {
+QUnit.test('for block - nested - if', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<ul>' +
@@ -366,10 +371,10 @@ QUnit.test('for block - nested - if', function (assert) {
     '<ul><li>odd: 3</li><li>even: 4</li></ul>' +
     '<ul><li>odd: 5</li><li>even: 6</li></ul>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - nested - if with property access', function (assert) {
+QUnit.test('for block - nested - if with property access', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<ul>' +
@@ -400,10 +405,10 @@ QUnit.test('for block - nested - if with property access', function (assert) {
     '<ul><li>A</li></ul>' +
     '<ul><li>C</li></ul>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - not iterable', function (assert) {
+QUnit.test('for block - not iterable', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<p>{ $item }</p>' +
@@ -411,10 +416,10 @@ QUnit.test('for block - not iterable', function (assert) {
   const param = {items: 'hello, world!'};
   const expected = '';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - haystack property chainable', function (assert) {
+QUnit.test('for block - haystack property chainable', (assert) => {
   const src =
     '{ for $value in $items.data }' +
     '<p>{ $value }</p>' +
@@ -426,10 +431,10 @@ QUnit.test('for block - haystack property chainable', function (assert) {
   };
   const expected = '<p>1</p><p>2</p><p>3</p>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - haystack property not chainable 1', function (assert) {
+QUnit.test('for block - haystack property not chainable 1', (assert) => {
   const src =
     '{ for $item in $items.foo.bar }' +
     '<p>{ $item }</p>' +
@@ -437,10 +442,10 @@ QUnit.test('for block - haystack property not chainable 1', function (assert) {
   const param = {items: [1, 2, 3]};
   const expected = '';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - haystack property not chainable 2', function (assert) {
+QUnit.test('for block - haystack property not chainable 2', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<div>{ $item.name }</div>' +
@@ -456,10 +461,10 @@ QUnit.test('for block - haystack property not chainable 2', function (assert) {
   };
   const expected = '<div>name1</div><div>name2</div>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('for block - dummy variable chainable', function (assert) {
+QUnit.test('for block - dummy variable chainable', (assert) => {
   const src =
     '{ for $item in $items }' +
     '<div>{ $item.data.key1 }</div>' +
@@ -472,14 +477,14 @@ QUnit.test('for block - dummy variable chainable', function (assert) {
   };
   const expected = '<div>value1</div><div>value2</div>';
 
-  assert.strictEqual(this.templr.render(src, param), expected);
+  assert.strictEqual(render(src, param), expected);
 });
 
-QUnit.test('error - filter not found', function (assert) {
+QUnit.test('error - filter not found', (assert) => {
   const src = '<p>{ $value | foo }</p>';
   const param = {};
 
-  assert.throws(function () {
-    this.templr.render(src, param);
+  assert.throws(() => {
+    render(src, param);
   }, Error);
 });

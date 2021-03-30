@@ -1,27 +1,27 @@
 const Templr = require('../src/templr');
 
-QUnit.module('templr', {
-  beforeEach: function () {
-    this.templr = new Templr();
-  },
+QUnit.module('templr');
+
+QUnit.test('hasCache', (assert) => {
+  const templr = new Templr();
+
+  assert.strictEqual(templr.hasCache('tpl_1'), false);
+
+  templr.registerCache('tpl_1', '<p>hello, world</p>');
+
+  assert.strictEqual(templr.hasCache('tpl_1'), true);
 });
 
-QUnit.test('hasCache', function (assert) {
-  assert.strictEqual(this.templr.hasCache('tpl_1'), false);
+QUnit.test('clearCache', (assert) => {
+  const templr = new Templr();
 
-  this.templr.registerCache('tpl_1', '<p>hello, world</p>');
+  templr.registerCache('tpl_1', '<p>hello, world</p>');
 
-  assert.strictEqual(this.templr.hasCache('tpl_1'), true);
-});
+  assert.strictEqual(templr.renderCached('tpl_1', {}), '<p>hello, world</p>');
 
-QUnit.test('clearCache', function (assert) {
-  this.templr.registerCache('tpl_1', '<p>hello, world</p>');
-
-  assert.strictEqual(this.templr.renderCached('tpl_1', {}), '<p>hello, world</p>');
-
-  this.templr.clearCache();
+  templr.clearCache();
 
   assert.throws(() => {
-    this.templr.renderCached('tpl_1', {});
+    templr.renderCached('tpl_1', {});
   }, Error);
 });
