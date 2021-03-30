@@ -1,23 +1,23 @@
 const Parser = require('../src/parser');
 
-QUnit.module('parser - error', {
-  beforeEach: function () {
-    this.parser = new Parser();
-  },
+/**
+ * @param {Assert} assert
+ * @param {string} text
+ */
+const parseError = (assert, text) => {
+  const parser = new Parser();
+
+  assert.throws(() => {
+    parser.parse(text);
+  }, Error);
+};
+
+QUnit.module('parser - literal - error');
+
+QUnit.test('only open tag', (assert) => {
+  parseError(assert, '<div>{literal}</div>');
 });
 
-QUnit.test('literal block - error - only open tag', function (assert) {
-  const src = '<div>{literal}</div>';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
-});
-
-QUnit.test('literal block - error - only close tag', function (assert) {
-  const src = '<div>{endliteral}</div>';
-
-  assert.throws(function () {
-    this.parser.parse(src);
-  }, Error);
+QUnit.test('only close tag', (assert) => {
+  parseError(assert, '<div>{endliteral}</div>');
 });
