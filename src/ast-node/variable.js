@@ -13,15 +13,17 @@ class Variable extends AstNode {
     const tm = context.sourceTextManager();
 
     tm.whitespace();
-    const parsed = tm.next('$') + tm.consumeWhile(/[\w.]/);
+    tm.next('$');
 
-    if (/^\$$|^\$\.|\.$|\.\./.test(parsed)) {
+    const parsed = tm.consumeWhile(/[\w.]/);
+
+    if (parsed === '' || /^\.|\.$|\.\./.test(parsed)) {
       throw new Error('invalid variable expression');
     }
 
     return {
       type: this.type(),
-      keys: parsed.slice(1).split('.'),
+      keys: parsed.split('.'),
     };
   }
 }
