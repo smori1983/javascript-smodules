@@ -11,7 +11,7 @@ workflows:
       - node/test:
           matrix:
             parameters:
-              version: ['15.1', 'lts', '12.21']
+              version: ['16', 'lts']
           # For more information about matrix testing see the detailed blog post:
           # https://circleci.com/blog/circleci-matrix-jobs/
           # or the configuration reference:
