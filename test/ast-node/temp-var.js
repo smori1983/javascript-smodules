@@ -1,84 +1,84 @@
+const describe = require('mocha').describe;
+const it = require('mocha').it;
+const assert = require('assert');
 const contextBuilder = require('../../test_lib/parse-context-builder');
 
-QUnit.module('ast-node - temp-var');
+describe('ast-node', () => {
+  describe('temp-var', () => {
+    describe('read - error', () => {
+      it('empty string', () => {
+        const context = contextBuilder.build('');
+        assert.deepStrictEqual(context.read('temp_var'), false);
+      });
 
-QUnit.test('read - error - empty string', function (assert) {
-  const context = contextBuilder.build('');
+      it('$', () => {
+        const context = contextBuilder.build('$');
+        assert.deepStrictEqual(context.read('temp_var'), false);
+      });
 
-  assert.deepEqual(context.read('temp_var'), false);
-});
+      it('$$', () => {
+        const context = contextBuilder.build('$$');
+        assert.deepStrictEqual(context.read('temp_var'), false);
+      });
 
-QUnit.test('read - error - $', function (assert) {
-  const context = contextBuilder.build('$');
+      it('$.', () => {
+        const context = contextBuilder.build('$.');
+        assert.deepStrictEqual(context.read('temp_var'), false);
+      });
 
-  assert.deepEqual(context.read('temp_var'), false);
-});
+      it('$-', () => {
+        const context = contextBuilder.build('$-');
+        assert.deepStrictEqual(context.read('temp_var'), false);
+      });
+    });
 
-QUnit.test('read - error - $$', function (assert) {
-  const context = contextBuilder.build('$$');
+    describe('read - ok', () => {
+      it('$a', () => {
+        const context = contextBuilder.build('$a');
+        assert.deepStrictEqual(context.read('temp_var'), true);
+      });
 
-  assert.deepEqual(context.read('temp_var'), false);
-});
+      it('$a=', () => {
+        const context = contextBuilder.build('$a=');
+        assert.deepStrictEqual(context.read('temp_var'), true);
+      });
 
-QUnit.test('read - error - $.', function (assert) {
-  const context = contextBuilder.build('$.');
+      it('$a!==$b', () => {
+        const context = contextBuilder.build('$a!==$b');
+        assert.deepStrictEqual(context.read('temp_var'), true);
+      });
+    });
 
-  assert.deepEqual(context.read('temp_var'), false);
-});
+    describe('parse - ok', () => {
+      it('$a', () => {
+        const context = contextBuilder.build('$a');
+        const ast = context.parse('temp_var');
+        const expected = {
+          type: 'temp_var',
+          expr: 'a',
+        };
+        assert.deepStrictEqual(ast, expected);
+      });
 
-QUnit.test('read - error - $-', function (assert) {
-  const context = contextBuilder.build('$-');
+      it('$a=', () => {
+        const context = contextBuilder.build('$a=');
+        const ast = context.parse('temp_var');
+        const expected = {
+          type: 'temp_var',
+          expr: 'a',
+        };
+        assert.deepStrictEqual(ast, expected);
+      });
 
-  assert.deepEqual(context.read('temp_var'), false);
-});
-
-QUnit.test('read - ok - $a', function (assert) {
-  const context = contextBuilder.build('$a');
-
-  assert.deepEqual(context.read('temp_var'), true);
-});
-
-QUnit.test('read - ok - $a=', function (assert) {
-  const context = contextBuilder.build('$a=');
-
-  assert.deepEqual(context.read('temp_var'), true);
-});
-
-QUnit.test('read - ok - $a!==$b', function (assert) {
-  const context = contextBuilder.build('$a!==');
-
-  assert.deepEqual(context.read('temp_var'), true);
-});
-
-QUnit.test('parse - ok - $a', function (assert) {
-  const context = contextBuilder.build('$a');
-  const ast = context.parse('temp_var');
-  const expected = {
-    type: 'temp_var',
-    expr: 'a',
-  };
-
-  assert.deepEqual(ast, expected);
-});
-
-QUnit.test('parse - ok - $a=', function (assert) {
-  const context = contextBuilder.build('$a=');
-  const ast = context.parse('temp_var');
-  const expected = {
-    type: 'temp_var',
-    expr: 'a',
-  };
-
-  assert.deepEqual(ast, expected);
-});
-
-QUnit.test('parse - ok - $a!==', function (assert) {
-  const context = contextBuilder.build('$a!==');
-  const ast = context.parse('temp_var');
-  const expected = {
-    type: 'temp_var',
-    expr: 'a',
-  };
-
-  assert.deepEqual(ast, expected);
+      it('$a!==', () => {
+        const context = contextBuilder.build('$a!==');
+        const ast = context.parse('temp_var');
+        const expected = {
+          type: 'temp_var',
+          expr: 'a',
+        };
+        assert.deepStrictEqual(ast, expected);
+      });
+    });
+  });
 });

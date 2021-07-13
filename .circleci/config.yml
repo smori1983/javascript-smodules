@@ -11,8 +11,11 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          name: Run tests
+          name: Run tests (qunit)
           command: npm run test:cli
+      - run:
+          name: Run tests (mocha)
+          command: npm run test:mocha
 
 workflows:
   main:
