@@ -17,13 +17,13 @@ describe('templr-browser', () => {
   it('confirm require is cached', function () {
     templr1.registerCache('tpl_1', 'foo');
 
-    assert.equal(templr1.renderCached('tpl_1', {}), 'foo');
-    assert.equal(templr2.renderCached('tpl_1', {}), 'foo');
+    assert.deepStrictEqual(templr1.renderCached('tpl_1', {}), 'foo');
+    assert.deepStrictEqual(templr2.renderCached('tpl_1', {}), 'foo');
 
     templr2.registerCache('tpl_2', 'bar');
 
-    assert.equal(templr1.renderCached('tpl_2', {}), 'bar');
-    assert.equal(templr2.renderCached('tpl_2', {}), 'bar');
+    assert.deepStrictEqual(templr1.renderCached('tpl_2', {}), 'bar');
+    assert.deepStrictEqual(templr2.renderCached('tpl_2', {}), 'bar');
   });
 
   it('error thrown when template not registered', function () {
