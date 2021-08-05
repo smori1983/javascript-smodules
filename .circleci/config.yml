@@ -12,7 +12,7 @@ jobs:
       - node/install-packages
       - run:
           name: Run tests (mocha)
-          command: npm run test:mocha
+          command: npm run test:cli
 
 workflows:
   main:
