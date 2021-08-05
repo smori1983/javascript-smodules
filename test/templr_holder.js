@@ -145,7 +145,7 @@ describe('templr - holder', () => {
     const templr = new Templr();
 
     // create original filter
-    templr.addFilter('original', (value) => {
+    templr.addFilter('original', () => {
       return null;
     });
 
@@ -160,7 +160,7 @@ describe('templr - holder', () => {
     const templr = new Templr();
 
     // create original filter
-    templr.addFilter('original', (value) => {
+    templr.addFilter('original', () => {
       return null;
     });
 
