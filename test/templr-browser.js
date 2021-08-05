@@ -14,7 +14,7 @@ describe('templr-browser', () => {
     templr2.clearCache();
   });
 
-  it('confirm require is cached', function () {
+  it('confirm require is cached', () => {
     templr1.registerCache('tpl_1', 'foo');
 
     assert.deepStrictEqual(templr1.renderCached('tpl_1', {}), 'foo');
@@ -26,8 +26,8 @@ describe('templr-browser', () => {
     assert.deepStrictEqual(templr2.renderCached('tpl_2', {}), 'bar');
   });
 
-  it('error thrown when template not registered', function () {
-    assert.throws(function () {
+  it('error thrown when template not registered', () => {
+    assert.throws(() => {
       templr.renderCached('xxx', {});
     }, /template identified by "xxx" not registered/);
   });
