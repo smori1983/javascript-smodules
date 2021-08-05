@@ -11,7 +11,7 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          name: Run tests
+          name: Run tests (mocha)
           command: npm run test:cli
 
 workflows:

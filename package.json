@@ -8,8 +8,8 @@
     "build:test:browser": "webpack --config webpack.test_browser.config.js",
     "build:test:browser:clean": "rimraf test_browser/public/index.js",
     "build:test:browser:watch": "webpack --config webpack.test_browser.config.js --watch",
-    "test:cli": "qunit test",
-    "test:cli:watch": "watch 'npm run test:cli' src/ test/ --interval=1 --ignoreDotFiles",
+    "test:cli": "mocha test/*",
+    "test:cli:watch": "watch 'npm run test:mocha' src/ test/ --interval=1 --ignoreDotFiles",
     "test:browser:serve": "reload --port=9876 --dir=test_browser/public/ --browser",
     "test:broser:puppeteer": "node-qunit-puppeteer http://localhost:9876/ 3000",
     "test:broser:puppeteer:watch": "watch 'npm run test:broser:puppeteer' test_browser/public/ --interval=1 --ignoreDotFiles"
@@ -27,6 +27,7 @@
     "css-loader": "^5.2.6",
     "eslint": "^7.29.0",
     "jquery": "^3.6.0",
+    "mocha": "^9.0.0",
     "node-qunit-puppeteer": "^2.1.0",
     "qunit": "2.13.0",
     "reload": "^3.2.0",
