@@ -9,12 +9,9 @@
     "build:test:browser:clean": "rimraf test_browser/public/index.js",
     "build:test:browser:watch": "webpack --config webpack.test_browser.config.js --watch",
     "test:cli": "mocha test/*",
-    "test:cli:watch": "watch 'npm run test:mocha' src/ test/ --interval=1 --ignoreDotFiles",
     "test:browser:serve": "reload --port=9876 --dir=test_browser/public/ --browser",
-    "test:broser:puppeteer": "node-qunit-puppeteer http://localhost:9876/ 3000",
-    "test:broser:puppeteer:watch": "watch 'npm run test:broser:puppeteer' test_browser/public/ --interval=1 --ignoreDotFiles"
+    "test:broser:puppeteer": "node-qunit-puppeteer http://localhost:9876/ 3000"
   },
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
@@ -33,7 +30,6 @@
     "reload": "^3.2.0",
     "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",
-    "watch": "^1.0.2",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
   },
